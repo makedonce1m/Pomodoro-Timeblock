@@ -17,11 +17,13 @@ export function RunScreen({ template, autoContinue, timeFormat, onDeactivate }: 
 
   const {
     mode, timerPhase, elapsedSeconds, phaseDurationSeconds, isRunning, canSwitch,
-    sessionPhase, pomodoroIndex, totalPomodoros, isClosingInterval,
-    currentBlock, nextBlock, isDone, waitingForContinue,
+    sessionPhase, blockIndex, pomodoroIndex, totalPomodoros, isClosingInterval,
+    currentBlock, isDone, waitingForContinue,
     pause, skip, switchMode, selectMode,
     startSession, continueToNext, goToPhase, resetPomodoro,
   } = session
+
+  const upcomingBlocks = template.blocks.slice(blockIndex + 1)
 
   const sessionStarted = sessionPhase !== 'idle'
   const isLongBreak = sessionPhase === 'long-break'
@@ -85,12 +87,16 @@ export function RunScreen({ template, autoContinue, timeFormat, onDeactivate }: 
         </div>
       )}
 
-      {/* ── Next up ── */}
-      {nextBlock && !isDone && (
-        <div className={styles.nextUp}>
-          <span className={styles.nextLabel}>Next</span>
-          <span className={styles.nextName}>{nextBlock.label}</span>
-          <span className={styles.nextTime}>{formatDisplayTime(nextBlock.startTime, timeFormat)}–{formatDisplayTime(nextBlock.endTime, timeFormat)}</span>
+      {/* ── Upcoming blocks ── */}
+      {upcomingBlocks.length > 0 && !isDone && (
+        <div className={styles.upcoming}>
+          {upcomingBlocks.map((block, i) => (
+            <div key={block.id} className={styles.upcomingRow}>
+              <span className={styles.nextLabel}>{i === 0 ? 'Next' : ''}</span>
+              <span className={styles.nextName}>{block.label}</span>
+              <span className={styles.nextTime}>{formatDisplayTime(block.startTime, timeFormat)}–{formatDisplayTime(block.endTime, timeFormat)}</span>
+            </div>
+          ))}
         </div>
       )}
 
