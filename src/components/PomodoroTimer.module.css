@@ -100,6 +100,31 @@
   color: #64748B;
 }
 
+/* ── Closing interval note ── */
+.closingNote {
+  background: #1c1c1c;
+  border-radius: 0.75rem;
+  padding: 0.85rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 90px;
+  align-items: flex-start;
+}
+
+.closingNoteIcon {
+  font-size: 0.9rem;
+}
+
+.closingNoteText {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #475569;
+  white-space: pre-line;
+  line-height: 1.5;
+}
+
 /* ── Controls ── */
 .controls {
   display: flex;

@@ -51,6 +51,8 @@ export interface UseSessionReturn {
   goToPhase: (phase: 'focus' | 'break') => void;
   /** Reset the current Pomodoro timer back to zero without changing block/Pomodoro position. */
   resetPomodoro: () => void;
+  /** Jump to a specific Pomodoro index within the current block (resets timer, waits for play). */
+  jumpToPomodoro: (index: number) => void;
 }
 
 export function useSession(
@@ -242,9 +244,14 @@ export function useSession(
 
   const resetPomodoro = useCallback(() => {
     timer.reset();
-    // Stay at the same block/pomodoro position, just restart the timer.
-    // sessionPhase stays 'focus' (not 'idle') so play → resume rather than startSession.
     setSessionPhase(prev => prev === 'idle' ? 'idle' : 'focus');
+    setWaitingForContinue(false);
+  }, [timer]);
+
+  const jumpToPomodoro = useCallback((index: number) => {
+    timer.reset();
+    setPomodoroIndex(index);
+    setSessionPhase('focus');
     setWaitingForContinue(false);
   }, [timer]);
 
@@ -274,5 +281,6 @@ export function useSession(
     continueToNext,
     goToPhase,
     resetPomodoro,
+    jumpToPomodoro,
   };
 }
