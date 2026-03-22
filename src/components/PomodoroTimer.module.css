@@ -1,0 +1,51 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+  border: 1px solid #333;
+  border-radius: 1rem;
+  width: fit-content;
+  margin: 4rem auto;
+}
+
+.phase {
+  margin: 0;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #888;
+}
+
+.display {
+  margin: 0;
+  font-size: 5rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.controls {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.controls button {
+  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  border: 1px solid #555;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.controls button:hover:not(:disabled) {
+  background: #222;
+}
+
+.controls button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
