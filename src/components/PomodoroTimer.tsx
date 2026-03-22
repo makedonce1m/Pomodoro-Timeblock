@@ -152,7 +152,6 @@ export function PomodoroTimer({
           <button
             className={styles.sideButton}
             onClick={onSkip}
-            disabled={!started}
             aria-label="Skip"
           >
             <IconSkip />
