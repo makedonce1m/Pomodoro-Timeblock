@@ -31,7 +31,8 @@
   color: #94A3B8;
 }
 
-.tabActive {
+.tabActive,
+.tabActive:hover {
   color: #F59E0B;
 }
 
