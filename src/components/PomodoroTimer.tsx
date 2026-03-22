@@ -9,7 +9,7 @@ function formatTime(seconds: number): string {
 }
 
 export function PomodoroTimer() {
-  const { mode, phase, elapsedSeconds, phaseDurationSeconds, isRunning, start, pause, resume, reset } =
+  const { mode, phase, elapsedSeconds, phaseDurationSeconds, isRunning, start, pause, resume, reset, skip } =
     usePomodoroTimer()
 
   const remaining = Math.max(0, phaseDurationSeconds - elapsedSeconds)
@@ -57,6 +57,9 @@ export function PomodoroTimer() {
         <button onClick={reset} disabled={!started}>
           Reset
         </button>
+        {phase === 'focus' && started && (
+          <button onClick={skip}>Skip</button>
+        )}
       </div>
     </div>
   )
