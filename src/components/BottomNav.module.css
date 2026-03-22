@@ -7,8 +7,8 @@
   border-top: 1px solid #1c1c1c;
   display: flex;
   align-items: flex-start;
-  /* small cushion above the home indicator — just enough, not too much */
-  padding-bottom: 10px;
+  /* ~4px gap between tab labels and the home indicator */
+  padding-bottom: 4px;
 }
 
 .tab {
