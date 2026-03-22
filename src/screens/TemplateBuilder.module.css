@@ -204,9 +204,41 @@
   border-color: #475569;
 }
 
-/* Hide AM/PM suffix shown by iOS on 12h-locale devices; value is always stored as HH:mm */
-.timeInput::-webkit-datetime-edit-ampm-field {
-  display: none;
+/* 24h overlay input: display span shows HH:mm, hidden input captures native picker */
+.timeInputWrapper {
+  position: relative;
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  padding: 0.45rem 0.55rem;
+  transition: border-color 0.15s;
+  cursor: pointer;
+  width: 100%;
+}
+
+.timeInputWrapper:focus-within {
+  border-color: #475569;
+}
+
+.timeInputDisplay {
+  font-size: 0.9rem;
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  color: #F1F5F9;
+  pointer-events: none;
+  user-select: none;
+}
+
+.timeInputHidden {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  /* value is still HH:mm; picker may show device locale format */
 }
 
 .timeSep {
@@ -325,4 +357,94 @@
 
 .deleteConfirmYes:hover {
   background: #dc2626;
+}
+
+/* ── Unsaved changes overlay ── */
+.unsavedOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: flex-end;
+  z-index: 100;
+}
+
+.unsavedSheet {
+  width: 100%;
+  background: #141414;
+  border-top: 1px solid #2a2a2a;
+  border-radius: 1.25rem 1.25rem 0 0;
+  padding: 1.5rem 1.25rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.unsavedTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #F1F5F9;
+}
+
+.unsavedDesc {
+  font-size: 0.82rem;
+  color: #64748B;
+  margin-bottom: 0.5rem;
+}
+
+.unsavedActions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.unsavedSave {
+  width: 100%;
+  background: #F59E0B;
+  border: none;
+  border-radius: 0.75rem;
+  color: #1c1c1c;
+  font-size: 0.9rem;
+  font-weight: 700;
+  font-family: inherit;
+  padding: 0.8rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.unsavedSave:hover {
+  background: #FBBF24;
+}
+
+.unsavedDiscard {
+  width: 100%;
+  background: #1c1c1c;
+  border: 1px solid #2a2a2a;
+  border-radius: 0.75rem;
+  color: #ef4444;
+  font-size: 0.9rem;
+  font-family: inherit;
+  padding: 0.8rem;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.unsavedDiscard:hover {
+  border-color: #ef4444;
+}
+
+.unsavedKeep {
+  width: 100%;
+  background: none;
+  border: none;
+  color: #475569;
+  font-size: 0.85rem;
+  font-family: inherit;
+  padding: 0.6rem;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.unsavedKeep:hover {
+  color: #94A3B8;
 }

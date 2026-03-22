@@ -56,6 +56,7 @@ export function TemplatesScreen({ activeTemplateId, onActivate, timeFormat }: Pr
     return (
       <TemplateBuilder
         template={editing}
+        timeFormat={timeFormat}
         onSave={handleSave}
         onCancel={() => setEditing(null)}
         onDelete={isNew ? undefined : (id) => { handleDelete(id); setEditing(null) }}
