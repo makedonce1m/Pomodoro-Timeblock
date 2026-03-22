@@ -4,6 +4,7 @@ import {
   POMODORO_BREAK_DURATION,
 } from '../constants/timer';
 import { canSwitchMode } from '../utils/pomodoroMode';
+import { playFocusEndSound, playBreakEndSound, playSkipSound } from '../utils/sound';
 import type { PomodoroMode } from '../types';
 
 type Phase = 'focus' | 'break';
@@ -108,6 +109,7 @@ export function usePomodoroTimer(
 
   const skip = useCallback(() => {
     const nextPhase = phase === 'focus' ? 'break' : 'focus';
+    playSkipSound();
     stopRaf();
     runStartWallTime.current = null;
     elapsedAtRunStart.current = 0;
@@ -161,7 +163,15 @@ export function usePomodoroTimer(
       runStartWallTime.current = performance.now();
       elapsedAtRunStart.current = 0;
       setElapsedSeconds(0);
-      setPhase((p) => (p === 'focus' ? 'break' : 'focus'));
+      setPhase((p) => {
+        if (p === 'focus') {
+          playFocusEndSound();
+          return 'break';
+        } else {
+          playBreakEndSound();
+          return 'focus';
+        }
+      });
       rafHandle.current = requestAnimationFrame(tick);
     }
   }, [elapsedSeconds, phaseDurationSeconds, isRunning, stopRaf, tick]);
