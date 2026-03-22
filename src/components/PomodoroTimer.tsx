@@ -50,7 +50,7 @@ function IconSkip() {
 export function PomodoroTimer() {
   const {
     mode, phase, elapsedSeconds, phaseDurationSeconds,
-    isRunning, start, pause, resume, reset, skip,
+    isRunning, start, pause, resume, reset, skip, goToPhase,
   } = usePomodoroTimer()
 
   const remaining = Math.max(0, phaseDurationSeconds - elapsedSeconds)
@@ -103,16 +103,24 @@ export function PomodoroTimer() {
 
       {/* Focus / Break cards */}
       <div className={styles.cards}>
-        <div className={`${styles.card} ${phase === 'focus' ? styles.cardActive : ''}`}>
+        <button
+          className={`${styles.card} ${phase === 'focus' ? styles.cardActive : ''}`}
+          onClick={() => goToPhase('focus')}
+          aria-pressed={phase === 'focus'}
+        >
           <span className={styles.cardIcon}>⚡</span>
           <span className={styles.cardTime}>{formatMinutes(focusTotal)}</span>
           <span className={styles.cardLabel}>Focus</span>
-        </div>
-        <div className={`${styles.card} ${phase === 'break' ? styles.cardActive : ''}`}>
+        </button>
+        <button
+          className={`${styles.card} ${phase === 'break' ? styles.cardActive : ''}`}
+          onClick={() => goToPhase('break')}
+          aria-pressed={phase === 'break'}
+        >
           <span className={styles.cardIcon}>🌙</span>
           <span className={styles.cardTime}>{formatMinutes(breakTotal)}</span>
           <span className={styles.cardLabel}>Break</span>
-        </div>
+        </button>
       </div>
 
       {/* Controls */}
@@ -136,7 +144,7 @@ export function PomodoroTimer() {
           <button
             className={styles.sideButton}
             onClick={skip}
-            disabled={!started || phase === 'break'}
+            disabled={phase === 'break'}
             aria-label="Skip"
           >
             <IconSkip />
