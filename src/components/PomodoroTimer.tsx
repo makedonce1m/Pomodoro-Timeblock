@@ -124,6 +124,7 @@ export function PomodoroTimer({
         <button
           className={`${styles.card} ${phase === 'break' ? styles.cardActive : ''}`}
           onClick={() => onGoToPhase('break')}
+          disabled={isRunning}
           aria-pressed={phase === 'break'}
         >
           <span className={styles.cardIcon}>🌙</span>
