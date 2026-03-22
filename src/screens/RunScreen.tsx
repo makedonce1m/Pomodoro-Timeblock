@@ -35,47 +35,14 @@ function IconSkip() {
   )
 }
 
-interface PickerProps {
-  templates: DayTemplate[]
-  onActivate: (id: string) => void
-}
-
-function TemplatePicker({ templates, onActivate }: PickerProps) {
-  return (
-    <div className={styles.picker}>
-      <p className={styles.pickerHint}>Choose a template to start a session</p>
-      {templates.length === 0 && (
-        <p className={styles.pickerEmpty}>No templates yet — create one in Templates.</p>
-      )}
-      {templates.map(t => {
-        const focusBlocks = t.blocks.filter(b => b.type === 'focus')
-        const totalPoms = focusBlocks.reduce((s, b) => s + (b as { pomodoroCount: number }).pomodoroCount, 0)
-        return (
-          <button key={t.id} className={styles.pickerCard} onClick={() => onActivate(t.id)}>
-            <span className={styles.pickerName}>{t.label}</span>
-            <span className={styles.pickerMeta}>{focusBlocks.length} blocks · {totalPoms} Pomodoros</span>
-            <span className={styles.pickerArrow}>▶</span>
-          </button>
-        )
-      })}
-    </div>
-  )
-}
-
 interface Props {
-  template: DayTemplate | null
-  templates: DayTemplate[]
+  template: DayTemplate         // always defined — App only renders this when a template is active
   autoContinue: boolean
-  onActivate: (id: string) => void
   onDeactivate: () => void
 }
 
-export function RunScreen({ template, templates, autoContinue, onActivate, onDeactivate }: Props) {
+export function RunScreen({ template, autoContinue, onDeactivate }: Props) {
   const session = useSession(template, autoContinue)
-
-  if (!template) {
-    return <TemplatePicker templates={templates} onActivate={onActivate} />
-  }
 
   const {
     sessionPhase, elapsedSeconds, phaseDurationSeconds, isRunning,
@@ -91,17 +58,15 @@ export function RunScreen({ template, templates, autoContinue, onActivate, onDea
   const isIdle = sessionPhase === 'idle'
   const isLongBreak = sessionPhase === 'long-break'
 
-  // Display label inside the ring
   function phaseLabel(): string {
     if (isIdle) return 'Ready'
     if (isDone) return 'Done'
-    if (sessionPhase === 'long-break') return 'Long Break'
+    if (isLongBreak) return 'Long Break'
     if (sessionPhase === 'short-break') return 'Break'
     if (isClosingInterval) return 'Closing'
     return 'Focus'
   }
 
-  // Ring colour: amber for focus/closing, slate for breaks
   const isFocusPhase = sessionPhase === 'focus' || sessionPhase === 'idle' || isClosingInterval
   const ringColour = isFocusPhase ? '#F59E0B' : '#64748B'
 
@@ -111,13 +76,9 @@ export function RunScreen({ template, templates, autoContinue, onActivate, onDea
       <div className={styles.header}>
         <div className={styles.headerInfo}>
           <p className={styles.templateLabel}>{template.label}</p>
-          {currentBlock && (
-            <p className={styles.blockLabel}>{currentBlock.label}</p>
-          )}
+          {currentBlock && <p className={styles.blockLabel}>{currentBlock.label}</p>}
         </div>
-        <button className={styles.endButton} onClick={onDeactivate} aria-label="End session">
-          ✕
-        </button>
+        <button className={styles.endButton} onClick={onDeactivate} aria-label="End session">✕</button>
       </div>
 
       {/* ── Progress dots ── */}
@@ -183,12 +144,7 @@ export function RunScreen({ template, templates, autoContinue, onActivate, onDea
             </button>
           ) : (
             <>
-              <button
-                className={styles.sideButton}
-                onClick={skip}
-                aria-label="Skip"
-                disabled={isIdle}
-              >
+              <button className={styles.sideButton} onClick={skip} aria-label="Skip">
                 <IconSkip />
               </button>
               <button
@@ -207,9 +163,7 @@ export function RunScreen({ template, templates, autoContinue, onActivate, onDea
       {isDone && (
         <div className={styles.doneActions}>
           <p className={styles.doneMsg}>Session complete!</p>
-          <button className={styles.restartButton} onClick={startSession}>
-            Start Again
-          </button>
+          <button className={styles.restartButton} onClick={startSession}>Start Again</button>
         </div>
       )}
 

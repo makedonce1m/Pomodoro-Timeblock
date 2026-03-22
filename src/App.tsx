@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { BottomNav } from './components/BottomNav'
 import type { AppView } from './components/BottomNav'
+import { PomodoroTimer } from './components/PomodoroTimer'
+import { usePomodoroTimer } from './hooks/usePomodoroTimer'
 import { RunScreen } from './screens/RunScreen'
 import { TemplatesScreen } from './screens/TemplatesScreen'
 import { SettingsScreen } from './screens/SettingsScreen'
@@ -24,7 +26,10 @@ function App() {
   const [activeTemplateId, setActiveTemplateId] = useState<string | null>(null)
   const { settings, update: updateSettings } = useSettings()
 
-  // Resolve the active template from localStorage on demand.
+  // Standalone timer — always alive so it keeps running when switching tabs.
+  const timer = usePomodoroTimer()
+  const timerStarted = timer.elapsedSeconds > 0 || timer.isRunning
+
   const activeTemplate = activeTemplateId
     ? (loadTemplates().find(t => t.id === activeTemplateId) ?? null)
     : null
@@ -36,13 +41,30 @@ function App() {
 
   return (
     <div className={styles.layout}>
-      <main className={`${styles.content} ${view === 'run' ? styles.contentRun : ''}`}>
-        {view === 'run' && (
+      <main className={`${styles.content} ${view === 'run' && !activeTemplate ? styles.contentCentered : ''}`}>
+        {view === 'run' && !activeTemplate && (
+          <PomodoroTimer
+            mode={timer.mode}
+            phase={timer.phase}
+            elapsedSeconds={timer.elapsedSeconds}
+            phaseDurationSeconds={timer.phaseDurationSeconds}
+            isRunning={timer.isRunning}
+            started={timerStarted}
+            canSwitch={timer.canSwitch}
+            onStart={timer.start}
+            onPause={timer.pause}
+            onResume={timer.resume}
+            onReset={timer.reset}
+            onSkip={timer.skip}
+            onGoToPhase={timer.goToPhase}
+            onSelectMode={timer.selectMode}
+            onSwitchMode={timer.switchMode}
+          />
+        )}
+        {view === 'run' && activeTemplate && (
           <RunScreen
             template={activeTemplate}
-            templates={loadTemplates()}
             autoContinue={settings.autoContinue}
-            onActivate={handleActivate}
             onDeactivate={() => setActiveTemplateId(null)}
           />
         )}

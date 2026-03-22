@@ -2,11 +2,25 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  height: 100%;
+  overscroll-behavior: none;
 }
 
 body {
   font-family: 'Inter', sans-serif;
   background: #000000;
   color: #F1F5F9;
-  min-height: 100vh;
+  min-height: 100%;
+  height: 100%;
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+  touch-action: manipulation; /* prevents 300ms tap delay */
+}
+
+#root {
+  height: 100%;
 }

@@ -13,8 +13,8 @@
   align-items: stretch;
 }
 
-/* Run screen: center vertically when showing session/picker (no template header shifting) */
-.contentRun {
+/* Standalone timer (no active template): center it */
+.contentCentered {
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
 }
