@@ -1,3 +1,5 @@
+export type PomodoroMode = 'standard' | 'comfort';
+
 /** A focus block: contains Pomodoros (focus intervals + short breaks, ending with a closing interval). */
 export interface FocusBlock {
   type: 'focus';

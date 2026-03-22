@@ -129,6 +129,7 @@ chore: upgrade dependencies
 - The last interval of every time block is a **closing interval**: 30 minutes of focus with no break; implement this as a distinct interval type (e.g., `CLOSING_INTERVAL`) so it is never confused with a standard Pomodoro
 - Use `Date.now()` / `performance.now()` for drift-resistant timing rather than naive `setInterval` counting
 - Pause/resume must preserve elapsed time accurately
+- **Mid-session mode switching**: While a Pomodoro is running, a button allows switching between Standard and Comfort mode. The timer must not stop. Switching is only permitted during the focus phase and only while elapsed focus time is below `MODE_SWITCH_CUTOFF_SECONDS` (10 seconds before Comfort mode's 20-minute focus mark, i.e. < 19:50). The button must be disabled outside this window. Elapsed time is preserved on switch.
 
 ### Time Block Scheduling
 - Store time blocks as `{ id, label, startTime: ISO8601, endTime: ISO8601, pomodoroCount: number }`
