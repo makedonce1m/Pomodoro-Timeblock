@@ -5,7 +5,7 @@ import styles from './App.module.css'
 function App() {
   const {
     mode, phase, elapsedSeconds, phaseDurationSeconds,
-    isRunning, start, pause, resume, reset, skip, goToPhase, selectMode,
+    isRunning, canSwitch, start, pause, resume, reset, skip, goToPhase, selectMode, switchMode,
   } = usePomodoroTimer()
 
   const started = elapsedSeconds > 0 || isRunning
@@ -26,6 +26,8 @@ function App() {
         onSkip={skip}
         onGoToPhase={goToPhase}
         onSelectMode={selectMode}
+        onSwitchMode={switchMode}
+        canSwitch={canSwitch}
       />
     </div>
   )

@@ -54,6 +54,7 @@ interface Props {
   phaseDurationSeconds: number
   isRunning: boolean
   started: boolean
+  canSwitch: boolean
   onStart: () => void
   onPause: () => void
   onResume: () => void
@@ -61,12 +62,13 @@ interface Props {
   onSkip: () => void
   onGoToPhase: (phase: 'focus' | 'break') => void
   onSelectMode: (mode: PomodoroMode) => void
+  onSwitchMode: () => void
 }
 
 export function PomodoroTimer({
   mode, phase, elapsedSeconds, phaseDurationSeconds,
-  isRunning, started,
-  onStart, onPause, onResume, onReset, onSkip, onGoToPhase, onSelectMode,
+  isRunning, started, canSwitch,
+  onStart, onPause, onResume, onReset, onSkip, onGoToPhase, onSelectMode, onSwitchMode,
 }: Props) {
   const remaining = Math.max(0, phaseDurationSeconds - elapsedSeconds)
 
@@ -162,16 +164,16 @@ export function PomodoroTimer({
       <div className={styles.modeSelector}>
         <button
           className={`${styles.modeButton} ${mode === 'comfort' ? styles.modeActive : ''}`}
-          onClick={() => onSelectMode('comfort')}
-          disabled={started}
+          onClick={() => started ? onSwitchMode() : onSelectMode('comfort')}
+          disabled={started ? !canSwitch : false}
           aria-pressed={mode === 'comfort'}
         >
           🍃 Comfort
         </button>
         <button
           className={`${styles.modeButton} ${mode === 'standard' ? styles.modeActive : ''}`}
-          onClick={() => onSelectMode('standard')}
-          disabled={started}
+          onClick={() => started ? onSwitchMode() : onSelectMode('standard')}
+          disabled={started ? !canSwitch : false}
           aria-pressed={mode === 'standard'}
         >
           ⏱ Standard
