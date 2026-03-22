@@ -11,8 +11,7 @@
 .content {
   flex: 1;
   overflow-y: auto;
-  /* 64px nav + home-indicator safe area */
-  padding-bottom: calc(64px + env(safe-area-inset-bottom, 0));
+  padding-bottom: 64px; /* clear the fixed bottom nav */
   display: flex;
   align-items: stretch;
 }
