@@ -55,6 +55,7 @@ interface Props {
   isRunning: boolean
   started: boolean
   canSwitch: boolean
+  isClosingInterval?: boolean
   onStart: () => void
   onPause: () => void
   onResume: () => void
@@ -67,7 +68,7 @@ interface Props {
 
 export function PomodoroTimer({
   mode, phase, elapsedSeconds, phaseDurationSeconds,
-  isRunning, started, canSwitch,
+  isRunning, started, canSwitch, isClosingInterval = false,
   onStart, onPause, onResume, onReset, onSkip, onGoToPhase, onSelectMode, onSwitchMode,
 }: Props) {
   const remaining = Math.max(0, phaseDurationSeconds - elapsedSeconds)
@@ -119,19 +120,26 @@ export function PomodoroTimer({
           aria-pressed={phase === 'focus'}
         >
           <span className={styles.cardIcon}>⚡</span>
-          <span className={styles.cardTime}>{formatMinutes(focusTotal)}</span>
+          <span className={styles.cardTime}>{formatMinutes(isClosingInterval ? 1800 : focusTotal)}</span>
           <span className={styles.cardLabel}>Focus</span>
         </button>
-        <button
-          className={`${styles.card} ${phase === 'break' ? styles.cardActive : ''}`}
-          onClick={() => onGoToPhase('break')}
-          disabled={isRunning}
-          aria-pressed={phase === 'break'}
-        >
-          <span className={styles.cardIcon}>🌙</span>
-          <span className={styles.cardTime}>{formatMinutes(breakTotal)}</span>
-          <span className={styles.cardLabel}>Break</span>
-        </button>
+        {isClosingInterval ? (
+          <div className={styles.closingNote}>
+            <span className={styles.closingNoteIcon}>🏁</span>
+            <span className={styles.closingNoteText}>No break{'\n'}Long rest follows</span>
+          </div>
+        ) : (
+          <button
+            className={`${styles.card} ${phase === 'break' ? styles.cardActive : ''}`}
+            onClick={() => onGoToPhase('break')}
+            disabled={isRunning}
+            aria-pressed={phase === 'break'}
+          >
+            <span className={styles.cardIcon}>🌙</span>
+            <span className={styles.cardTime}>{formatMinutes(breakTotal)}</span>
+            <span className={styles.cardLabel}>Break</span>
+          </button>
+        )}
       </div>
 
       <div className={styles.controls}>

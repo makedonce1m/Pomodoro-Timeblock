@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import type { DayTemplate } from '../types'
 import type { TimeFormat } from '../hooks/useSettings'
 import { useSession } from '../hooks/useSession'
@@ -20,10 +21,31 @@ export function RunScreen({ template, autoContinue, timeFormat, onDeactivate }: 
     sessionPhase, blockIndex, pomodoroIndex, totalPomodoros, isClosingInterval,
     currentBlock, isDone, waitingForContinue,
     pause, skip, switchMode, selectMode,
-    startSession, continueToNext, goToPhase, resetPomodoro,
+    startSession, continueToNext, goToPhase, resetPomodoro, jumpToPomodoro,
   } = session
 
   const upcomingBlocks = template.blocks.slice(blockIndex + 1)
+
+  // Swipe to navigate between pomodoros within the current block
+  const touchStartX = useRef(0)
+  const touchStartY = useRef(0)
+
+  function handleTouchStart(e: React.TouchEvent) {
+    touchStartX.current = e.touches[0].clientX
+    touchStartY.current = e.touches[0].clientY
+  }
+
+  function handleTouchEnd(e: React.TouchEvent) {
+    const dx = e.changedTouches[0].clientX - touchStartX.current
+    const dy = Math.abs(e.changedTouches[0].clientY - touchStartY.current)
+    // Ignore if not a clear horizontal swipe
+    if (Math.abs(dx) < 50 || dy > Math.abs(dx)) return
+    if (dx < 0 && pomodoroIndex < totalPomodoros - 1) {
+      jumpToPomodoro(pomodoroIndex + 1)
+    } else if (dx > 0 && pomodoroIndex > 0) {
+      jumpToPomodoro(pomodoroIndex - 1)
+    }
+  }
 
   const sessionStarted = sessionPhase !== 'idle'
   const isLongBreak = sessionPhase === 'long-break'
@@ -32,13 +54,18 @@ export function RunScreen({ template, autoContinue, timeFormat, onDeactivate }: 
   const handleResume = waitingForContinue ? continueToNext : session.resume
 
   return (
-    <div className={styles.screen}>
+    <div className={styles.screen} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
 
       {/* ── Session context header ── */}
       <div className={styles.sessionHeader}>
         <div className={styles.sessionInfo}>
-          <p className={styles.templateName}>{template.label}</p>
-          {currentBlock && <p className={styles.blockName}>{currentBlock.label}</p>}
+          <p className={styles.templateName}>{template.label}{currentBlock ? ` · ${currentBlock.label}` : ''}</p>
+          {!isLongBreak && totalPomodoros > 0 && (
+            <p className={styles.blockName}>Pomo {pomodoroIndex + 1}</p>
+          )}
+          {isLongBreak && currentBlock && (
+            <p className={styles.blockName}>{currentBlock.label}</p>
+          )}
         </div>
         <button className={styles.endButton} onClick={onDeactivate} aria-label="End session">✕</button>
       </div>
@@ -69,6 +96,7 @@ export function RunScreen({ template, autoContinue, timeFormat, onDeactivate }: 
         isRunning={isRunning}
         started={sessionStarted}
         canSwitch={canSwitch}
+        isClosingInterval={isClosingInterval}
         onStart={startSession}
         onPause={pause}
         onResume={handleResume}
