@@ -14,7 +14,7 @@
   overflow-y: auto;
   display: flex;
   align-items: stretch;
-  padding-bottom: calc(64px + env(safe-area-inset-bottom, 0));
+  padding-bottom: calc(64px + env(safe-area-inset-bottom, 34px));
 }
 
 /* Standalone timer (no active template): center it */

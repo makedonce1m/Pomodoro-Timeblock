@@ -219,6 +219,7 @@ function TimeInput({
         type="time"
         className={styles.timeInput}
         value={value}
+        step="60"
         onChange={e => onChange(e.target.value)}
       />
     )
@@ -233,9 +234,8 @@ function TimeInput({
         type="time"
         className={styles.timeInputHidden}
         value={value}
+        step="60"
         onChange={e => onChange(e.target.value)}
-        tabIndex={-1}
-        aria-hidden="true"
       />
     </div>
   )
