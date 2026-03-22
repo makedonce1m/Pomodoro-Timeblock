@@ -12,7 +12,7 @@ This file provides guidance for AI assistants (Claude and others) working on thi
 - **Time Block**: A named, calendar-scheduled work session (e.g., "Deep Work 9:00–11:00")
 - **Pomodoro**: A 30-minute interval consisting of a focus period followed by a break
 - **Short Break**: Rest period between Pomodoros within a time block
-- **Long Break**: Rest after every 4 Pomodoros; duration is configurable (15 min, 30 min, or 60 min)
+- **Long Break**: Rest after a user-configurable number of Pomodoros (4, 5, or 6); duration is also configurable (15 min, 30 min, or 60 min)
 - **Closing Interval**: The final Pomodoro of a time block — 30 minutes of pure focus with no trailing break, since a longer inter-block break follows immediately
 
 ### Pomodoro Interval Modes
@@ -29,7 +29,7 @@ Two modes are supported; users can switch between them in settings:
 When a time block ends, the final Pomodoro runs as a **30-minute pure focus interval** (no break appended). The rationale: a longer inter-block break is already scheduled after the time block, so a 5-minute trailing break would be redundant and disruptive to the natural transition.
 
 ### Long Break Options
-After every 4 Pomodoros, users choose their long break length:
+After a user-configured number of Pomodoros (4, 5, or 6), users take a long break. Both the interval count and the break length are configurable:
 
 | Option | Duration |
 |--------|----------|
@@ -125,6 +125,7 @@ chore: upgrade dependencies
 - The two supported modes are Standard (25 min focus / 5 min break) and Comfort (20 min focus / 10 min break); both total 30 minutes
 - Comfort mode's 10-minute break is designed to cover a bathroom break combined with a normal rest — do not shorten it
 - Long break duration is user-configurable: 15 min, 30 min, or 60 min; use a named constant (e.g., `LONG_BREAK_DURATION`) — never hardcode
+- The number of Pomodoros before a long break is user-configurable: 4, 5, or 6; use a named constant (e.g., `POMODOROS_BEFORE_LONG_BREAK`) — never hardcode
 - The last interval of every time block is a **closing interval**: 30 minutes of focus with no break; implement this as a distinct interval type (e.g., `CLOSING_INTERVAL`) so it is never confused with a standard Pomodoro
 - Use `Date.now()` / `performance.now()` for drift-resistant timing rather than naive `setInterval` counting
 - Pause/resume must preserve elapsed time accurately
