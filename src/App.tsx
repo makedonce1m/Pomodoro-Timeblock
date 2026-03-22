@@ -19,7 +19,7 @@ function App() {
 
   return (
     <div className={styles.layout}>
-      <main className={styles.content}>
+      <main className={`${styles.content} ${view === 'run' ? styles.contentCentered : ''}`}>
         {view === 'run' && (
           <PomodoroTimer
             mode={mode}
