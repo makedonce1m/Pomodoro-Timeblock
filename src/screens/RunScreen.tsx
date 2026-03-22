@@ -69,7 +69,7 @@ export function RunScreen({ template, autoContinue, timeFormat, onDeactivate }: 
       pendingJump.current = targetIndex
       animPhase.current = 'exit'
       setSwipeTransition(true)
-      setSwipeX(exitToward.current * -window.innerWidth)
+      setSwipeX(exitToward.current * window.innerWidth)
     } else {
       // Snap back
       setSwipeTransition(true)
@@ -84,7 +84,7 @@ export function RunScreen({ template, autoContinue, timeFormat, onDeactivate }: 
       pendingJump.current = null
       // Position the new card off-screen from the opposite side, no transition
       setSwipeTransition(false)
-      setSwipeX(exitToward.current * window.innerWidth)
+      setSwipeX(exitToward.current * -window.innerWidth)
       // Double rAF: ensure DOM reflects the no-transition position before animating in
       requestAnimationFrame(() => requestAnimationFrame(() => {
         setSwipeTransition(true)
