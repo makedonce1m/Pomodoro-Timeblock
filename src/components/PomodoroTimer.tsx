@@ -149,7 +149,7 @@ export function PomodoroTimer({
           <button
             className={styles.sideButton}
             onClick={onSkip}
-            disabled={phase === 'break'}
+            disabled={!started}
             aria-label="Skip"
           >
             <IconSkip />
