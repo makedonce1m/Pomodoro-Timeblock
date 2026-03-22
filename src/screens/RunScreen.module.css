@@ -96,6 +96,17 @@
   margin-left: 0.15rem;
 }
 
+/* ── Swipe viewport (clips the sliding card) ── */
+.swipeViewport {
+  width: 100%;
+  overflow: hidden;
+}
+
+.swipeCard {
+  width: 100%;
+  will-change: transform;
+}
+
 /* ── Done row ── */
 .doneRow {
   display: flex;
