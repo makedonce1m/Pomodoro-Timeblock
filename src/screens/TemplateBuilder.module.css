@@ -204,6 +204,11 @@
   border-color: #475569;
 }
 
+/* Hide AM/PM suffix shown by iOS on 12h-locale devices; value is always stored as HH:mm */
+.timeInput::-webkit-datetime-edit-ampm-field {
+  display: none;
+}
+
 .timeSep {
   color: #334155;
   font-size: 0.9rem;
@@ -247,4 +252,77 @@
 .addBreak:hover {
   color: #94A3B8;
   border-color: #334155;
+}
+
+/* ── Delete zone ── */
+.deleteZone {
+  padding: 0 1.25rem 1.5rem;
+  flex-shrink: 0;
+}
+
+.deleteTemplate {
+  width: 100%;
+  background: none;
+  border: 1px solid #2a2a2a;
+  border-radius: 0.65rem;
+  color: #475569;
+  font-size: 0.8rem;
+  font-family: inherit;
+  padding: 0.65rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.deleteTemplate:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.deleteConfirm {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(239, 68, 68, 0.06);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: 0.65rem;
+  padding: 0.65rem 0.9rem;
+}
+
+.deleteConfirmText {
+  flex: 1;
+  font-size: 0.78rem;
+  color: #ef4444;
+}
+
+.deleteConfirmNo {
+  background: #1c1c1c;
+  border: 1px solid #2a2a2a;
+  border-radius: 0.5rem;
+  color: #64748B;
+  font-size: 0.75rem;
+  font-family: inherit;
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.deleteConfirmNo:hover {
+  color: #F1F5F9;
+}
+
+.deleteConfirmYes {
+  background: #ef4444;
+  border: none;
+  border-radius: 0.5rem;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.deleteConfirmYes:hover {
+  background: #dc2626;
 }

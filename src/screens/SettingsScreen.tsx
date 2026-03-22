@@ -33,6 +33,27 @@ export function SettingsScreen({ settings, onUpdate }: Props) {
       </section>
 
       <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Display</h2>
+
+        <div className={styles.row}>
+          <div className={styles.rowInfo}>
+            <span className={styles.rowLabel}>Time format</span>
+            <span className={styles.rowDesc}>Choose how times appear throughout the app.</span>
+          </div>
+          <div className={styles.segmented}>
+            <button
+              className={`${styles.seg} ${settings.timeFormat === '24h' ? styles.segActive : ''}`}
+              onClick={() => onUpdate({ timeFormat: '24h' })}
+            >24h</button>
+            <button
+              className={`${styles.seg} ${settings.timeFormat === '12h' ? styles.segActive : ''}`}
+              onClick={() => onUpdate({ timeFormat: '12h' })}
+            >AM/PM</button>
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Timer</h2>
         <p className={styles.comingSoon}>Pomodoro mode defaults, long break configuration — coming soon.</p>
       </section>

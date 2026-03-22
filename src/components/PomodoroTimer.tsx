@@ -17,7 +17,7 @@ function formatMinutes(seconds: number): string {
 
 function IconPlay() {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" width="32" height="32">
+    <svg viewBox="0 0 24 24" fill="currentColor" width="72" height="72">
       <path d="M8 5v14l11-7z" />
     </svg>
   )
@@ -25,7 +25,7 @@ function IconPlay() {
 
 function IconPause() {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+    <svg viewBox="0 0 24 24" fill="currentColor" width="56" height="56">
       <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
     </svg>
   )

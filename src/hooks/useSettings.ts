@@ -1,11 +1,15 @@
 import { useState } from 'react';
 
+export type TimeFormat = '24h' | '12h';
+
 export interface AppSettings {
   autoContinue: boolean;
+  timeFormat: TimeFormat;
 }
 
 const DEFAULTS: AppSettings = {
   autoContinue: true,
+  timeFormat: '24h',
 };
 
 const KEY = 'pomodoro-app-settings';

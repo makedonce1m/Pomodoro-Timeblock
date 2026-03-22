@@ -7,11 +7,14 @@ interface Props {
   template: DayTemplate
   onSave: (t: DayTemplate) => void
   onCancel: () => void
+  /** Not provided for brand-new unsaved templates. */
+  onDelete?: (id: string) => void
 }
 
-export function TemplateBuilder({ template, onSave, onCancel }: Props) {
+export function TemplateBuilder({ template, onSave, onCancel, onDelete }: Props) {
   const [label, setLabel] = useState(template.label)
   const [blocks, setBlocks] = useState<TimeBlock[]>(template.blocks)
+  const [confirmDelete, setConfirmDelete] = useState(false)
 
   function lastEndTime(): string {
     return blocks.length > 0 ? blocks[blocks.length - 1].endTime : '08:00'
@@ -137,6 +140,22 @@ export function TemplateBuilder({ template, onSave, onCancel }: Props) {
         <button className={styles.addButton} onClick={addFocusBlock}>+ Focus Block</button>
         <button className={`${styles.addButton} ${styles.addBreak}`} onClick={addBreakBlock}>+ Break</button>
       </div>
+
+      {onDelete && (
+        <div className={styles.deleteZone}>
+          {confirmDelete ? (
+            <div className={styles.deleteConfirm}>
+              <span className={styles.deleteConfirmText}>Delete this template?</span>
+              <button className={styles.deleteConfirmNo} onClick={() => setConfirmDelete(false)}>Cancel</button>
+              <button className={styles.deleteConfirmYes} onClick={() => onDelete(template.id)}>Delete</button>
+            </div>
+          ) : (
+            <button className={styles.deleteTemplate} onClick={() => setConfirmDelete(true)}>
+              Delete Template
+            </button>
+          )}
+        </div>
+      )}
     </div>
   )
 }
