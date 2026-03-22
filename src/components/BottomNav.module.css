@@ -1,14 +1,16 @@
 .nav {
-  height: 64px;
   flex-shrink: 0;
   background: #0a0a0a;
   border-top: 1px solid #1c1c1c;
   display: flex;
-  align-items: stretch;
+  align-items: flex-start;
+  /* extend background into the home-indicator zone without moving the tap targets */
+  padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
 .tab {
   flex: 1;
+  height: 64px;
   background: none;
   border: none;
   color: #475569;
