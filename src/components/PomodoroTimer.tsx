@@ -170,7 +170,7 @@ export function PomodoroTimer({
         </div>
       </div>
 
-      <div className={styles.modeSelector}>
+      {!isClosingInterval && <div className={styles.modeSelector}>
         <button
           className={`${styles.modeButton} ${mode === 'comfort' ? styles.modeActive : ''}`}
           onClick={() => started ? onSwitchMode() : onSelectMode('comfort')}
@@ -187,7 +187,7 @@ export function PomodoroTimer({
         >
           ⏱ Standard
         </button>
-      </div>
+      </div>}
     </div>
   )
 }

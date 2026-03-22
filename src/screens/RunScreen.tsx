@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import type { DayTemplate } from '../types'
 import type { TimeFormat } from '../hooks/useSettings'
 import { useSession } from '../hooks/useSession'
@@ -26,24 +26,73 @@ export function RunScreen({ template, autoContinue, timeFormat, onDeactivate }: 
 
   const upcomingBlocks = template.blocks.slice(blockIndex + 1)
 
-  // Swipe to navigate between pomodoros within the current block
+  // ── Animated swipe between pomodoros ──────────────────────────────
+  const [swipeX, setSwipeX] = useState(0)
+  const [swipeTransition, setSwipeTransition] = useState(false)
   const touchStartX = useRef(0)
   const touchStartY = useRef(0)
+  const dragging = useRef(false)
+  const animPhase = useRef<'idle' | 'exit' | 'enter'>('idle')
+  const pendingJump = useRef<number | null>(null)
+  const exitToward = useRef(0) // -1 = left exit, +1 = right exit
 
   function handleTouchStart(e: React.TouchEvent) {
+    if (animPhase.current !== 'idle') return
     touchStartX.current = e.touches[0].clientX
     touchStartY.current = e.touches[0].clientY
+    dragging.current = true
+  }
+
+  function handleTouchMove(e: React.TouchEvent) {
+    if (!dragging.current) return
+    const dx = e.touches[0].clientX - touchStartX.current
+    const dy = Math.abs(e.touches[0].clientY - touchStartY.current)
+    if (dy > Math.abs(dx)) { dragging.current = false; setSwipeX(0); return }
+    // Apply rubber-band resistance when at the edge (no pomo in that direction)
+    const atLeft = pomodoroIndex === 0 && dx > 0
+    const atRight = pomodoroIndex === totalPomodoros - 1 && dx < 0
+    setSwipeX(dx * ((atLeft || atRight) ? 0.25 : 1))
   }
 
   function handleTouchEnd(e: React.TouchEvent) {
+    if (!dragging.current) return
+    dragging.current = false
     const dx = e.changedTouches[0].clientX - touchStartX.current
     const dy = Math.abs(e.changedTouches[0].clientY - touchStartY.current)
-    // Ignore if not a clear horizontal swipe
-    if (Math.abs(dx) < 50 || dy > Math.abs(dx)) return
-    if (dx < 0 && pomodoroIndex < totalPomodoros - 1) {
-      jumpToPomodoro(pomodoroIndex + 1)
-    } else if (dx > 0 && pomodoroIndex > 0) {
-      jumpToPomodoro(pomodoroIndex - 1)
+
+    const canNext = dx < 0 && pomodoroIndex < totalPomodoros - 1
+    const canPrev = dx > 0 && pomodoroIndex > 0
+
+    if (Math.abs(dx) >= 50 && dy <= Math.abs(dx) && (canNext || canPrev)) {
+      const targetIndex = dx < 0 ? pomodoroIndex + 1 : pomodoroIndex - 1
+      exitToward.current = dx < 0 ? -1 : 1
+      pendingJump.current = targetIndex
+      animPhase.current = 'exit'
+      setSwipeTransition(true)
+      setSwipeX(exitToward.current * -window.innerWidth)
+    } else {
+      // Snap back
+      setSwipeTransition(true)
+      setSwipeX(0)
+    }
+  }
+
+  function handleSwipeTransitionEnd() {
+    if (animPhase.current === 'exit') {
+      animPhase.current = 'enter'
+      jumpToPomodoro(pendingJump.current!)
+      pendingJump.current = null
+      // Position the new card off-screen from the opposite side, no transition
+      setSwipeTransition(false)
+      setSwipeX(exitToward.current * window.innerWidth)
+      // Double rAF: ensure DOM reflects the no-transition position before animating in
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        setSwipeTransition(true)
+        setSwipeX(0)
+      }))
+    } else if (animPhase.current === 'enter') {
+      animPhase.current = 'idle'
+      setSwipeTransition(false)
     }
   }
 
@@ -54,7 +103,7 @@ export function RunScreen({ template, autoContinue, timeFormat, onDeactivate }: 
   const handleResume = waitingForContinue ? continueToNext : session.resume
 
   return (
-    <div className={styles.screen} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+    <div className={styles.screen}>
 
       {/* ── Session context header ── */}
       <div className={styles.sessionHeader}>
@@ -87,25 +136,39 @@ export function RunScreen({ template, autoContinue, timeFormat, onDeactivate }: 
         </div>
       )}
 
-      {/* ── Full Adaptive Pomo timer ── */}
-      <PomodoroTimer
-        mode={mode}
-        phase={timerPhase}
-        elapsedSeconds={elapsedSeconds}
-        phaseDurationSeconds={phaseDurationSeconds}
-        isRunning={isRunning}
-        started={sessionStarted}
-        canSwitch={canSwitch}
-        isClosingInterval={isClosingInterval}
-        onStart={startSession}
-        onPause={pause}
-        onResume={handleResume}
-        onReset={resetPomodoro}
-        onSkip={skip}
-        onGoToPhase={goToPhase}
-        onSelectMode={selectMode}
-        onSwitchMode={switchMode}
-      />
+      {/* ── Full Adaptive Pomo timer (swipeable) ── */}
+      <div className={styles.swipeViewport}>
+        <div
+          className={styles.swipeCard}
+          style={{
+            transform: `translateX(${swipeX}px)`,
+            transition: swipeTransition ? 'transform 0.22s ease-out' : 'none',
+          }}
+          onTransitionEnd={handleSwipeTransitionEnd}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
+          <PomodoroTimer
+            mode={mode}
+            phase={timerPhase}
+            elapsedSeconds={elapsedSeconds}
+            phaseDurationSeconds={phaseDurationSeconds}
+            isRunning={isRunning}
+            started={sessionStarted}
+            canSwitch={canSwitch}
+            isClosingInterval={isClosingInterval}
+            onStart={startSession}
+            onPause={pause}
+            onResume={handleResume}
+            onReset={resetPomodoro}
+            onSkip={skip}
+            onGoToPhase={goToPhase}
+            onSelectMode={selectMode}
+            onSwitchMode={switchMode}
+          />
+        </div>
+      </div>
 
       {/* ── Done overlay ── */}
       {isDone && (
