@@ -32,6 +32,8 @@ interface PomodoroTimerActions {
   goToPhase: (phase: 'focus' | 'break') => void;
   /** Switch between standard and comfort. No-op if canSwitch is false. */
   switchMode: () => void;
+  /** Select a mode freely. Only works when the timer has not started yet. */
+  selectMode: (mode: PomodoroMode) => void;
 }
 
 export function usePomodoroTimer(
@@ -132,6 +134,11 @@ export function usePomodoroTimer(
     });
   }, [stopRaf, tick]);
 
+  const selectMode = useCallback((target: PomodoroMode) => {
+    if (isRunning || elapsedSeconds > 0) return;
+    setMode(target);
+  }, [isRunning, elapsedSeconds]);
+
   const switchMode = useCallback(() => {
     setElapsedSeconds((current) => {
       if (!canSwitchMode(phase, current)) return current;
@@ -178,5 +185,6 @@ export function usePomodoroTimer(
     skip,
     goToPhase,
     switchMode,
+    selectMode,
   };
 }
