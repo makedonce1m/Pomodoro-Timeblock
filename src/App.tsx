@@ -28,7 +28,7 @@ function App() {
 
   // Standalone timer — always alive so it keeps running when switching tabs.
   const timer = usePomodoroTimer()
-  const timerStarted = timer.elapsedSeconds > 0 || timer.isRunning
+  const timerStarted = timer.hasStarted
 
   const activeTemplate = activeTemplateId
     ? (loadTemplates().find(t => t.id === activeTemplateId) ?? null)

@@ -31,6 +31,8 @@ interface PomodoroTimerState {
   elapsedSeconds: number;
   phaseDurationSeconds: number;
   isRunning: boolean;
+  /** True once start() has been called; only resets to false on reset(). Survives phase transitions. */
+  hasStarted: boolean;
   canSwitch: boolean;
 }
 
@@ -53,6 +55,7 @@ export function usePomodoroTimer(
   const [phase, setPhase] = useState<Phase>('focus');
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
 
   const runStartWallTime = useRef<number | null>(null);
   const elapsedAtRunStart = useRef(0);
@@ -93,6 +96,7 @@ export function usePomodoroTimer(
     setElapsedSeconds(0);
     setPhase('focus');
     setIsRunning(true);
+    setHasStarted(true);
     rafHandle.current = requestAnimationFrame(tick);
   }, [tick]);
 
@@ -120,6 +124,7 @@ export function usePomodoroTimer(
     setElapsedSeconds(0);
     setPhase('focus');
     setIsRunning(false);
+    setHasStarted(false);
   }, [stopRaf]);
 
   const skip = useCallback(() => {
@@ -207,6 +212,7 @@ export function usePomodoroTimer(
     elapsedSeconds,
     phaseDurationSeconds,
     isRunning,
+    hasStarted,
     canSwitch: canSwitchMode(phase, elapsedSeconds),
     start,
     pause,
