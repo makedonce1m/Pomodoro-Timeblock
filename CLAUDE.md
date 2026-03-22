@@ -21,9 +21,9 @@ Two modes are supported; users can switch between them in settings:
 | Mode | Focus | Break | Total | Intent |
 |------|-------|-------|-------|--------|
 | **Standard** (default) | 25 min | 5 min | 30 min | Primary work mode |
-| **Short** | 20 min | 10 min | 30 min | Accommodates quick bathroom/bio breaks alongside the built-in break |
+| **Comfort** | 20 min | 10 min | 30 min | Break sized to include a bathroom stop alongside a normal rest |
 
-> **Note on Short mode**: The 10-minute break is intentionally long enough to serve as a bathroom break combined with a normal rest, making it useful when users need a slightly longer but still structured pause.
+> **Note on Comfort Pomodoro**: The 10-minute break is intentionally long enough to cover a bathroom break combined with a normal rest. Do not shorten it.
 
 ### Closing Interval (Last Pomodoro of a Time Block)
 When a time block ends, the final Pomodoro runs as a **30-minute pure focus interval** (no break appended). The rationale: a longer inter-block break is already scheduled after the time block, so a 5-minute trailing break would be redundant and disruptive to the natural transition.
@@ -121,9 +121,9 @@ chore: upgrade dependencies
 
 ### Timer Logic
 - Timer state should be managed in a dedicated store or hook, not scattered across UI components
-- Pomodoro intervals are user-configurable; never hardcode durations — use named constants or settings (e.g., `STANDARD_MODE`, `SHORT_MODE`)
-- The two supported modes are Standard (25 min focus / 5 min break) and Short (20 min focus / 10 min break); both total 30 minutes
-- Short mode's 10-minute break is designed to cover a bathroom break combined with a normal rest — do not shorten it
+- Pomodoro intervals are user-configurable; never hardcode durations — use named constants or settings (e.g., `STANDARD_MODE`, `COMFORT_MODE`)
+- The two supported modes are Standard (25 min focus / 5 min break) and Comfort (20 min focus / 10 min break); both total 30 minutes
+- Comfort mode's 10-minute break is designed to cover a bathroom break combined with a normal rest — do not shorten it
 - Long break duration is user-configurable: 15 min, 30 min, or 60 min; use a named constant (e.g., `LONG_BREAK_DURATION`) — never hardcode
 - The last interval of every time block is a **closing interval**: 30 minutes of focus with no break; implement this as a distinct interval type (e.g., `CLOSING_INTERVAL`) so it is never confused with a standard Pomodoro
 - Use `Date.now()` / `performance.now()` for drift-resistant timing rather than naive `setInterval` counting
