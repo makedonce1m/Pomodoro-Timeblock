@@ -128,17 +128,26 @@
   color: #F59E0B;
 }
 
-/* ── Next up ── */
-.nextUp {
+/* ── Upcoming blocks ── */
+.upcoming {
   width: calc(100% - 2.5rem);
   background: #141414;
   border: 1px solid #1e1e1e;
   border-radius: 0.65rem;
-  padding: 0.6rem 0.9rem;
+  margin-top: 0.25rem;
+  overflow: hidden;
+}
+
+.upcomingRow {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  margin-top: 0.25rem;
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.upcomingRow:last-child {
+  border-bottom: none;
 }
 
 .nextLabel {
