@@ -6,10 +6,7 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  background: #0F172A;
+  background: #000000;
   color: #F1F5F9;
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }

@@ -1,4 +1,4 @@
-import { usePomodoroTimer } from '../hooks/usePomodoroTimer'
+import type { PomodoroMode } from '../types'
 import { POMODORO_FOCUS_DURATION, POMODORO_BREAK_DURATION } from '../constants/timer'
 import styles from './PomodoroTimer.module.css'
 
@@ -47,14 +47,27 @@ function IconSkip() {
   )
 }
 
-export function PomodoroTimer() {
-  const {
-    mode, phase, elapsedSeconds, phaseDurationSeconds,
-    isRunning, start, pause, resume, reset, skip,
-  } = usePomodoroTimer()
+interface Props {
+  mode: PomodoroMode
+  phase: 'focus' | 'break'
+  elapsedSeconds: number
+  phaseDurationSeconds: number
+  isRunning: boolean
+  started: boolean
+  onStart: () => void
+  onPause: () => void
+  onResume: () => void
+  onReset: () => void
+  onSkip: () => void
+  onGoToPhase: (phase: 'focus' | 'break') => void
+}
 
+export function PomodoroTimer({
+  mode, phase, elapsedSeconds, phaseDurationSeconds,
+  isRunning, started,
+  onStart, onPause, onResume, onReset, onSkip, onGoToPhase,
+}: Props) {
   const remaining = Math.max(0, phaseDurationSeconds - elapsedSeconds)
-  const started = elapsedSeconds > 0 || isRunning
 
   const focusTotal = POMODORO_FOCUS_DURATION[mode]
   const breakTotal = POMODORO_BREAK_DURATION[mode]
@@ -66,15 +79,9 @@ export function PomodoroTimer() {
     <div className={styles.page}>
       <p className={styles.pomodoroLabel}>Pomodoro</p>
 
-      {/* Circular ring timer */}
       <div className={styles.ringContainer}>
         <svg className={styles.ring} viewBox="0 0 200 200">
-          <circle
-            cx="100" cy="100" r={RADIUS}
-            fill="none"
-            stroke="#1E293B"
-            strokeWidth="6"
-          />
+          <circle cx="100" cy="100" r={RADIUS} fill="none" stroke="#1a1a1a" strokeWidth="6" />
           <circle
             cx="100" cy="100" r={RADIUS}
             fill="none"
@@ -101,24 +108,30 @@ export function PomodoroTimer() {
         </div>
       </div>
 
-      {/* Focus / Break cards */}
       <div className={styles.cards}>
-        <div className={`${styles.card} ${phase === 'focus' ? styles.cardActive : ''}`}>
+        <button
+          className={`${styles.card} ${phase === 'focus' ? styles.cardActive : ''}`}
+          onClick={() => onGoToPhase('focus')}
+          aria-pressed={phase === 'focus'}
+        >
           <span className={styles.cardIcon}>⚡</span>
           <span className={styles.cardTime}>{formatMinutes(focusTotal)}</span>
           <span className={styles.cardLabel}>Focus</span>
-        </div>
-        <div className={`${styles.card} ${phase === 'break' ? styles.cardActive : ''}`}>
+        </button>
+        <button
+          className={`${styles.card} ${phase === 'break' ? styles.cardActive : ''}`}
+          onClick={() => onGoToPhase('break')}
+          aria-pressed={phase === 'break'}
+        >
           <span className={styles.cardIcon}>🌙</span>
           <span className={styles.cardTime}>{formatMinutes(breakTotal)}</span>
           <span className={styles.cardLabel}>Break</span>
-        </div>
+        </button>
       </div>
 
-      {/* Controls */}
       <div className={styles.controls}>
         <div className={styles.sideControl}>
-          <button className={styles.sideButton} onClick={reset} disabled={!started} aria-label="Reset">
+          <button className={styles.sideButton} onClick={onReset} disabled={!started} aria-label="Reset">
             <IconReset />
           </button>
           <span className={styles.buttonLabel}>Reset</span>
@@ -126,7 +139,7 @@ export function PomodoroTimer() {
 
         <button
           className={styles.playButton}
-          onClick={!started ? start : isRunning ? pause : resume}
+          onClick={!started ? onStart : isRunning ? onPause : onResume}
           aria-label={isRunning ? 'Pause' : 'Play'}
         >
           {isRunning ? <IconPause /> : <IconPlay />}
@@ -135,8 +148,8 @@ export function PomodoroTimer() {
         <div className={styles.sideControl}>
           <button
             className={styles.sideButton}
-            onClick={skip}
-            disabled={!started || phase === 'break'}
+            onClick={onSkip}
+            disabled={phase === 'break'}
             aria-label="Skip"
           >
             <IconSkip />

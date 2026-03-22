@@ -28,8 +28,12 @@ interface PomodoroTimerActions {
   reset: () => void;
   /** Skip the current focus phase and jump straight to break. No-op if not in focus phase. */
   skip: () => void;
+  /** Switch to the given phase, reset elapsed time, and maintain current running state. */
+  goToPhase: (phase: 'focus' | 'break') => void;
   /** Switch between standard and comfort. No-op if canSwitch is false. */
   switchMode: () => void;
+  /** Select a mode freely. Only works when the timer has not started yet. */
+  selectMode: (mode: PomodoroMode) => void;
 }
 
 export function usePomodoroTimer(
@@ -114,6 +118,27 @@ export function usePomodoroTimer(
     rafHandle.current = requestAnimationFrame(tick);
   }, [phase, stopRaf, tick]);
 
+  const goToPhase = useCallback((target: 'focus' | 'break') => {
+    stopRaf();
+    elapsedAtRunStart.current = 0;
+    setElapsedSeconds(0);
+    setPhase(target);
+    setIsRunning((running) => {
+      if (running) {
+        runStartWallTime.current = performance.now();
+        rafHandle.current = requestAnimationFrame(tick);
+      } else {
+        runStartWallTime.current = null;
+      }
+      return running;
+    });
+  }, [stopRaf, tick]);
+
+  const selectMode = useCallback((target: PomodoroMode) => {
+    if (isRunning || elapsedSeconds > 0) return;
+    setMode(target);
+  }, [isRunning, elapsedSeconds]);
+
   const switchMode = useCallback(() => {
     setElapsedSeconds((current) => {
       if (!canSwitchMode(phase, current)) return current;
@@ -158,6 +183,8 @@ export function usePomodoroTimer(
     resume,
     reset,
     skip,
+    goToPhase,
     switchMode,
+    selectMode,
   };
 }
