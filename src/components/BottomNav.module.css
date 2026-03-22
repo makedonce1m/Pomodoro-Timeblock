@@ -27,12 +27,9 @@
   transition: color 0.15s;
 }
 
-.tab:hover {
-  color: #94A3B8;
-}
-
 .tabActive,
-.tabActive:hover {
+.tabActive:focus,
+.tabActive:active {
   color: #F59E0B;
 }
 
