@@ -19,47 +19,47 @@ export function PomodoroTimer() {
   const breakRemaining = phase === 'break' ? remaining : POMODORO_BREAK_DURATION[mode]
 
   return (
-    <div className={styles.pomodoro}>
-      <p className={styles.pomodoroLabel}>Pomodoro</p>
+    <div className={styles.wrapper}>
+      <span className={styles.pomodoroLabel}>Pomodoro</span>
+      <div className={styles.outerBox}>
 
-      <div className={`${styles.block} ${phase === 'focus' ? styles.active : styles.inactive}`}>
-        <p className={styles.blockLabel}>Focus</p>
-        <p
-          className={styles.display}
-          role="timer"
-          aria-live={phase === 'focus' ? 'off' : undefined}
-          aria-label={`Focus time remaining: ${formatTime(focusRemaining)}`}
-        >
-          {formatTime(focusRemaining)}
-        </p>
-      </div>
+        <div className={`${styles.block} ${phase === 'focus' ? styles.active : styles.inactive}`}>
+          <p className={styles.blockLabel}>Focus</p>
+          <p
+            className={styles.display}
+            role="timer"
+            aria-live="off"
+            aria-label={`Focus time remaining: ${formatTime(focusRemaining)}`}
+          >
+            {formatTime(focusRemaining)}
+          </p>
+          <div className={styles.controls}>
+            {!isRunning ? (
+              <button onClick={started ? resume : start}>
+                {started ? 'Resume' : 'Start'}
+              </button>
+            ) : (
+              <button onClick={pause}>Pause</button>
+            )}
+            <button onClick={reset} disabled={!started}>Reset</button>
+            {phase === 'focus' && started && (
+              <button onClick={skip}>Skip</button>
+            )}
+          </div>
+        </div>
 
-      <div className={`${styles.block} ${phase === 'break' ? styles.active : styles.inactive}`}>
-        <p className={styles.blockLabel}>Break</p>
-        <p
-          className={styles.display}
-          role="timer"
-          aria-live={phase === 'break' ? 'off' : undefined}
-          aria-label={`Break time remaining: ${formatTime(breakRemaining)}`}
-        >
-          {formatTime(breakRemaining)}
-        </p>
-      </div>
+        <div className={`${styles.block} ${phase === 'break' ? styles.active : styles.inactive}`}>
+          <p className={styles.blockLabel}>Break</p>
+          <p
+            className={styles.display}
+            role="timer"
+            aria-live="off"
+            aria-label={`Break time remaining: ${formatTime(breakRemaining)}`}
+          >
+            {formatTime(breakRemaining)}
+          </p>
+        </div>
 
-      <div className={styles.controls}>
-        {!isRunning ? (
-          <button onClick={started ? resume : start}>
-            {started ? 'Resume' : 'Start'}
-          </button>
-        ) : (
-          <button onClick={pause}>Pause</button>
-        )}
-        <button onClick={reset} disabled={!started}>
-          Reset
-        </button>
-        {phase === 'focus' && started && (
-          <button onClick={skip}>Skip</button>
-        )}
       </div>
     </div>
   )
