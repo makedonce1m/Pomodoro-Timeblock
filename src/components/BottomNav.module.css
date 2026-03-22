@@ -1,16 +1,19 @@
 .nav {
-  flex-shrink: 0;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   background: #0a0a0a;
   border-top: 1px solid #1c1c1c;
   display: flex;
   align-items: flex-start;
-  /* extend background into the home-indicator zone without moving the tap targets */
+  /* background bleeds into the home-indicator zone — mirrors native iOS tab bar */
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
 .tab {
   flex: 1;
-  height: 64px;
+  height: 64px; /* tap-target height, above the safe-area padding */
   background: none;
   border: none;
   color: #475569;
