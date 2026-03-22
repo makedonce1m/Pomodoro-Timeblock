@@ -1,5 +1,4 @@
 import { usePomodoroTimer } from './hooks/usePomodoroTimer'
-import { ModeSidebar } from './components/ModeSidebar'
 import { PomodoroTimer } from './components/PomodoroTimer'
 import styles from './App.module.css'
 
@@ -13,27 +12,21 @@ function App() {
 
   return (
     <div className={styles.layout}>
-      <ModeSidebar
+      <PomodoroTimer
         mode={mode}
-        onSelect={selectMode}
-        disabled={started}
+        phase={phase}
+        elapsedSeconds={elapsedSeconds}
+        phaseDurationSeconds={phaseDurationSeconds}
+        isRunning={isRunning}
+        started={started}
+        onStart={start}
+        onPause={pause}
+        onResume={resume}
+        onReset={reset}
+        onSkip={skip}
+        onGoToPhase={goToPhase}
+        onSelectMode={selectMode}
       />
-      <main className={styles.main}>
-        <PomodoroTimer
-          mode={mode}
-          phase={phase}
-          elapsedSeconds={elapsedSeconds}
-          phaseDurationSeconds={phaseDurationSeconds}
-          isRunning={isRunning}
-          started={started}
-          onStart={start}
-          onPause={pause}
-          onResume={resume}
-          onReset={reset}
-          onSkip={skip}
-          onGoToPhase={goToPhase}
-        />
-      </main>
     </div>
   )
 }
