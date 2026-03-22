@@ -14,12 +14,15 @@ function loadTemplates(): DayTemplate[] {
   return [DEFAULT_DAY_TEMPLATE]
 }
 
+import type { TimeFormat } from '../hooks/useSettings'
+
 interface Props {
   activeTemplateId: string | null
   onActivate: (id: string) => void
+  timeFormat: TimeFormat
 }
 
-export function TemplatesScreen({ activeTemplateId, onActivate }: Props) {
+export function TemplatesScreen({ activeTemplateId, onActivate, timeFormat }: Props) {
   const [templates, setTemplates] = useState<DayTemplate[]>(loadTemplates)
   const [editing, setEditing] = useState<DayTemplate | null>(null)
   const [isNew, setIsNew] = useState(false)
@@ -50,16 +53,24 @@ export function TemplatesScreen({ activeTemplateId, onActivate }: Props) {
   }
 
   if (editing) {
-    return <TemplateBuilder template={editing} onSave={handleSave} onCancel={() => setEditing(null)} />
+    return (
+      <TemplateBuilder
+        template={editing}
+        timeFormat={timeFormat}
+        onSave={handleSave}
+        onCancel={() => setEditing(null)}
+        onDelete={isNew ? undefined : (id) => { handleDelete(id); setEditing(null) }}
+      />
+    )
   }
 
   return (
     <TemplateLibrary
       templates={templates}
       activeTemplateId={activeTemplateId}
+      timeFormat={timeFormat}
       onNew={handleNew}
       onEdit={handleEdit}
-      onDelete={handleDelete}
       onActivate={onActivate}
     />
   )

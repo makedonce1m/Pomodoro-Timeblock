@@ -65,6 +65,7 @@ function App() {
           <RunScreen
             template={activeTemplate}
             autoContinue={settings.autoContinue}
+            timeFormat={settings.timeFormat}
             onDeactivate={() => setActiveTemplateId(null)}
           />
         )}
@@ -72,6 +73,7 @@ function App() {
           <TemplatesScreen
             activeTemplateId={activeTemplateId}
             onActivate={handleActivate}
+            timeFormat={settings.timeFormat}
           />
         )}
         {view === 'settings' && (

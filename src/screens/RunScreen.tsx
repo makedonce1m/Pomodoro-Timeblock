@@ -1,15 +1,18 @@
 import type { DayTemplate } from '../types'
+import type { TimeFormat } from '../hooks/useSettings'
 import { useSession } from '../hooks/useSession'
 import { PomodoroTimer } from '../components/PomodoroTimer'
+import { formatDisplayTime } from '../utils/timeblock'
 import styles from './RunScreen.module.css'
 
 interface Props {
   template: DayTemplate
   autoContinue: boolean
+  timeFormat: TimeFormat
   onDeactivate: () => void
 }
 
-export function RunScreen({ template, autoContinue, onDeactivate }: Props) {
+export function RunScreen({ template, autoContinue, timeFormat, onDeactivate }: Props) {
   const session = useSession(template, autoContinue)
 
   const {
@@ -87,7 +90,7 @@ export function RunScreen({ template, autoContinue, onDeactivate }: Props) {
         <div className={styles.nextUp}>
           <span className={styles.nextLabel}>Next</span>
           <span className={styles.nextName}>{nextBlock.label}</span>
-          <span className={styles.nextTime}>{nextBlock.startTime}–{nextBlock.endTime}</span>
+          <span className={styles.nextTime}>{formatDisplayTime(nextBlock.startTime, timeFormat)}–{formatDisplayTime(nextBlock.endTime, timeFormat)}</span>
         </div>
       )}
 

@@ -91,6 +91,39 @@
   transform: translateX(18px);
 }
 
+/* ── Segmented control ── */
+.segmented {
+  display: flex;
+  background: #111;
+  border-radius: 0.6rem;
+  padding: 0.2rem;
+  gap: 0.2rem;
+  flex-shrink: 0;
+}
+
+.seg {
+  padding: 0.35rem 0.75rem;
+  border: none;
+  border-radius: 0.45rem;
+  background: transparent;
+  color: #475569;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.seg:hover {
+  color: #94A3B8;
+}
+
+.segActive {
+  background: #1f1f1f;
+  color: #F59E0B;
+}
+
 /* ── Coming soon ── */
 .comingSoon {
   font-size: 0.8rem;

@@ -10,8 +10,8 @@
 
 .content {
   flex: 1;
+  min-height: 0; /* required for flex children to scroll; without this the flex item grows infinitely */
   overflow-y: auto;
-  padding-bottom: 64px; /* clear the fixed bottom nav */
   display: flex;
   align-items: stretch;
 }

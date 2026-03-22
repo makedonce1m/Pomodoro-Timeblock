@@ -1,4 +1,6 @@
 import type { DayTemplate, FocusBlock } from '../types'
+import type { TimeFormat } from '../hooks/useSettings'
+import { formatDisplayTime } from '../utils/timeblock'
 import styles from './TemplateLibrary.module.css'
 
 function totalPomodoros(template: DayTemplate): number {
@@ -10,13 +12,13 @@ function totalPomodoros(template: DayTemplate): number {
 interface Props {
   templates: DayTemplate[]
   activeTemplateId: string | null
+  timeFormat: TimeFormat
   onNew: () => void
   onEdit: (t: DayTemplate) => void
-  onDelete: (id: string) => void
   onActivate: (id: string) => void
 }
 
-export function TemplateLibrary({ templates, activeTemplateId, onNew, onEdit, onDelete, onActivate }: Props) {
+export function TemplateLibrary({ templates, activeTemplateId, timeFormat, onNew, onEdit, onActivate }: Props) {
   return (
     <div className={styles.screen}>
       <div className={styles.header}>
@@ -52,7 +54,7 @@ export function TemplateLibrary({ templates, activeTemplateId, onNew, onEdit, on
                       key={b.id}
                       className={`${styles.pill} ${b.type === 'focus' ? styles.pillFocus : styles.pillBreak}`}
                     >
-                      {b.startTime}–{b.endTime}
+                      {formatDisplayTime(b.startTime, timeFormat)}–{formatDisplayTime(b.endTime, timeFormat)}
                     </span>
                   ))}
                 </div>
@@ -65,13 +67,6 @@ export function TemplateLibrary({ templates, activeTemplateId, onNew, onEdit, on
                   title={isActive ? 'Active in Run tab' : 'Set as active in Run tab'}
                 >
                   {isActive ? '●' : '▶'}
-                </button>
-                <button
-                  className={styles.deleteButton}
-                  onClick={e => { e.stopPropagation(); onDelete(t.id) }}
-                  aria-label={`Delete ${t.label}`}
-                >
-                  ×
                 </button>
               </div>
             </div>
