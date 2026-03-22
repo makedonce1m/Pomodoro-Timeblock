@@ -75,7 +75,6 @@ export function usePomodoroTimer(
     elapsedAtRunStart.current = 0;
     runStartWallTime.current = performance.now();
     setElapsedSeconds(0);
-    setPhase('focus');
     setIsRunning(true);
     rafHandle.current = requestAnimationFrame(tick);
   }, [tick]);
