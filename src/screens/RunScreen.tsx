@@ -1,42 +1,10 @@
 import type { DayTemplate } from '../types'
 import { useSession } from '../hooks/useSession'
+import { PomodoroTimer } from '../components/PomodoroTimer'
 import styles from './RunScreen.module.css'
 
-const RADIUS = 90
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS
-
-function formatTime(seconds: number): string {
-  const m = Math.floor(seconds / 60)
-  const s = Math.floor(seconds % 60)
-  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
-}
-
-function IconPlay() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
-      <path d="M8 5v14l11-7z" />
-    </svg>
-  )
-}
-
-function IconPause() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
-      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-    </svg>
-  )
-}
-
-function IconSkip() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-      <path d="M6 18l8.5-6L6 6v12zm2-8.14L11.03 12 8 14.14V9.86zM16 6h2v12h-2z" />
-    </svg>
-  )
-}
-
 interface Props {
-  template: DayTemplate         // always defined — App only renders this when a template is active
+  template: DayTemplate
   autoContinue: boolean
   onDeactivate: () => void
 }
@@ -45,124 +13,71 @@ export function RunScreen({ template, autoContinue, onDeactivate }: Props) {
   const session = useSession(template, autoContinue)
 
   const {
-    sessionPhase, elapsedSeconds, phaseDurationSeconds, isRunning,
-    pomodoroIndex, totalPomodoros, isClosingInterval,
+    mode, timerPhase, elapsedSeconds, phaseDurationSeconds, isRunning, canSwitch,
+    sessionPhase, pomodoroIndex, totalPomodoros, isClosingInterval,
     currentBlock, nextBlock, isDone, waitingForContinue,
-    pause, resume, skip, startSession, continueToNext,
+    pause, skip, switchMode, selectMode,
+    startSession, continueToNext, goToPhase, resetPomodoro,
   } = session
 
-  const remaining = Math.max(0, phaseDurationSeconds - elapsedSeconds)
-  const progressFraction = phaseDurationSeconds > 0 ? remaining / phaseDurationSeconds : 1
-  const strokeDashoffset = CIRCUMFERENCE * (1 - progressFraction)
-
-  const isIdle = sessionPhase === 'idle'
+  const sessionStarted = sessionPhase !== 'idle'
   const isLongBreak = sessionPhase === 'long-break'
 
-  function phaseLabel(): string {
-    if (isIdle) return 'Ready'
-    if (isDone) return 'Done'
-    if (isLongBreak) return 'Long Break'
-    if (sessionPhase === 'short-break') return 'Break'
-    if (isClosingInterval) return 'Closing'
-    return 'Focus'
-  }
-
-  const isFocusPhase = sessionPhase === 'focus' || sessionPhase === 'idle' || isClosingInterval
-  const ringColour = isFocusPhase ? '#F59E0B' : '#64748B'
+  // When waiting for the user to tap continue, the play button advances to the next phase.
+  const handleResume = waitingForContinue ? continueToNext : session.resume
 
   return (
     <div className={styles.screen}>
-      {/* ── Header ── */}
-      <div className={styles.header}>
-        <div className={styles.headerInfo}>
-          <p className={styles.templateLabel}>{template.label}</p>
-          {currentBlock && <p className={styles.blockLabel}>{currentBlock.label}</p>}
+
+      {/* ── Session context header ── */}
+      <div className={styles.sessionHeader}>
+        <div className={styles.sessionInfo}>
+          <p className={styles.templateName}>{template.label}</p>
+          {currentBlock && <p className={styles.blockName}>{currentBlock.label}</p>}
         </div>
         <button className={styles.endButton} onClick={onDeactivate} aria-label="End session">✕</button>
       </div>
 
-      {/* ── Progress dots ── */}
-      {!isLongBreak && totalPomodoros > 0 && (
+      {/* ── Pomodoro progress dots ── */}
+      {!isLongBreak && !isDone && totalPomodoros > 0 && (
         <div className={styles.dots} aria-label={`Pomodoro ${pomodoroIndex + 1} of ${totalPomodoros}`}>
           {Array.from({ length: totalPomodoros }, (_, i) => (
             <span
               key={i}
-              className={`${styles.dot} ${i < pomodoroIndex ? styles.dotDone : ''} ${i === pomodoroIndex ? styles.dotActive : ''}`}
+              className={`${styles.dot}
+                ${i < pomodoroIndex ? styles.dotDone : ''}
+                ${i === pomodoroIndex ? (isClosingInterval ? styles.dotClosing : styles.dotActive) : ''}`}
             />
           ))}
-        </div>
-      )}
-
-      {/* ── Timer ring ── */}
-      <div className={styles.ringContainer}>
-        <svg className={styles.ring} viewBox="0 0 200 200" aria-hidden="true">
-          <circle cx="100" cy="100" r={RADIUS} fill="none" stroke="#1a1a1a" strokeWidth="6" />
-          <circle
-            cx="100" cy="100" r={RADIUS}
-            fill="none"
-            stroke={ringColour}
-            strokeWidth="6"
-            strokeLinecap="round"
-            strokeDasharray={CIRCUMFERENCE}
-            strokeDashoffset={isDone || isIdle ? CIRCUMFERENCE : strokeDashoffset}
-            transform="rotate(-90 100 100)"
-            style={{ transition: 'stroke 0.3s' }}
-          />
-        </svg>
-        <div className={styles.ringCenter}>
-          <span
-            className={styles.timeDisplay}
-            role="timer"
-            aria-live="off"
-            aria-label={`${phaseLabel()} time remaining: ${formatTime(remaining)}`}
-          >
-            {isDone ? '✓' : formatTime(remaining)}
-          </span>
-          <span className={styles.phaseLabel}>{phaseLabel()}</span>
-        </div>
-      </div>
-
-      {/* ── Pomodoro counter ── */}
-      {!isLongBreak && !isDone && totalPomodoros > 0 && (
-        <p className={styles.pomCounter}>
-          {isClosingInterval
-            ? `Closing interval · ${totalPomodoros} of ${totalPomodoros}`
-            : `Pomodoro ${pomodoroIndex + 1} of ${totalPomodoros}`}
-        </p>
-      )}
-
-      {/* ── Controls ── */}
-      {!isDone && (
-        <div className={styles.controls}>
-          {isIdle ? (
-            <button className={styles.playButton} onClick={startSession} aria-label="Start session">
-              <IconPlay />
-            </button>
-          ) : waitingForContinue ? (
-            <button className={styles.continueButton} onClick={continueToNext}>
-              Continue →
-            </button>
-          ) : (
-            <>
-              <button className={styles.sideButton} onClick={skip} aria-label="Skip">
-                <IconSkip />
-              </button>
-              <button
-                className={styles.playButton}
-                onClick={isRunning ? pause : resume}
-                aria-label={isRunning ? 'Pause' : 'Resume'}
-              >
-                {isRunning ? <IconPause /> : <IconPlay />}
-              </button>
-              <div className={styles.sideButton} aria-hidden="true" />
-            </>
+          {isClosingInterval && (
+            <span className={styles.closingBadge}>closing</span>
           )}
         </div>
       )}
 
+      {/* ── Full Adaptive Pomo timer ── */}
+      <PomodoroTimer
+        mode={mode}
+        phase={timerPhase}
+        elapsedSeconds={elapsedSeconds}
+        phaseDurationSeconds={phaseDurationSeconds}
+        isRunning={isRunning}
+        started={sessionStarted}
+        canSwitch={canSwitch}
+        onStart={startSession}
+        onPause={pause}
+        onResume={handleResume}
+        onReset={resetPomodoro}
+        onSkip={skip}
+        onGoToPhase={goToPhase}
+        onSelectMode={selectMode}
+        onSwitchMode={switchMode}
+      />
+
+      {/* ── Done overlay ── */}
       {isDone && (
-        <div className={styles.doneActions}>
-          <p className={styles.doneMsg}>Session complete!</p>
+        <div className={styles.doneRow}>
+          <span className={styles.doneMsg}>Session complete!</span>
           <button className={styles.restartButton} onClick={startSession}>Start Again</button>
         </div>
       )}
@@ -175,6 +90,7 @@ export function RunScreen({ template, autoContinue, onDeactivate }: Props) {
           <span className={styles.nextTime}>{nextBlock.startTime}–{nextBlock.endTime}</span>
         </div>
       )}
+
     </div>
   )
 }

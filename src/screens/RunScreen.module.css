@@ -3,96 +3,32 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1.25rem 1.25rem 1.5rem;
-  gap: 1.25rem;
-}
-
-/* ── Template picker (no active template) ── */
-.picker {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding-top: 0.5rem;
-}
-
-.pickerHint {
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: #475569;
-  text-align: center;
-  padding: 0.5rem 0 0.25rem;
-}
-
-.pickerEmpty {
-  color: #334155;
-  font-size: 0.85rem;
-  text-align: center;
-  padding: 1.5rem 0;
-}
-
-.pickerCard {
-  background: #1c1c1c;
-  border: 1px solid #2a2a2a;
-  border-radius: 0.75rem;
-  padding: 1rem 1.1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  cursor: pointer;
-  font-family: inherit;
-  text-align: left;
-  transition: background 0.15s, border-color 0.15s;
-}
-
-.pickerCard:hover {
-  background: #222;
-  border-color: #F59E0B;
-}
-
-.pickerName {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #F1F5F9;
-  flex: 1;
-}
-
-.pickerMeta {
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #475569;
-}
-
-.pickerArrow {
-  font-size: 0.75rem;
-  color: #F59E0B;
+  padding: 0.75rem 0 0;
 }
 
 /* ── Session header ── */
-.header {
+.sessionHeader {
   width: 100%;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 0.75rem;
+  padding: 0 1.25rem 0.75rem;
 }
 
-.headerInfo {
+.sessionInfo {
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  gap: 0.1rem;
 }
 
-.templateLabel {
-  font-size: 0.65rem;
+.templateName {
+  font-size: 0.6rem;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.18em;
   color: #475569;
 }
 
-.blockLabel {
+.blockName {
   font-size: 0.9rem;
   font-weight: 600;
   color: #F1F5F9;
@@ -102,9 +38,9 @@
   background: #1c1c1c;
   border: none;
   color: #475569;
-  font-size: 0.85rem;
-  width: 32px;
-  height: 32px;
+  font-size: 0.8rem;
+  width: 30px;
+  height: 30px;
   border-radius: 0.5rem;
   display: flex;
   align-items: center;
@@ -116,14 +52,15 @@
 
 .endButton:hover {
   color: #ef4444;
-  background: rgba(239, 68, 68, 0.1);
+  background: rgba(239, 68, 68, 0.08);
 }
 
 /* ── Progress dots ── */
 .dots {
   display: flex;
-  gap: 0.4rem;
   align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.25rem;
 }
 
 .dot {
@@ -133,10 +70,11 @@
   background: #1e1e1e;
   border: 1.5px solid #2a2a2a;
   transition: background 0.2s, border-color 0.2s;
+  flex-shrink: 0;
 }
 
 .dotDone {
-  background: #2a4a22;
+  background: #1a3a1a;
   border-color: #4ade80;
 }
 
@@ -145,134 +83,30 @@
   border-color: #F59E0B;
 }
 
-/* ── Timer ring ── */
-.ringContainer {
-  position: relative;
-  width: 210px;
-  height: 210px;
-  flex-shrink: 0;
+.dotClosing {
+  background: #b45309;
+  border-color: #F59E0B;
 }
 
-.ring {
-  width: 100%;
-  height: 100%;
-}
-
-.ringCenter {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.25rem;
-}
-
-.timeDisplay {
-  font-size: 2.6rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  color: #F1F5F9;
-  letter-spacing: -0.02em;
-}
-
-.phaseLabel {
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: #64748B;
-}
-
-/* ── Pomodoro counter ── */
-.pomCounter {
-  font-size: 0.72rem;
+.closingBadge {
+  font-size: 0.55rem;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: #64748B;
-  margin-top: -0.5rem;
+  color: #b45309;
+  margin-left: 0.15rem;
 }
 
-/* ── Controls ── */
-.controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1.5rem;
-}
-
-.playButton {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: #F59E0B;
-  border: none;
-  color: #1c1c1c;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.15s, transform 0.1s;
-}
-
-.playButton:hover {
-  background: #FBBF24;
-}
-
-.playButton:active {
-  transform: scale(0.95);
-}
-
-.sideButton {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: #1c1c1c;
-  border: none;
-  color: #64748B;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: color 0.15s, background 0.15s;
-}
-
-.sideButton:hover:not(:disabled) {
-  color: #94A3B8;
-  background: #222;
-}
-
-.sideButton:disabled {
-  opacity: 0.3;
-  cursor: default;
-}
-
-.continueButton {
-  background: #F59E0B;
-  color: #1c1c1c;
-  border: none;
-  border-radius: 2rem;
-  padding: 0.75rem 2rem;
-  font-size: 0.9rem;
-  font-weight: 700;
-  font-family: inherit;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.continueButton:hover {
-  background: #FBBF24;
-}
-
-/* ── Done state ── */
-.doneActions {
+/* ── Done row ── */
+.doneRow {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.75rem;
+  padding: 0.5rem 0 0;
 }
 
 .doneMsg {
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: #4ade80;
 }
@@ -281,12 +115,12 @@
   background: #1c1c1c;
   border: 1px solid #2a2a2a;
   border-radius: 2rem;
-  color: #94A3B8;
+  color: #64748B;
   font-size: 0.8rem;
   font-family: inherit;
-  padding: 0.5rem 1.25rem;
+  padding: 0.45rem 1.25rem;
   cursor: pointer;
-  transition: border-color 0.15s;
+  transition: border-color 0.15s, color 0.15s;
 }
 
 .restartButton:hover {
@@ -296,18 +130,19 @@
 
 /* ── Next up ── */
 .nextUp {
-  width: 100%;
+  width: calc(100% - 2.5rem);
   background: #141414;
   border: 1px solid #1e1e1e;
   border-radius: 0.65rem;
-  padding: 0.65rem 0.9rem;
+  padding: 0.6rem 0.9rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
+  margin-top: 0.25rem;
 }
 
 .nextLabel {
-  font-size: 0.6rem;
+  font-size: 0.58rem;
   text-transform: uppercase;
   letter-spacing: 0.15em;
   color: #334155;
@@ -315,13 +150,13 @@
 }
 
 .nextName {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: #64748B;
   flex: 1;
 }
 
 .nextTime {
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-variant-numeric: tabular-nums;
   color: #334155;
   flex-shrink: 0;

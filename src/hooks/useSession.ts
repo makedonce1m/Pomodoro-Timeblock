@@ -47,6 +47,10 @@ export interface UseSessionReturn {
   // ── Session actions ──────────────────────────────────────────────
   startSession: () => void;
   continueToNext: () => void;
+  /** Manually switch the timer to a given phase (mirrors the phase cards). */
+  goToPhase: (phase: 'focus' | 'break') => void;
+  /** Reset the current Pomodoro timer back to zero without changing block/Pomodoro position. */
+  resetPomodoro: () => void;
 }
 
 export function useSession(
@@ -230,6 +234,20 @@ export function useSession(
     }
   }, [sessionPhase, timer, advanceBlock]);
 
+  const goToPhase = useCallback((phase: 'focus' | 'break') => {
+    timer.goToPhase(phase);
+    setSessionPhase(phase === 'focus' ? 'focus' : 'short-break');
+    setWaitingForContinue(false);
+  }, [timer]);
+
+  const resetPomodoro = useCallback(() => {
+    timer.reset();
+    // Stay at the same block/pomodoro position, just restart the timer.
+    // sessionPhase stays 'focus' (not 'idle') so play → resume rather than startSession.
+    setSessionPhase(prev => prev === 'idle' ? 'idle' : 'focus');
+    setWaitingForContinue(false);
+  }, [timer]);
+
   return {
     mode: timer.mode,
     timerPhase: timer.phase,
@@ -254,5 +272,7 @@ export function useSession(
     waitingForContinue,
     startSession,
     continueToNext,
+    goToPhase,
+    resetPomodoro,
   };
 }

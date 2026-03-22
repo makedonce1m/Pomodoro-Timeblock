@@ -80,7 +80,7 @@ export function PomodoroTimer({
 
   return (
     <div className={styles.page}>
-      <p className={styles.pomodoroLabel}>Pomodoro</p>
+      <p className={styles.pomodoroLabel}>Adaptive Pomo</p>
 
       <div className={styles.ringContainer}>
         <svg className={styles.ring} viewBox="0 0 200 200">
