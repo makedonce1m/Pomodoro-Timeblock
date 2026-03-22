@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.25rem;
+  gap: 2rem;
 }
 
 .pomodoroLabel {
@@ -146,18 +146,18 @@
 }
 
 .playButton {
-  width: 160px;
-  height: 160px;
+  width: 80px;
+  height: 80px;
   background: #F59E0B;
   border: none;
-  border-radius: 50%;
+  border-radius: 1.1rem;
   color: #1c1c1c;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: background 0.15s, transform 0.1s;
-  box-shadow: 0 8px 40px rgba(245, 158, 11, 0.45);
+  box-shadow: 0 4px 24px rgba(245, 158, 11, 0.35);
 }
 
 .playButton:hover {
