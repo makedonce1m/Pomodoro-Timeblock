@@ -9,12 +9,14 @@ function totalPomodoros(template: DayTemplate): number {
 
 interface Props {
   templates: DayTemplate[]
+  activeTemplateId: string | null
   onNew: () => void
   onEdit: (t: DayTemplate) => void
   onDelete: (id: string) => void
+  onActivate: (id: string) => void
 }
 
-export function TemplateLibrary({ templates, onNew, onEdit, onDelete }: Props) {
+export function TemplateLibrary({ templates, activeTemplateId, onNew, onEdit, onDelete, onActivate }: Props) {
   return (
     <div className={styles.screen}>
       <div className={styles.header}>
@@ -26,37 +28,55 @@ export function TemplateLibrary({ templates, onNew, onEdit, onDelete }: Props) {
         {templates.length === 0 && (
           <p className={styles.empty}>No templates yet. Tap + New to create one.</p>
         )}
-        {templates.map(t => (
-          <div key={t.id} className={styles.card} onClick={() => onEdit(t)} role="button" tabIndex={0}
-            onKeyDown={e => e.key === 'Enter' && onEdit(t)}
-          >
-            <div className={styles.cardBody}>
-              <p className={styles.cardName}>{t.label}</p>
-              <p className={styles.cardMeta}>
-                {t.blocks.length} {t.blocks.length === 1 ? 'block' : 'blocks'}
-                {' · '}
-                {totalPomodoros(t)} Pomodoros
-              </p>
-              <div className={styles.blockPills}>
-                {t.blocks.map(b => (
-                  <span
-                    key={b.id}
-                    className={`${styles.pill} ${b.type === 'focus' ? styles.pillFocus : styles.pillBreak}`}
-                  >
-                    {b.startTime}–{b.endTime}
-                  </span>
-                ))}
+        {templates.map(t => {
+          const isActive = t.id === activeTemplateId
+          return (
+            <div
+              key={t.id}
+              className={`${styles.card} ${isActive ? styles.cardActive : ''}`}
+              onClick={() => onEdit(t)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={e => e.key === 'Enter' && onEdit(t)}
+            >
+              <div className={styles.cardBody}>
+                <p className={styles.cardName}>{t.label}</p>
+                <p className={styles.cardMeta}>
+                  {t.blocks.length} {t.blocks.length === 1 ? 'block' : 'blocks'}
+                  {' · '}
+                  {totalPomodoros(t)} Pomodoros
+                </p>
+                <div className={styles.blockPills}>
+                  {t.blocks.map(b => (
+                    <span
+                      key={b.id}
+                      className={`${styles.pill} ${b.type === 'focus' ? styles.pillFocus : styles.pillBreak}`}
+                    >
+                      {b.startTime}–{b.endTime}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className={styles.cardActions}>
+                <button
+                  className={`${styles.runButton} ${isActive ? styles.runButtonActive : ''}`}
+                  onClick={e => { e.stopPropagation(); onActivate(t.id) }}
+                  aria-label={`${isActive ? 'Active' : 'Run'} ${t.label}`}
+                  title={isActive ? 'Active in Run tab' : 'Set as active in Run tab'}
+                >
+                  {isActive ? '●' : '▶'}
+                </button>
+                <button
+                  className={styles.deleteButton}
+                  onClick={e => { e.stopPropagation(); onDelete(t.id) }}
+                  aria-label={`Delete ${t.label}`}
+                >
+                  ×
+                </button>
               </div>
             </div>
-            <button
-              className={styles.deleteButton}
-              onClick={e => { e.stopPropagation(); onDelete(t.id) }}
-              aria-label={`Delete ${t.label}`}
-            >
-              ×
-            </button>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )

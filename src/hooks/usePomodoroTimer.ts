@@ -9,15 +9,28 @@ import type { PomodoroMode } from '../types';
 
 type Phase = 'focus' | 'break';
 
+export interface PomodoroTimerOptions {
+  /** Override the duration (seconds) for the current phase. Use for closing/long-break intervals. */
+  customPhaseDuration?: number;
+  /**
+   * Called when a phase ends, before the timer auto-advances (or stops).
+   * Useful for session-layer state updates.
+   */
+  onPhaseComplete?: (phase: Phase) => void;
+  /**
+   * Whether to auto-advance to the next phase when one ends.
+   * Pass `false` or a function returning `false` to stop and wait for external control.
+   * Defaults to `true`.
+   */
+  autoAdvance?: boolean | (() => boolean);
+}
+
 interface PomodoroTimerState {
   mode: PomodoroMode;
   phase: Phase;
-  /** Seconds elapsed within the current phase. */
   elapsedSeconds: number;
-  /** Total seconds for the current phase (derived from mode + phase). */
   phaseDurationSeconds: number;
   isRunning: boolean;
-  /** Whether the mode switch button should be enabled. */
   canSwitch: boolean;
 }
 
@@ -25,42 +38,44 @@ interface PomodoroTimerActions {
   start: () => void;
   pause: () => void;
   resume: () => void;
-  /** Stop the timer and reset to the beginning without starting. */
   reset: () => void;
-  /** Skip the current focus phase and jump straight to break. No-op if not in focus phase. */
   skip: () => void;
-  /** Switch to the given phase, reset elapsed time, and maintain current running state. */
-  goToPhase: (phase: 'focus' | 'break') => void;
-  /** Switch between standard and comfort. No-op if canSwitch is false. */
+  goToPhase: (phase: Phase) => void;
   switchMode: () => void;
-  /** Select a mode freely. Only works when the timer has not started yet. */
   selectMode: (mode: PomodoroMode) => void;
 }
 
 export function usePomodoroTimer(
   initialMode: PomodoroMode = 'standard',
+  options?: PomodoroTimerOptions,
 ): PomodoroTimerState & PomodoroTimerActions {
   const [mode, setMode] = useState<PomodoroMode>(initialMode);
   const [phase, setPhase] = useState<Phase>('focus');
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
 
-  // Drift-resistant timing: track the wall-clock origin of the current run.
   const runStartWallTime = useRef<number | null>(null);
   const elapsedAtRunStart = useRef(0);
   const rafHandle = useRef<number | null>(null);
 
+  // Keep mutable references to options so effects never capture stale values.
+  const onPhaseCompleteRef = useRef(options?.onPhaseComplete);
+  onPhaseCompleteRef.current = options?.onPhaseComplete;
+  const autoAdvanceRef = useRef(options?.autoAdvance);
+  autoAdvanceRef.current = options?.autoAdvance;
+  const phaseRef = useRef(phase);
+  phaseRef.current = phase;
+
   const phaseDurationSeconds =
-    phase === 'focus'
+    options?.customPhaseDuration ??
+    (phase === 'focus'
       ? POMODORO_FOCUS_DURATION[mode]
-      : POMODORO_BREAK_DURATION[mode];
+      : POMODORO_BREAK_DURATION[mode]);
 
   const tick = useCallback(() => {
     if (runStartWallTime.current === null) return;
-
     const wallElapsed = (performance.now() - runStartWallTime.current) / 1000;
     const total = elapsedAtRunStart.current + wallElapsed;
-
     setElapsedSeconds(total);
     rafHandle.current = requestAnimationFrame(tick);
   }, []);
@@ -76,13 +91,13 @@ export function usePomodoroTimer(
     elapsedAtRunStart.current = 0;
     runStartWallTime.current = performance.now();
     setElapsedSeconds(0);
+    setPhase('focus');
     setIsRunning(true);
     rafHandle.current = requestAnimationFrame(tick);
   }, [tick]);
 
   const pause = useCallback(() => {
     stopRaf();
-    // Snapshot elapsed so resume can continue from here.
     elapsedAtRunStart.current =
       elapsedAtRunStart.current +
       (runStartWallTime.current !== null
@@ -108,7 +123,7 @@ export function usePomodoroTimer(
   }, [stopRaf]);
 
   const skip = useCallback(() => {
-    const nextPhase = phase === 'focus' ? 'break' : 'focus';
+    const nextPhase = phaseRef.current === 'focus' ? 'break' : 'focus';
     playSkipSound();
     stopRaf();
     runStartWallTime.current = null;
@@ -116,9 +131,9 @@ export function usePomodoroTimer(
     setElapsedSeconds(0);
     setPhase(nextPhase);
     setIsRunning(false);
-  }, [phase, stopRaf]);
+  }, [stopRaf]);
 
-  const goToPhase = useCallback((target: 'focus' | 'break') => {
+  const goToPhase = useCallback((target: Phase) => {
     stopRaf();
     elapsedAtRunStart.current = 0;
     setElapsedSeconds(0);
@@ -141,42 +156,49 @@ export function usePomodoroTimer(
 
   const switchMode = useCallback(() => {
     setElapsedSeconds((current) => {
-      if (!canSwitchMode(phase, current)) return current;
-
+      if (!canSwitchMode(phaseRef.current, current)) return current;
       const next: PomodoroMode = mode === 'standard' ? 'comfort' : 'standard';
       setMode(next);
-
-      // Keep the elapsed snapshot in sync so the RAF loop continues correctly.
       elapsedAtRunStart.current = current;
       if (runStartWallTime.current !== null) {
         runStartWallTime.current = performance.now();
       }
-
-      return current; // elapsed time is unchanged
+      return current;
     });
-  }, [mode, phase]);
+  }, [mode]);
 
-  // Advance phase when the current phase duration is reached.
+  // Advance or stop when the current phase duration is reached.
   useEffect(() => {
     if (elapsedSeconds >= phaseDurationSeconds && isRunning) {
       stopRaf();
-      runStartWallTime.current = performance.now();
-      elapsedAtRunStart.current = 0;
-      setElapsedSeconds(0);
-      setPhase((p) => {
-        if (p === 'focus') {
-          playFocusEndSound();
-          return 'break';
-        } else {
-          playBreakEndSound();
-          return 'focus';
-        }
-      });
-      rafHandle.current = requestAnimationFrame(tick);
+
+      // Notify the session layer before transitioning.
+      onPhaseCompleteRef.current?.(phaseRef.current);
+
+      // Resolve autoAdvance: boolean | function | undefined → boolean.
+      const raw = autoAdvanceRef.current;
+      const shouldAdvance = typeof raw === 'function' ? raw() : (raw ?? true);
+
+      if (shouldAdvance) {
+        runStartWallTime.current = performance.now();
+        elapsedAtRunStart.current = 0;
+        setElapsedSeconds(0);
+        setPhase((p) => {
+          if (p === 'focus') { playFocusEndSound(); return 'break'; }
+          else { playBreakEndSound(); return 'focus'; }
+        });
+        rafHandle.current = requestAnimationFrame(tick);
+      } else {
+        runStartWallTime.current = null;
+        elapsedAtRunStart.current = 0;
+        setElapsedSeconds(0);
+        if (phaseRef.current === 'focus') playFocusEndSound();
+        else playBreakEndSound();
+        setIsRunning(false);
+      }
     }
   }, [elapsedSeconds, phaseDurationSeconds, isRunning, stopRaf, tick]);
 
-  // Cleanup on unmount.
   useEffect(() => () => stopRaf(), [stopRaf]);
 
   return {

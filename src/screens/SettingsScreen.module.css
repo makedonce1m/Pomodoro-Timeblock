@@ -2,20 +2,98 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
+  padding: 1.5rem 1.25rem 1rem;
+  gap: 1.5rem;
 }
 
-.label {
+.title {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #F1F5F9;
   text-transform: uppercase;
   letter-spacing: 0.15em;
+  color: #F1F5F9;
 }
 
-.hint {
-  font-size: 0.8rem;
+/* ── Section ── */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.sectionTitle {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
   color: #475569;
+  margin-bottom: 0.5rem;
+}
+
+/* ── Row ── */
+.row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: #1c1c1c;
+  border-radius: 0.75rem;
+  padding: 1rem 1.1rem;
+  cursor: pointer;
+}
+
+.rowInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.rowLabel {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #F1F5F9;
+}
+
+.rowDesc {
+  font-size: 0.72rem;
+  color: #64748B;
+  line-height: 1.4;
+}
+
+/* ── Toggle ── */
+.toggle {
+  width: 44px;
+  height: 26px;
+  border-radius: 999px;
+  background: #2a2a2a;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.toggleOn {
+  background: #F59E0B;
+}
+
+.toggleThumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.2s;
+}
+
+.toggleOn .toggleThumb {
+  transform: translateX(18px);
+}
+
+/* ── Coming soon ── */
+.comingSoon {
+  font-size: 0.8rem;
+  color: #334155;
+  padding: 0.75rem 0;
 }

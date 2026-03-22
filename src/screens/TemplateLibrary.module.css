@@ -111,6 +111,39 @@
   color: #64748B;
 }
 
+.cardActive {
+  border-color: rgba(245, 158, 11, 0.35) !important;
+  background: #1e1c14 !important;
+}
+
+.cardActions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.runButton {
+  background: none;
+  border: none;
+  color: #334155;
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0.2rem 0.35rem;
+  border-radius: 0.4rem;
+  transition: color 0.15s, background 0.15s;
+}
+
+.runButton:hover {
+  color: #F59E0B;
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.runButtonActive {
+  color: #F59E0B;
+}
+
 .deleteButton {
   background: none;
   border: none;

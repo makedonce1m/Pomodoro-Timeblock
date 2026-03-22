@@ -1,46 +1,63 @@
 import { useState } from 'react'
-import { usePomodoroTimer } from './hooks/usePomodoroTimer'
-import { PomodoroTimer } from './components/PomodoroTimer'
 import { BottomNav } from './components/BottomNav'
 import type { AppView } from './components/BottomNav'
+import { RunScreen } from './screens/RunScreen'
 import { TemplatesScreen } from './screens/TemplatesScreen'
 import { SettingsScreen } from './screens/SettingsScreen'
+import { useSettings } from './hooks/useSettings'
+import type { DayTemplate } from './types'
+import { DEFAULT_DAY_TEMPLATE } from './defaults/schedule'
 import styles from './App.module.css'
+
+const TEMPLATES_KEY = 'pomodoro-templates'
+
+function loadTemplates(): DayTemplate[] {
+  try {
+    const raw = localStorage.getItem(TEMPLATES_KEY)
+    if (raw) return JSON.parse(raw) as DayTemplate[]
+  } catch {}
+  return [DEFAULT_DAY_TEMPLATE]
+}
 
 function App() {
   const [view, setView] = useState<AppView>('run')
+  const [activeTemplateId, setActiveTemplateId] = useState<string | null>(null)
+  const { settings, update: updateSettings } = useSettings()
 
-  const {
-    mode, phase, elapsedSeconds, phaseDurationSeconds,
-    isRunning, canSwitch, start, pause, resume, reset, skip, goToPhase, selectMode, switchMode,
-  } = usePomodoroTimer()
+  // Resolve the active template from localStorage on demand.
+  const activeTemplate = activeTemplateId
+    ? (loadTemplates().find(t => t.id === activeTemplateId) ?? null)
+    : null
 
-  const started = elapsedSeconds > 0 || isRunning
+  function handleActivate(id: string) {
+    setActiveTemplateId(id)
+    setView('run')
+  }
 
   return (
     <div className={styles.layout}>
-      <main className={`${styles.content} ${view === 'run' ? styles.contentCentered : ''}`}>
+      <main className={`${styles.content} ${view === 'run' ? styles.contentRun : ''}`}>
         {view === 'run' && (
-          <PomodoroTimer
-            mode={mode}
-            phase={phase}
-            elapsedSeconds={elapsedSeconds}
-            phaseDurationSeconds={phaseDurationSeconds}
-            isRunning={isRunning}
-            started={started}
-            onStart={start}
-            onPause={pause}
-            onResume={resume}
-            onReset={reset}
-            onSkip={skip}
-            onGoToPhase={goToPhase}
-            onSelectMode={selectMode}
-            onSwitchMode={switchMode}
-            canSwitch={canSwitch}
+          <RunScreen
+            template={activeTemplate}
+            templates={loadTemplates()}
+            autoContinue={settings.autoContinue}
+            onActivate={handleActivate}
+            onDeactivate={() => setActiveTemplateId(null)}
           />
         )}
-        {view === 'templates' && <TemplatesScreen />}
-        {view === 'settings' && <SettingsScreen />}
+        {view === 'templates' && (
+          <TemplatesScreen
+            activeTemplateId={activeTemplateId}
+            onActivate={handleActivate}
+          />
+        )}
+        {view === 'settings' && (
+          <SettingsScreen
+            settings={settings}
+            onUpdate={updateSettings}
+          />
+        )}
       </main>
       <BottomNav active={view} onChange={setView} />
     </div>

@@ -13,8 +13,8 @@
   align-items: stretch;
 }
 
-/* Center the Run screen specifically */
-.contentCentered {
+/* Run screen: center vertically when showing session/picker (no template header shifting) */
+.contentRun {
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 }

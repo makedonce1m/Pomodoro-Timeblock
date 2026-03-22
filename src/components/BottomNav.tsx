@@ -1,3 +1,4 @@
+import React from 'react'
 import styles from './BottomNav.module.css'
 
 export type AppView = 'run' | 'templates' | 'settings'
@@ -32,7 +33,7 @@ interface Props {
 }
 
 export function BottomNav({ active, onChange }: Props) {
-  const tabs: { view: AppView; label: string; Icon: () => JSX.Element }[] = [
+  const tabs: { view: AppView; label: string; Icon: () => React.ReactElement }[] = [
     { view: 'run', label: 'Run', Icon: IconRun },
     { view: 'templates', label: 'Templates', Icon: IconTemplates },
     { view: 'settings', label: 'Settings', Icon: IconSettings },
