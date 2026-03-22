@@ -56,7 +56,7 @@
 }
 
 .card {
-  background: #1E293B;
+  background: #1c1c1c;
   border: none;
   border-radius: 0.75rem;
   padding: 0.85rem 1.25rem;
@@ -117,7 +117,7 @@
 .sideButton {
   width: 52px;
   height: 52px;
-  background: #1E293B;
+  background: #1c1c1c;
   border: none;
   border-radius: 0.75rem;
   color: #94A3B8;
@@ -129,7 +129,7 @@
 }
 
 .sideButton:hover:not(:disabled) {
-  background: #273549;
+  background: #2a2a2a;
   color: #F1F5F9;
 }
 
@@ -151,7 +151,7 @@
   background: #F59E0B;
   border: none;
   border-radius: 1.1rem;
-  color: #1E293B;
+  color: #1c1c1c;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -167,4 +167,42 @@
 
 .playButton:active {
   transform: scale(0.97);
+}
+
+/* ── Mode selector ── */
+.modeSelector {
+  display: flex;
+  gap: 0.5rem;
+  background: #111;
+  border-radius: 0.75rem;
+  padding: 0.25rem;
+}
+
+.modeButton {
+  flex: 1;
+  padding: 0.6rem 1.25rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: #6B7280;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.modeButton:hover:not(:disabled) {
+  color: #D1D5DB;
+}
+
+.modeButton:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.modeActive {
+  background: #1f1f1f;
+  color: #F59E0B;
 }

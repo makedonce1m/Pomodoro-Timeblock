@@ -60,12 +60,13 @@ interface Props {
   onReset: () => void
   onSkip: () => void
   onGoToPhase: (phase: 'focus' | 'break') => void
+  onSelectMode: (mode: PomodoroMode) => void
 }
 
 export function PomodoroTimer({
   mode, phase, elapsedSeconds, phaseDurationSeconds,
   isRunning, started,
-  onStart, onPause, onResume, onReset, onSkip, onGoToPhase,
+  onStart, onPause, onResume, onReset, onSkip, onGoToPhase, onSelectMode,
 }: Props) {
   const remaining = Math.max(0, phaseDurationSeconds - elapsedSeconds)
 
@@ -149,13 +150,32 @@ export function PomodoroTimer({
           <button
             className={styles.sideButton}
             onClick={onSkip}
-            disabled={phase === 'break'}
+            disabled={!started}
             aria-label="Skip"
           >
             <IconSkip />
           </button>
           <span className={styles.buttonLabel}>Skip</span>
         </div>
+      </div>
+
+      <div className={styles.modeSelector}>
+        <button
+          className={`${styles.modeButton} ${mode === 'comfort' ? styles.modeActive : ''}`}
+          onClick={() => onSelectMode('comfort')}
+          disabled={started}
+          aria-pressed={mode === 'comfort'}
+        >
+          🍃 Comfort
+        </button>
+        <button
+          className={`${styles.modeButton} ${mode === 'standard' ? styles.modeActive : ''}`}
+          onClick={() => onSelectMode('standard')}
+          disabled={started}
+          aria-pressed={mode === 'standard'}
+        >
+          ⏱ Standard
+        </button>
       </div>
     </div>
   )
