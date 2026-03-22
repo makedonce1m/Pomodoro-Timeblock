@@ -1,0 +1,48 @@
+.nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: #0a0a0a;
+  border-top: 1px solid #1c1c1c;
+  display: flex;
+  align-items: stretch;
+}
+
+.tab {
+  flex: 1;
+  background: none;
+  border: none;
+  color: #475569;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  cursor: pointer;
+  transition: color 0.15s;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.tab:hover {
+  color: #94A3B8;
+}
+
+.tabActive {
+  color: #F59E0B;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-family: inherit;
+  font-weight: 600;
+}

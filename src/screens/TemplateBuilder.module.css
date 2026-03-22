@@ -1,0 +1,250 @@
+.screen {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem 1.25rem 1rem;
+  flex-shrink: 0;
+}
+
+.backButton {
+  background: #1c1c1c;
+  border: none;
+  color: #94A3B8;
+  font-size: 1.1rem;
+  width: 38px;
+  height: 38px;
+  border-radius: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.15s, background 0.15s;
+}
+
+.backButton:hover {
+  background: #222;
+  color: #F1F5F9;
+}
+
+.nameInput {
+  flex: 1;
+  background: #1c1c1c;
+  border: 1px solid #2a2a2a;
+  border-radius: 0.6rem;
+  color: #F1F5F9;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 0.5rem 0.75rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.nameInput:focus {
+  border-color: #F59E0B;
+}
+
+.saveButton {
+  background: #F59E0B;
+  color: #1c1c1c;
+  border: none;
+  border-radius: 0.6rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.saveButton:hover {
+  background: #FBBF24;
+}
+
+/* ── Block list ── */
+.blocks {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.empty {
+  color: #475569;
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 2.5rem 0;
+}
+
+.block {
+  background: #1c1c1c;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  border-left: 3px solid transparent;
+}
+
+.blockFocus {
+  border-left-color: #F59E0B;
+}
+
+.blockBreak {
+  border-left-color: #334155;
+}
+
+.blockHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.blockType {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  color: #64748B;
+}
+
+.pomCount {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #F59E0B;
+  background: rgba(245, 158, 11, 0.1);
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+}
+
+.deleteBlock {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: #475569;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.1rem 0.3rem;
+  border-radius: 0.35rem;
+  transition: color 0.15s, background 0.15s;
+}
+
+.deleteBlock:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.blockLabel {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 0.5rem;
+  color: #F1F5F9;
+  font-size: 0.85rem;
+  font-family: inherit;
+  padding: 0.45rem 0.65rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.blockLabel:focus {
+  border-color: #475569;
+}
+
+/* ── Time row ── */
+.timeRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.timeField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1;
+}
+
+.timeFieldLabel {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #475569;
+}
+
+.timeInput {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 0.5rem;
+  color: #F1F5F9;
+  font-size: 0.9rem;
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  padding: 0.45rem 0.55rem;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s;
+  color-scheme: dark;
+}
+
+.timeInput:focus {
+  border-color: #475569;
+}
+
+.timeSep {
+  color: #334155;
+  font-size: 0.9rem;
+  padding-bottom: 0.45rem;
+  flex-shrink: 0;
+}
+
+/* ── Footer ── */
+.footer {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  flex-shrink: 0;
+  border-top: 1px solid #1a1a1a;
+}
+
+.addButton {
+  flex: 1;
+  background: #1c1c1c;
+  border: 1px solid #2a2a2a;
+  border-radius: 0.65rem;
+  color: #F59E0B;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 0.65rem;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.addButton:hover {
+  background: #222;
+  border-color: #F59E0B;
+}
+
+.addBreak {
+  color: #64748B;
+}
+
+.addBreak:hover {
+  color: #94A3B8;
+  border-color: #334155;
+}

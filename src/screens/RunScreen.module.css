@@ -1,0 +1,163 @@
+.screen {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.75rem 0 0;
+}
+
+/* ── Session header ── */
+.sessionHeader {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 0 1.25rem 0.75rem;
+}
+
+.sessionInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.templateName {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: #475569;
+}
+
+.blockName {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #F1F5F9;
+}
+
+.endButton {
+  background: #1c1c1c;
+  border: none;
+  color: #475569;
+  font-size: 0.8rem;
+  width: 30px;
+  height: 30px;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.15s, background 0.15s;
+}
+
+.endButton:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+/* ── Progress dots ── */
+.dots {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.25rem;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #1e1e1e;
+  border: 1.5px solid #2a2a2a;
+  transition: background 0.2s, border-color 0.2s;
+  flex-shrink: 0;
+}
+
+.dotDone {
+  background: #1a3a1a;
+  border-color: #4ade80;
+}
+
+.dotActive {
+  background: #F59E0B;
+  border-color: #F59E0B;
+}
+
+.dotClosing {
+  background: #b45309;
+  border-color: #F59E0B;
+}
+
+.closingBadge {
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #b45309;
+  margin-left: 0.15rem;
+}
+
+/* ── Done row ── */
+.doneRow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0 0;
+}
+
+.doneMsg {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4ade80;
+}
+
+.restartButton {
+  background: #1c1c1c;
+  border: 1px solid #2a2a2a;
+  border-radius: 2rem;
+  color: #64748B;
+  font-size: 0.8rem;
+  font-family: inherit;
+  padding: 0.45rem 1.25rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.restartButton:hover {
+  border-color: #F59E0B;
+  color: #F59E0B;
+}
+
+/* ── Next up ── */
+.nextUp {
+  width: calc(100% - 2.5rem);
+  background: #141414;
+  border: 1px solid #1e1e1e;
+  border-radius: 0.65rem;
+  padding: 0.6rem 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.25rem;
+}
+
+.nextLabel {
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #334155;
+  flex-shrink: 0;
+}
+
+.nextName {
+  font-size: 0.78rem;
+  color: #64748B;
+  flex: 1;
+}
+
+.nextTime {
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
+  color: #334155;
+  flex-shrink: 0;
+}

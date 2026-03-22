@@ -1,6 +1,20 @@
 .layout {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 64px; /* clear the fixed bottom nav */
+  display: flex;
+  align-items: stretch;
+}
+
+/* Standalone timer (no active template): center it */
+.contentCentered {
   align-items: center;
   justify-content: center;
 }
