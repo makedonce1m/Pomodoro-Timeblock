@@ -24,6 +24,8 @@ interface PomodoroTimerActions {
   start: () => void;
   pause: () => void;
   resume: () => void;
+  /** Stop the timer and reset to the beginning without starting. */
+  reset: () => void;
   /** Switch between standard and comfort. No-op if canSwitch is false. */
   switchMode: () => void;
 }
@@ -90,6 +92,15 @@ export function usePomodoroTimer(
     rafHandle.current = requestAnimationFrame(tick);
   }, [tick]);
 
+  const reset = useCallback(() => {
+    stopRaf();
+    runStartWallTime.current = null;
+    elapsedAtRunStart.current = 0;
+    setElapsedSeconds(0);
+    setPhase('focus');
+    setIsRunning(false);
+  }, [stopRaf]);
+
   const switchMode = useCallback(() => {
     setElapsedSeconds((current) => {
       if (!canSwitchMode(phase, current)) return current;
@@ -132,6 +143,7 @@ export function usePomodoroTimer(
     start,
     pause,
     resume,
+    reset,
     switchMode,
   };
 }

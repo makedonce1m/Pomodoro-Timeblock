@@ -8,16 +8,11 @@ function formatTime(seconds: number): string {
 }
 
 export function PomodoroTimer() {
-  const { phase, elapsedSeconds, phaseDurationSeconds, isRunning, start, pause, resume } =
+  const { phase, elapsedSeconds, phaseDurationSeconds, isRunning, start, pause, resume, reset } =
     usePomodoroTimer()
 
   const remaining = Math.max(0, phaseDurationSeconds - elapsedSeconds)
   const started = elapsedSeconds > 0 || isRunning
-
-  function handleReset() {
-    pause()
-    start()
-  }
 
   return (
     <div className={styles.container}>
@@ -38,7 +33,7 @@ export function PomodoroTimer() {
         ) : (
           <button onClick={pause}>Pause</button>
         )}
-        <button onClick={handleReset} disabled={!started}>
+        <button onClick={reset} disabled={!started}>
           Reset
         </button>
       </div>
