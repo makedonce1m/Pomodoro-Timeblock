@@ -12,7 +12,7 @@ This file provides guidance for AI assistants (Claude and others) working on thi
 - **Time Block**: A named, calendar-scheduled work session (e.g., "Deep Work 9:00–11:00")
 - **Pomodoro**: A 30-minute interval consisting of a focus period followed by a break
 - **Short Break**: Rest period between Pomodoros
-- **Long Break**: 15–30-minute rest after every 4 Pomodoros
+- **Long Break**: Rest after every 4 Pomodoros; duration is configurable (15 min, 30 min, or 60 min)
 
 ### Pomodoro Interval Modes
 Two modes are supported; users can switch between them in settings:
@@ -21,6 +21,15 @@ Two modes are supported; users can switch between them in settings:
 |------|-------|-------|-------|
 | **Standard** (default) | 25 min | 5 min | 30 min |
 | **Short** | 20 min | 10 min | 30 min |
+
+### Long Break Options
+After every 4 Pomodoros, users choose their long break length:
+
+| Option | Duration |
+|--------|----------|
+| Short long break | 15 min |
+| Standard long break | 30 min |
+| **Extended long break** | 60 min |
 
 ---
 
@@ -108,6 +117,7 @@ chore: upgrade dependencies
 - Timer state should be managed in a dedicated store or hook, not scattered across UI components
 - Pomodoro intervals are user-configurable; never hardcode durations — use named constants or settings (e.g., `STANDARD_MODE`, `SHORT_MODE`)
 - The two supported modes are Standard (25 min focus / 5 min break) and Short (20 min focus / 10 min break); both total 30 minutes
+- Long break duration is user-configurable: 15 min, 30 min, or 60 min; use a named constant (e.g., `LONG_BREAK_DURATION`) — never hardcode
 - Use `Date.now()` / `performance.now()` for drift-resistant timing rather than naive `setInterval` counting
 - Pause/resume must preserve elapsed time accurately
 
