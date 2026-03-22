@@ -110,13 +110,12 @@ export function usePomodoroTimer(
   const skip = useCallback(() => {
     const nextPhase = phase === 'focus' ? 'break' : 'focus';
     stopRaf();
-    runStartWallTime.current = performance.now();
+    runStartWallTime.current = null;
     elapsedAtRunStart.current = 0;
     setElapsedSeconds(0);
     setPhase(nextPhase);
-    setIsRunning(true);
-    rafHandle.current = requestAnimationFrame(tick);
-  }, [phase, stopRaf, tick]);
+    setIsRunning(false);
+  }, [phase, stopRaf]);
 
   const goToPhase = useCallback((target: 'focus' | 'break') => {
     stopRaf();
