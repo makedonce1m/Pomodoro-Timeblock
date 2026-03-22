@@ -77,7 +77,7 @@ export function usePomodoroTimer(
 
   const tick = useCallback(() => {
     if (runStartWallTime.current === null) return;
-    const wallElapsed = (performance.now() - runStartWallTime.current) / 1000;
+    const wallElapsed = (Date.now() - runStartWallTime.current) / 1000;
     const total = elapsedAtRunStart.current + wallElapsed;
     setElapsedSeconds(total);
     rafHandle.current = requestAnimationFrame(tick);
@@ -92,7 +92,7 @@ export function usePomodoroTimer(
 
   const start = useCallback(() => {
     elapsedAtRunStart.current = 0;
-    runStartWallTime.current = performance.now();
+    runStartWallTime.current = Date.now();
     setElapsedSeconds(0);
     setPhase('focus');
     setIsRunning(true);
@@ -105,14 +105,14 @@ export function usePomodoroTimer(
     elapsedAtRunStart.current =
       elapsedAtRunStart.current +
       (runStartWallTime.current !== null
-        ? (performance.now() - runStartWallTime.current) / 1000
+        ? (Date.now() - runStartWallTime.current) / 1000
         : 0);
     runStartWallTime.current = null;
     setIsRunning(false);
   }, [stopRaf]);
 
   const resume = useCallback(() => {
-    runStartWallTime.current = performance.now();
+    runStartWallTime.current = Date.now();
     setIsRunning(true);
     rafHandle.current = requestAnimationFrame(tick);
   }, [tick]);
@@ -145,7 +145,7 @@ export function usePomodoroTimer(
     setPhase(target);
     setIsRunning((running) => {
       if (running) {
-        runStartWallTime.current = performance.now();
+        runStartWallTime.current = Date.now();
         rafHandle.current = requestAnimationFrame(tick);
       } else {
         runStartWallTime.current = null;
@@ -166,7 +166,7 @@ export function usePomodoroTimer(
       setMode(next);
       elapsedAtRunStart.current = current;
       if (runStartWallTime.current !== null) {
-        runStartWallTime.current = performance.now();
+        runStartWallTime.current = Date.now();
       }
       return current;
     });
@@ -185,7 +185,7 @@ export function usePomodoroTimer(
       const shouldAdvance = typeof raw === 'function' ? raw() : (raw ?? true);
 
       if (shouldAdvance) {
-        runStartWallTime.current = performance.now();
+        runStartWallTime.current = Date.now();
         elapsedAtRunStart.current = 0;
         setElapsedSeconds(0);
         setPhase((p) => {
@@ -205,6 +205,20 @@ export function usePomodoroTimer(
   }, [elapsedSeconds, phaseDurationSeconds, isRunning, stopRaf, tick]);
 
   useEffect(() => () => stopRaf(), [stopRaf]);
+
+  // On iOS, RAF is suspended when the app is backgrounded.
+  // When the app returns to foreground, restart RAF if the timer is running.
+  // Date.now() keeps counting while backgrounded, so elapsed time stays accurate.
+  useEffect(() => {
+    function onVisibilityChange() {
+      if (!document.hidden && runStartWallTime.current !== null) {
+        if (rafHandle.current !== null) cancelAnimationFrame(rafHandle.current);
+        rafHandle.current = requestAnimationFrame(tick);
+      }
+    }
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', onVisibilityChange);
+  }, [tick]);
 
   return {
     mode,

@@ -1,7 +1,11 @@
 let ctx: AudioContext | null = null
 
-function getCtx(): AudioContext {
+async function getCtx(): Promise<AudioContext> {
   if (!ctx) ctx = new AudioContext()
+  // iOS suspends AudioContext until a user gesture — resume before every use
+  if (ctx.state === 'suspended') {
+    try { await ctx.resume() } catch { /* best-effort */ }
+  }
   return ctx
 }
 
@@ -53,8 +57,8 @@ function chirp(
  * Soft descending bird song — played when focus ends and break starts.
  * Feels like a gentle "wind down" call.
  */
-export function playFocusEndSound() {
-  const audioCtx = getCtx()
+export async function playFocusEndSound() {
+  const audioCtx = await getCtx()
   const now = audioCtx.currentTime
   // 5 chirps, descending in pitch, spaced ~0.55s apart over ~3s; last two fade out
   chirp(audioCtx, now + 0.0,  2800, 3400, 2600, 0.35, 0.18)
@@ -68,8 +72,8 @@ export function playFocusEndSound() {
  * Bright ascending bird song — played when break ends and focus starts.
  * Feels like an energetic morning call.
  */
-export function playBreakEndSound() {
-  const audioCtx = getCtx()
+export async function playBreakEndSound() {
+  const audioCtx = await getCtx()
   const now = audioCtx.currentTime
   // 5 chirps, ascending in pitch, spaced ~0.55s apart over ~3s; last two fade out
   chirp(audioCtx, now + 0.0,  1400, 1700, 1500, 0.30, 0.12)
@@ -82,8 +86,8 @@ export function playBreakEndSound() {
 /**
  * Two quick chirps — played when skip is pressed.
  */
-export function playSkipSound() {
-  const audioCtx = getCtx()
+export async function playSkipSound() {
+  const audioCtx = await getCtx()
   const now = audioCtx.currentTime
   chirp(audioCtx, now + 0.0,  2200, 2800, 2400, 0.18, 0.15)
   chirp(audioCtx, now + 0.25, 2400, 3000, 2600, 0.18, 0.15)

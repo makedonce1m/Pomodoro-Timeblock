@@ -70,7 +70,7 @@
   text-align: left;
 }
 
-.card:hover {
+.card:active {
   opacity: 0.7;
 }
 
@@ -78,7 +78,7 @@
   opacity: 1;
 }
 
-.cardActive:hover {
+.cardActive:active {
   opacity: 1;
 }
 
@@ -128,7 +128,7 @@
   transition: background 0.15s, color 0.15s;
 }
 
-.sideButton:hover:not(:disabled) {
+.sideButton:active:not(:disabled) {
   background: #2a2a2a;
   color: #F1F5F9;
 }
@@ -160,9 +160,8 @@
   box-shadow: 0 4px 24px rgba(245, 158, 11, 0.35);
 }
 
-.playButton:hover {
+.playButton:active {
   background: #FBBF24;
-  transform: scale(1.04);
 }
 
 .playButton:active {
@@ -193,7 +192,7 @@
   white-space: nowrap;
 }
 
-.modeButton:hover:not(:disabled) {
+.modeButton:active:not(:disabled) {
   color: #D1D5DB;
 }
 

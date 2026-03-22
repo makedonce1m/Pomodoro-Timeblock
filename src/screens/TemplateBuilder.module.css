@@ -30,7 +30,7 @@
   transition: color 0.15s, background 0.15s;
 }
 
-.backButton:hover {
+.backButton:active {
   background: #222;
   color: #F1F5F9;
 }
@@ -67,7 +67,7 @@
   transition: background 0.15s;
 }
 
-.saveButton:hover {
+.saveButton:active {
   background: #FBBF24;
 }
 
@@ -143,7 +143,7 @@
   transition: color 0.15s, background 0.15s;
 }
 
-.deleteBlock:hover {
+.deleteBlock:active {
   color: #ef4444;
   background: rgba(239, 68, 68, 0.1);
 }
@@ -272,7 +272,7 @@
   transition: background 0.15s, border-color 0.15s;
 }
 
-.addButton:hover {
+.addButton:active {
   background: #222;
   border-color: #F59E0B;
 }
@@ -281,7 +281,7 @@
   color: #64748B;
 }
 
-.addBreak:hover {
+.addBreak:active {
   color: #94A3B8;
   border-color: #334155;
 }
@@ -305,7 +305,7 @@
   transition: border-color 0.15s, color 0.15s;
 }
 
-.deleteTemplate:hover {
+.deleteTemplate:active {
   border-color: #ef4444;
   color: #ef4444;
 }
@@ -338,7 +338,7 @@
   transition: color 0.15s;
 }
 
-.deleteConfirmNo:hover {
+.deleteConfirmNo:active {
   color: #F1F5F9;
 }
 
@@ -355,7 +355,7 @@
   transition: background 0.15s;
 }
 
-.deleteConfirmYes:hover {
+.deleteConfirmYes:active {
   background: #dc2626;
 }
 
@@ -412,7 +412,7 @@
   transition: background 0.15s;
 }
 
-.unsavedSave:hover {
+.unsavedSave:active {
   background: #FBBF24;
 }
 
@@ -429,7 +429,7 @@
   transition: border-color 0.15s;
 }
 
-.unsavedDiscard:hover {
+.unsavedDiscard:active {
   border-color: #ef4444;
 }
 
@@ -445,6 +445,6 @@
   transition: color 0.15s;
 }
 
-.unsavedKeep:hover {
+.unsavedKeep:active {
   color: #94A3B8;
 }

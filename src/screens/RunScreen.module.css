@@ -50,7 +50,7 @@
   transition: color 0.15s, background 0.15s;
 }
 
-.endButton:hover {
+.endButton:active {
   color: #ef4444;
   background: rgba(239, 68, 68, 0.08);
 }
@@ -123,7 +123,7 @@
   transition: border-color 0.15s, color 0.15s;
 }
 
-.restartButton:hover {
+.restartButton:active {
   border-color: #F59E0B;
   color: #F59E0B;
 }

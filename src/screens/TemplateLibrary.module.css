@@ -33,7 +33,7 @@
   transition: background 0.15s;
 }
 
-.newButton:hover {
+.newButton:active {
   background: #FBBF24;
 }
 
@@ -62,7 +62,7 @@
   border: 1px solid transparent;
 }
 
-.card:hover {
+.card:active {
   background: #222;
   border-color: #2a2a2a;
 }
@@ -140,7 +140,7 @@
   flex-shrink: 0;
 }
 
-.runButton:hover {
+.runButton:active {
   color: #F59E0B;
   background: rgba(245, 158, 11, 0.1);
   border-color: rgba(245, 158, 11, 0.35);
@@ -165,7 +165,7 @@
   flex-shrink: 0;
 }
 
-.deleteButton:hover {
+.deleteButton:active {
   color: #ef4444;
   background: rgba(239, 68, 68, 0.1);
 }

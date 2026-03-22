@@ -115,7 +115,7 @@
   white-space: nowrap;
 }
 
-.seg:hover {
+.seg:active {
   color: #94A3B8;
 }
 
