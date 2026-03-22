@@ -40,51 +40,55 @@ function App() {
   }
 
   return (
-    <div className={styles.layout}>
-      <main className={`${styles.content} ${view === 'run' && !activeTemplate ? styles.contentCentered : ''}`}>
-        {view === 'run' && !activeTemplate && (
-          <PomodoroTimer
-            mode={timer.mode}
-            phase={timer.phase}
-            elapsedSeconds={timer.elapsedSeconds}
-            phaseDurationSeconds={timer.phaseDurationSeconds}
-            isRunning={timer.isRunning}
-            started={timerStarted}
-            canSwitch={timer.canSwitch}
-            onStart={timer.start}
-            onPause={timer.pause}
-            onResume={timer.resume}
-            onReset={timer.reset}
-            onSkip={timer.skip}
-            onGoToPhase={timer.goToPhase}
-            onSelectMode={timer.selectMode}
-            onSwitchMode={timer.switchMode}
-          />
-        )}
-        {view === 'run' && activeTemplate && (
-          <RunScreen
-            template={activeTemplate}
-            autoContinue={settings.autoContinue}
-            timeFormat={settings.timeFormat}
-            onDeactivate={() => setActiveTemplateId(null)}
-          />
-        )}
-        {view === 'templates' && (
-          <TemplatesScreen
-            activeTemplateId={activeTemplateId}
-            onActivate={handleActivate}
-            timeFormat={settings.timeFormat}
-          />
-        )}
-        {view === 'settings' && (
-          <SettingsScreen
-            settings={settings}
-            onUpdate={updateSettings}
-          />
-        )}
-      </main>
+    <>
+      <div className={styles.layout}>
+        <main className={`${styles.content} ${view === 'run' && !activeTemplate ? styles.contentCentered : ''}`}>
+          {view === 'run' && !activeTemplate && (
+            <PomodoroTimer
+              mode={timer.mode}
+              phase={timer.phase}
+              elapsedSeconds={timer.elapsedSeconds}
+              phaseDurationSeconds={timer.phaseDurationSeconds}
+              isRunning={timer.isRunning}
+              started={timerStarted}
+              canSwitch={timer.canSwitch}
+              onStart={timer.start}
+              onPause={timer.pause}
+              onResume={timer.resume}
+              onReset={timer.reset}
+              onSkip={timer.skip}
+              onGoToPhase={timer.goToPhase}
+              onSelectMode={timer.selectMode}
+              onSwitchMode={timer.switchMode}
+            />
+          )}
+          {view === 'run' && activeTemplate && (
+            <RunScreen
+              template={activeTemplate}
+              autoContinue={settings.autoContinue}
+              timeFormat={settings.timeFormat}
+              onDeactivate={() => setActiveTemplateId(null)}
+            />
+          )}
+          {view === 'templates' && (
+            <TemplatesScreen
+              activeTemplateId={activeTemplateId}
+              onActivate={handleActivate}
+              timeFormat={settings.timeFormat}
+            />
+          )}
+          {view === 'settings' && (
+            <SettingsScreen
+              settings={settings}
+              onUpdate={updateSettings}
+            />
+          )}
+        </main>
+      </div>
+      {/* Nav is outside the layout so position:fixed reaches the real viewport bottom,
+          unaffected by the layout's overflow:hidden */}
       <BottomNav active={view} onChange={setView} />
-    </div>
+    </>
   )
 }
 

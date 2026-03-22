@@ -7,13 +7,13 @@
   border-top: 1px solid #1c1c1c;
   display: flex;
   align-items: flex-start;
-  /* background bleeds into the home-indicator zone — mirrors native iOS tab bar */
+  /* extend background flush to the physical screen bottom */
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
 .tab {
   flex: 1;
-  height: 64px; /* tap-target height, above the safe-area padding */
+  height: 64px;
   background: none;
   border: none;
   color: #475569;
