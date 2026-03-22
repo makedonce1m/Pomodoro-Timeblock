@@ -14,8 +14,6 @@
   overflow-y: auto;
   display: flex;
   align-items: stretch;
-  /* clear the fixed nav: 64px tap area + home-indicator safe zone */
-  padding-bottom: calc(64px + env(safe-area-inset-bottom, 0));
 }
 
 /* Standalone timer (no active template): center it */

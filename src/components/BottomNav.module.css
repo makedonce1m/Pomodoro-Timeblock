@@ -1,19 +1,14 @@
 .nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  flex-shrink: 0;
+  height: 64px;
   background: #0a0a0a;
   border-top: 1px solid #1c1c1c;
   display: flex;
-  align-items: flex-start;
-  /* background bleeds into the home-indicator zone — mirrors native iOS tab bar */
-  padding-bottom: env(safe-area-inset-bottom, 0);
+  align-items: stretch;
 }
 
 .tab {
   flex: 1;
-  height: 64px; /* tap-target height, above the safe-area padding */
   background: none;
   border: none;
   color: #475569;
