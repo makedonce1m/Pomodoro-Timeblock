@@ -7,8 +7,8 @@
   border-top: 1px solid #1c1c1c;
   display: flex;
   align-items: flex-start;
-  /* ~2px gap between tab labels and the home indicator */
-  padding-bottom: 2px;
+  /* extend nav background into the home indicator zone */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .tab {
@@ -20,7 +20,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  /* push icon+label to the bottom of the tab, 4px above home indicator */
+  justify-content: flex-end;
+  padding-bottom: 4px;
   gap: 0.25rem;
   cursor: pointer;
   transition: color 0.15s;
