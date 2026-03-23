@@ -125,6 +125,9 @@ export function RunScreen({ template, autoContinue, keepScreenOn, timeFormat, on
   return (
     <div className={styles.screen}>
 
+      {/* ── Plan name ── */}
+      <p className={styles.planName}>{template.label}</p>
+
       {/* ── Pomodoro progress dots ── */}
       {!isLongBreak && !isDone && totalPomodoros > 0 && (
         <div className={styles.dots} aria-label={`Pomodoro ${pomodoroIndex + 1} of ${totalPomodoros}`}>

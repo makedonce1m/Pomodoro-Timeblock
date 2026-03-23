@@ -14,6 +14,16 @@
   flex-shrink: 0;
 }
 
+/* ── Plan name ── */
+.planName {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 0.5rem;
+}
+
 /* ── Progress dots ── */
 .dots {
   display: flex;
