@@ -116,6 +116,42 @@
   padding: 2.5rem 0;
 }
 
+/* ── Drag handle ── */
+.dragHandle {
+  flex-shrink: 0;
+  width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  background: none;
+  border: none;
+  color: #334155;
+  cursor: grab;
+  touch-action: none;
+  padding: 0;
+  border-radius: 0.35rem;
+  transition: color 0.15s;
+}
+
+.dragHandle:active {
+  color: #64748B;
+  cursor: grabbing;
+}
+
+/* ── Drop indicator ── */
+.dropLine {
+  height: 2px;
+  background: #F59E0B;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+/* ── Dragging state ── */
+.blockDragging {
+  opacity: 0.35;
+}
+
 .block {
   background: #1c1c1c;
   border-radius: 0.75rem;
