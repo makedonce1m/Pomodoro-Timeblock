@@ -15,6 +15,14 @@
   padding: 0 1.25rem 0.75rem;
 }
 
+.divider {
+  width: 75%;
+  height: 1px;
+  background: #1e1e1e;
+  margin-bottom: 0.75rem;
+  flex-shrink: 0;
+}
+
 .sessionInfo {
   display: flex;
   flex-direction: column;
@@ -22,10 +30,9 @@
 }
 
 .templateName {
-  font-size: 0.6rem;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: #475569;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #F1F5F9;
 }
 
 .blockName {
@@ -38,9 +45,9 @@
   background: #1c1c1c;
   border: none;
   color: #475569;
-  font-size: 0.8rem;
-  width: 30px;
-  height: 30px;
+  font-size: 1rem;
+  width: 42px;
+  height: 42px;
   border-radius: 0.5rem;
   display: flex;
   align-items: center;
@@ -171,12 +178,9 @@
   border-bottom: none;
 }
 
-.nextLabel {
-  font-size: 0.58rem;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: #334155;
-  flex-shrink: 0;
+.upcomingRowCurrent .nextName,
+.upcomingRowCurrent .nextTime {
+  color: #F59E0B;
 }
 
 .nextName {

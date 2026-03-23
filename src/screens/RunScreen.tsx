@@ -129,15 +129,13 @@ export function RunScreen({ template, autoContinue, keepScreenOn, timeFormat, on
       <div className={styles.sessionHeader}>
         <div className={styles.sessionInfo}>
           <p className={styles.templateName}>{template.label}{currentBlock ? ` · ${currentBlock.label}` : ''}</p>
-          {!isLongBreak && totalPomodoros > 0 && (
-            <p className={styles.blockName}>Pomo {pomodoroIndex + 1}</p>
-          )}
           {isLongBreak && currentBlock && (
             <p className={styles.blockName}>{currentBlock.label}</p>
           )}
         </div>
         <button className={styles.endButton} onClick={() => setShowExitConfirm(true)} aria-label="End session">✕</button>
       </div>
+      <div className={styles.divider} />
 
       {/* ── Pomodoro progress dots ── */}
       {!isLongBreak && !isDone && totalPomodoros > 0 && (
@@ -228,11 +226,14 @@ export function RunScreen({ template, autoContinue, keepScreenOn, timeFormat, on
       )}
 
       {/* ── Upcoming blocks ── */}
-      {upcomingBlocks.length > 0 && !isDone && (
+      {currentBlock && !isDone && (
         <div className={styles.upcoming}>
-          {upcomingBlocks.map((block, i) => (
+          <div className={`${styles.upcomingRow} ${styles.upcomingRowCurrent}`}>
+            <span className={styles.nextName}>{currentBlock.label}</span>
+            <span className={styles.nextTime}>{formatDisplayTime(currentBlock.startTime, timeFormat)}–{formatDisplayTime(currentBlock.endTime, timeFormat)}</span>
+          </div>
+          {upcomingBlocks.map(block => (
             <div key={block.id} className={styles.upcomingRow}>
-              <span className={styles.nextLabel}>{i === 0 ? 'Next' : ''}</span>
               <span className={styles.nextName}>{block.label}</span>
               <span className={styles.nextTime}>{formatDisplayTime(block.startTime, timeFormat)}–{formatDisplayTime(block.endTime, timeFormat)}</span>
             </div>
