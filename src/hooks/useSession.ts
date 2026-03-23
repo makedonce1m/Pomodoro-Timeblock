@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { DayTemplate, FocusBlock, LongBreakBlock, TimeBlock } from '../types';
 import { CLOSING_INTERVAL_DURATION } from '../constants/timer';
 import { usePomodoroTimer } from './usePomodoroTimer';
+import { playSkipSound } from '../utils/sound';
 import type { PomodoroMode } from '../types';
 
 export type SessionPhase =
@@ -255,6 +256,54 @@ export function useSession(
     setWaitingForContinue(false);
   }, [timer]);
 
+  // Skip: on closing interval or long-break → advance to next block.
+  //        on any other pomo → advance to next pomo within the block.
+  const skipPendingRef = useRef(false);
+  const skipBlock = useCallback(() => {
+    const tmpl = templateRef.current;
+    if (!tmpl) return;
+    playSkipSound();
+    timer.reset();
+
+    if (isClosingIntervalRef.current || isLongBreakBlockRef.current) {
+      // Advance to next block.
+      const nextBi = blockIndexRef.current + 1;
+      if (nextBi >= tmpl.blocks.length) {
+        setIsDone(true);
+        setSessionPhase('done');
+        setWaitingForContinue(false);
+      } else {
+        setBlockIndex(nextBi);
+        setPomodoroIndex(0);
+        const nb = tmpl.blocks[nextBi];
+        setSessionPhase(nb.type === 'long-break' ? 'long-break' : 'focus');
+        setWaitingForContinue(false);
+        if (autoContinueRef.current) {
+          skipPendingRef.current = true;
+        }
+      }
+    } else {
+      // Advance to next pomo within the current block.
+      const nextPi = pomodoroIndexRef.current + 1;
+      setPomodoroIndex(nextPi);
+      setSessionPhase('focus');
+      setWaitingForContinue(false);
+      if (autoContinueRef.current) {
+        timer.resume();
+      }
+    }
+  }, [timer]);
+
+  // Restart timer after a skip when autoContinue is on.
+  // (The normal restart effect only watches for 'block-done'/'long-break' transitions.)
+  useEffect(() => {
+    if (skipPendingRef.current && (sessionPhase === 'focus' || sessionPhase === 'long-break')) {
+      skipPendingRef.current = false;
+      timer.reset();
+      timer.resume();
+    }
+  }, [blockIndex, sessionPhase, timer]);
+
   return {
     mode: timer.mode,
     timerPhase: timer.phase,
@@ -264,7 +313,7 @@ export function useSession(
     canSwitch: timer.canSwitch,
     pause: timer.pause,
     resume: timer.resume,
-    skip: timer.skip,
+    skip: skipBlock,
     switchMode: timer.switchMode,
     selectMode: timer.selectMode,
     sessionPhase,
