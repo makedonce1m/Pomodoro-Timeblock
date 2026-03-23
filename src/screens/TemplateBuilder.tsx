@@ -31,17 +31,41 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
   const blocksContainerRef = useRef<HTMLDivElement>(null)
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const pendingDrag = useRef<{ index: number; startY: number } | null>(null)
+  const autoScrollRaf = useRef<number | null>(null)
+  const autoScrollSpeed = useRef(0)
 
-  // Prevent the scroll container from scrolling while a drag is in progress.
-  // Must be a non-passive listener so preventDefault() is honoured.
+  // Prevent touch-driven scroll while dragging; auto-scroll via JS instead.
+  // Must be non-passive so preventDefault() is honoured.
   useEffect(() => {
     if (dragging === null) return
     const el = blocksContainerRef.current
     if (!el) return
     const prevent = (e: TouchEvent) => e.preventDefault()
     el.addEventListener('touchmove', prevent, { passive: false })
-    return () => el.removeEventListener('touchmove', prevent)
+    return () => {
+      el.removeEventListener('touchmove', prevent)
+      stopAutoScroll()
+    }
   }, [dragging])
+
+  function startAutoScroll(speed: number) {
+    autoScrollSpeed.current = speed
+    if (autoScrollRaf.current !== null) return // loop already running
+    function tick() {
+      const el = blocksContainerRef.current
+      if (el && autoScrollSpeed.current !== 0) el.scrollTop += autoScrollSpeed.current
+      autoScrollRaf.current = requestAnimationFrame(tick)
+    }
+    autoScrollRaf.current = requestAnimationFrame(tick)
+  }
+
+  function stopAutoScroll() {
+    if (autoScrollRaf.current !== null) {
+      cancelAnimationFrame(autoScrollRaf.current)
+      autoScrollRaf.current = null
+    }
+    autoScrollSpeed.current = 0
+  }
 
   function handleTouchStart(index: number, clientY: number) {
     pendingDrag.current = { index, startY: clientY }
@@ -65,6 +89,23 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
       return
     }
     if (dragging === null) return
+
+    // Auto-scroll when finger is near the top or bottom edge
+    const ZONE = 64
+    const MAX_SPEED = 10
+    const container = blocksContainerRef.current
+    if (container) {
+      const { top, bottom } = container.getBoundingClientRect()
+      if (clientY < top + ZONE) {
+        startAutoScroll(-((ZONE - (clientY - top)) / ZONE) * MAX_SPEED)
+      } else if (clientY > bottom - ZONE) {
+        startAutoScroll(((ZONE - (bottom - clientY)) / ZONE) * MAX_SPEED)
+      } else {
+        stopAutoScroll()
+      }
+    }
+
+    // Update drop position from block midpoints
     const mids = blockEls.current.map(el => {
       if (!el) return 0
       const r = el.getBoundingClientRect()
@@ -78,6 +119,7 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
   }
 
   function handleTouchEnd() {
+    stopAutoScroll()
     if (longPressTimer.current !== null) {
       clearTimeout(longPressTimer.current)
       longPressTimer.current = null

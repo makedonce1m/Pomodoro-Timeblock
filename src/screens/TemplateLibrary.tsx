@@ -44,7 +44,7 @@ export function TemplateLibrary({ templates, activeTemplateId, timeFormat, onNew
   return (
     <div className={styles.screen}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Templates</h1>
+        <h1 className={styles.title}>Plans</h1>
         <button className={styles.newButton} onClick={onNew}>+ New</button>
       </div>
 
