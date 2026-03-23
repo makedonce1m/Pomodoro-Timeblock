@@ -178,12 +178,9 @@
   border-bottom: none;
 }
 
-.nextLabel {
-  font-size: 0.58rem;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: #334155;
-  flex-shrink: 0;
+.upcomingRowCurrent .nextName,
+.upcomingRowCurrent .nextTime {
+  color: #F59E0B;
 }
 
 .nextName {
