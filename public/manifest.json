@@ -1,6 +1,6 @@
 {
-  "name": "Pomodoro Timeblock",
-  "short_name": "Pomodoro",
+  "name": "PomoBlock",
+  "short_name": "PomoBlock",
   "start_url": "/Pomodoro-Timeblock/",
   "display": "standalone",
   "orientation": "portrait",
