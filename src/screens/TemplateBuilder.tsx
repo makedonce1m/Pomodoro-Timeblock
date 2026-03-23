@@ -75,7 +75,7 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
         setDropAt(pendingDrag.current.index)
         pendingDrag.current = null
       }
-    }, 500)
+    }, 300)
   }
 
   function handleTouchMove(clientY: number) {
