@@ -125,18 +125,6 @@ export function RunScreen({ template, autoContinue, keepScreenOn, timeFormat, on
   return (
     <div className={styles.screen}>
 
-      {/* ── Session context header ── */}
-      <div className={styles.sessionHeader}>
-        <div className={styles.sessionInfo}>
-          <p className={styles.templateName}>{template.label}{currentBlock ? ` · ${currentBlock.label}` : ''}</p>
-          {isLongBreak && currentBlock && (
-            <p className={styles.blockName}>{currentBlock.label}</p>
-          )}
-        </div>
-        <button className={styles.endButton} onClick={() => setShowExitConfirm(true)} aria-label="End session">✕</button>
-      </div>
-      <div className={styles.divider} />
-
       {/* ── Pomodoro progress dots ── */}
       {!isLongBreak && !isDone && totalPomodoros > 0 && (
         <div className={styles.dots} aria-label={`Pomodoro ${pomodoroIndex + 1} of ${totalPomodoros}`}>
@@ -226,6 +214,7 @@ export function RunScreen({ template, autoContinue, keepScreenOn, timeFormat, on
       )}
 
       {/* ── Upcoming blocks ── */}
+      <div className={styles.divider} />
       {currentBlock && !isDone && (
         <div className={styles.upcoming}>
           <div className={`${styles.upcomingRow} ${styles.upcomingRowCurrent}`}>
@@ -239,6 +228,13 @@ export function RunScreen({ template, autoContinue, keepScreenOn, timeFormat, on
             </div>
           ))}
         </div>
+      )}
+
+      {/* ── Cancel Plan button ── */}
+      {!isDone && (
+        <button className={styles.cancelPlanButton} onClick={() => setShowExitConfirm(true)}>
+          Cancel Plan
+        </button>
       )}
 
       {showExitConfirm && (
