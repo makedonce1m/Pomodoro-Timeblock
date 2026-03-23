@@ -15,8 +15,8 @@
 /* ── Circular ring ── */
 .ringContainer {
   position: relative;
-  width: 220px;
-  height: 220px;
+  width: clamp(185px, 57vw, 250px);
+  height: clamp(185px, 57vw, 250px);
 }
 
 .ring {
@@ -35,7 +35,7 @@
 }
 
 .timeDisplay {
-  font-size: 3rem;
+  font-size: clamp(2.5rem, 12vw, 3.2rem);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
