@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import type { DayTemplate } from '../types'
+import type { DayTemplate, PomodoroMode, PomodoroType } from '../types'
 import type { TimeFormat } from '../hooks/useSettings'
 import { useSession } from '../hooks/useSession'
 import { useWakeLock } from '../hooks/useWakeLock'
@@ -13,14 +13,17 @@ interface Props {
   autoContinue: boolean
   keepScreenOn: boolean
   timeFormat: TimeFormat
+  pomodoroType: PomodoroType
+  defaultMode: PomodoroMode
   onDeactivate: () => void
 }
 
-export function RunScreen({ template, autoContinue, keepScreenOn, timeFormat, onDeactivate }: Props) {
-  const session = useSession(template, autoContinue)
+export function RunScreen({ template, autoContinue, keepScreenOn, timeFormat, pomodoroType, defaultMode, onDeactivate }: Props) {
+  const session = useSession(template, autoContinue, pomodoroType, defaultMode)
   useWakeLock(session.isRunning && keepScreenOn)
 
   const {
+    pomodoroType: sessionPomodoroType,
     mode, timerPhase, elapsedSeconds, phaseDurationSeconds, isRunning, canSwitch,
     sessionPhase, blockIndex, pomodoroIndex, totalPomodoros, isClosingInterval,
     currentBlock, isDone, waitingForContinue,
@@ -159,6 +162,7 @@ export function RunScreen({ template, autoContinue, keepScreenOn, timeFormat, on
           onTouchEnd={handleTouchEnd}
         >
           <PomodoroTimer
+            pomodoroType={sessionPomodoroType}
             mode={mode}
             phase={timerPhase}
             elapsedSeconds={elapsedSeconds}
@@ -187,6 +191,7 @@ export function RunScreen({ template, autoContinue, keepScreenOn, timeFormat, on
             }}
           >
             <PomodoroTimer
+              pomodoroType={sessionPomodoroType}
               mode={mode}
               phase="focus"
               elapsedSeconds={0}

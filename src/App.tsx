@@ -10,6 +10,7 @@ import { useSettings } from './hooks/useSettings'
 import { useWakeLock } from './hooks/useWakeLock'
 import type { DayTemplate } from './types'
 import { DEFAULT_DAY_TEMPLATE } from './defaults/schedule'
+import { CLASSIC_POMODORO_FOCUS_DURATION, CLASSIC_POMODORO_BREAK_DURATION } from './constants/timer'
 import styles from './App.module.css'
 
 const TEMPLATES_KEY = 'pomodoro-templates'
@@ -28,7 +29,13 @@ function App() {
   const { settings, update: updateSettings } = useSettings()
 
   // Standalone timer — always alive so it keeps running when switching tabs.
-  const timer = usePomodoroTimer()
+  const timer = usePomodoroTimer(
+    settings.pomodoroType === 'classic' ? 'standard' : settings.defaultMode,
+    {
+      customFocusDuration: settings.pomodoroType === 'classic' ? CLASSIC_POMODORO_FOCUS_DURATION : undefined,
+      customBreakDuration: settings.pomodoroType === 'classic' ? CLASSIC_POMODORO_BREAK_DURATION : undefined,
+    },
+  )
   const timerStarted = timer.hasStarted
 
   const activeTemplate = activeTemplateId
@@ -48,6 +55,7 @@ function App() {
         <main className={`${styles.content} ${view === 'run' && !activeTemplate ? styles.contentCentered : ''}`}>
           {view === 'run' && !activeTemplate && (
             <PomodoroTimer
+              pomodoroType={settings.pomodoroType}
               mode={timer.mode}
               phase={timer.phase}
               elapsedSeconds={timer.elapsedSeconds}
@@ -71,6 +79,8 @@ function App() {
               autoContinue={settings.autoContinue}
               keepScreenOn={settings.keepScreenOn}
               timeFormat={settings.timeFormat}
+              pomodoroType={settings.pomodoroType}
+              defaultMode={settings.defaultMode}
               onDeactivate={() => setActiveTemplateId(null)}
             />
           )}

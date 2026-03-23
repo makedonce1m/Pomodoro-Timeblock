@@ -12,6 +12,10 @@ export const POMODORO_BREAK_DURATION: Record<PomodoroMode, number> = {
   comfort:  10 * MINUTE, //  600 s
 };
 
+/** Classic Pomodoro: 20 min focus / 5 min break, fixed — no sub-modes. */
+export const CLASSIC_POMODORO_FOCUS_DURATION = 20 * MINUTE; // 1200 s
+export const CLASSIC_POMODORO_BREAK_DURATION =  5 * MINUTE; //  300 s
+
 /** 30-minute closing interval: pure focus, no trailing break. */
 export const CLOSING_INTERVAL_DURATION = 30 * MINUTE;
 
