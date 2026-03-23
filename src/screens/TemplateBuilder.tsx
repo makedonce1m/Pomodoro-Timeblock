@@ -114,57 +114,66 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
             key={block.id}
             className={`${styles.block} ${block.type === 'focus' ? styles.blockFocus : styles.blockBreak}`}
           >
-            <div className={styles.blockHeader}>
-              <span className={styles.blockType}>
-                {block.type === 'focus' ? 'Focus' : 'Break'}
-              </span>
-              {block.type === 'focus' && (
-                <span className={styles.pomCount}>{block.pomodoroCount} Pomodoros</span>
-              )}
-              <button
-                className={styles.deleteBlock}
-                onClick={() => deleteBlock(block.id)}
-                aria-label="Remove block"
-              >
-                ×
-              </button>
-            </div>
-
-            <input
-              className={styles.blockLabel}
-              value={block.label}
-              onChange={e => updateField(block.id, 'label', e.target.value)}
-              placeholder="Block name"
-              aria-label="Block name"
-            />
-
-            <div className={styles.timeRow}>
-              <label className={styles.timeField}>
-                <span className={styles.timeFieldLabel}>Start</span>
-                <TimeInput
-                  value={block.startTime}
-                  timeFormat={timeFormat}
-                  onChange={v => updateField(block.id, 'startTime', v)}
-                />
-              </label>
-              <span className={styles.timeSep}>→</span>
-              <label className={styles.timeField}>
-                <span className={styles.timeFieldLabel}>End</span>
-                {block.type === 'focus' ? (
-                  <FocusEndSelect
-                    startTime={block.startTime}
-                    endTime={block.endTime}
-                    timeFormat={timeFormat}
-                    onChange={v => updateField(block.id, 'endTime', v)}
-                  />
-                ) : (
-                  <TimeInput
-                    value={block.endTime}
-                    timeFormat={timeFormat}
-                    onChange={v => updateField(block.id, 'endTime', v)}
-                  />
+            {block.type === 'focus' && (
+              <div className={styles.blockPill} aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+            )}
+            <div className={styles.blockContent}>
+              <div className={styles.blockHeader}>
+                <span className={styles.blockType}>
+                  {block.type === 'focus' ? 'Focus' : 'Break'}
+                </span>
+                {block.type === 'focus' && (
+                  <span className={styles.pomCount}>{block.pomodoroCount} Pomodoros</span>
                 )}
-              </label>
+                <button
+                  className={styles.deleteBlock}
+                  onClick={() => deleteBlock(block.id)}
+                  aria-label="Remove block"
+                >
+                  ×
+                </button>
+              </div>
+
+              <input
+                className={styles.blockLabel}
+                value={block.label}
+                onChange={e => updateField(block.id, 'label', e.target.value)}
+                placeholder="Block name"
+                aria-label="Block name"
+              />
+
+              <div className={styles.timeRows}>
+                <label className={styles.timeRowItem}>
+                  <span className={styles.timeLabel}>Start</span>
+                  <TimeInput
+                    value={block.startTime}
+                    timeFormat={timeFormat}
+                    onChange={v => updateField(block.id, 'startTime', v)}
+                  />
+                </label>
+                <label className={styles.timeRowItem}>
+                  <span className={styles.timeLabel}>End</span>
+                  {block.type === 'focus' ? (
+                    <FocusEndSelect
+                      startTime={block.startTime}
+                      endTime={block.endTime}
+                      timeFormat={timeFormat}
+                      onChange={v => updateField(block.id, 'endTime', v)}
+                    />
+                  ) : (
+                    <TimeInput
+                      value={block.endTime}
+                      timeFormat={timeFormat}
+                      onChange={v => updateField(block.id, 'endTime', v)}
+                    />
+                  )}
+                </label>
+              </div>
             </div>
           </div>
         ))}

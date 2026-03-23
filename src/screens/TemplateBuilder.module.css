@@ -91,19 +91,37 @@
 .block {
   background: #1c1c1c;
   border-radius: 0.75rem;
-  padding: 1rem;
+  padding: 0.75rem;
   display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-  border-left: 3px solid transparent;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0.75rem;
 }
 
 .blockFocus {
-  border-left-color: #F59E0B;
+  /* pill provides the visual indicator */
 }
 
 .blockBreak {
-  border-left-color: #334155;
+  border-left: 3px solid #334155;
+}
+
+.blockPill {
+  flex-shrink: 0;
+  width: 42px;
+  background: #F59E0B;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.blockContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  min-width: 0;
 }
 
 .blockHeader {
@@ -164,25 +182,31 @@
   border-color: #475569;
 }
 
-/* ── Time row ── */
-.timeRow {
+/* ── Time rows ── */
+.timeRows {
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.timeRowItem {
+  display: flex;
+  align-items: center;
   gap: 0.5rem;
 }
 
-.timeField {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  flex: 1;
-}
-
-.timeFieldLabel {
+.timeLabel {
   font-size: 0.6rem;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: #475569;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  color: #94A3B8;
+  background: #2a2a2a;
+  padding: 0.2rem 0.45rem;
+  border-radius: 0.35rem;
+  flex-shrink: 0;
+  width: 2.8rem;
+  text-align: center;
 }
 
 .timeInput {
@@ -195,7 +219,8 @@
   font-variant-numeric: tabular-nums;
   padding: 0.45rem 0.55rem;
   outline: none;
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   transition: border-color 0.15s;
   color-scheme: dark;
 }
@@ -215,7 +240,8 @@
   padding: 0.45rem 0.55rem;
   transition: border-color 0.15s;
   cursor: pointer;
-  width: 100%;
+  flex: 1;
+  min-width: 0;
 }
 
 .timeInputWrapper:focus-within {
@@ -241,13 +267,6 @@
   /* value is still HH:mm; picker may show device locale format */
 }
 
-.timeSep {
-  color: #334155;
-  font-size: 0.9rem;
-  padding-bottom: 0.45rem;
-  flex-shrink: 0;
-}
-
 /* Focus block end-time dropdown */
 .endSelect {
   background: #141414;
@@ -259,7 +278,8 @@
   font-variant-numeric: tabular-nums;
   padding: 0.45rem 0.55rem;
   outline: none;
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   transition: border-color 0.15s;
   color-scheme: dark;
   appearance: none;
