@@ -1,0 +1,82 @@
+/* ── Type-picker bottom sheet ── */
+.typeOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: flex-end;
+  z-index: 100;
+}
+
+.typeSheet {
+  width: 100%;
+  background: #141414;
+  border-top: 1px solid #2a2a2a;
+  border-radius: 1.25rem 1.25rem 0 0;
+  padding: 1.5rem 1.25rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.typeTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #F1F5F9;
+}
+
+.typeDesc {
+  font-size: 0.82rem;
+  color: #64748B;
+  margin-bottom: 0.25rem;
+}
+
+.typeOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.typeOption {
+  background: #1c1c1c;
+  border: 1px solid #2a2a2a;
+  border-radius: 0.75rem;
+  color: #F1F5F9;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 0.9rem 1rem;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.typeOption:active {
+  background: #222;
+  border-color: #F59E0B;
+}
+
+.typeOptionSub {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #64748B;
+}
+
+.typeCancel {
+  background: none;
+  border: none;
+  color: #475569;
+  font-size: 0.85rem;
+  font-family: inherit;
+  padding: 0.6rem;
+  cursor: pointer;
+  text-align: center;
+  transition: color 0.15s;
+}
+
+.typeCancel:active {
+  color: #94A3B8;
+}

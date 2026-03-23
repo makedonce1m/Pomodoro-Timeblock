@@ -32,4 +32,6 @@ export interface DayTemplate {
   id: string;
   label: string;
   blocks: TimeBlock[];
+  /** Locked Pomodoro type for this plan. Defaults to 'adaptive' for older saved templates. */
+  pomodoroType?: PomodoroType;
 }

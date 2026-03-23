@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import type { DayTemplate, TimeBlock, FocusBlock, LongBreakBlock } from '../types'
 import type { TimeFormat } from '../hooks/useSettings'
 import { calcPomodoroCount, addMinutes, formatDisplayTime } from '../utils/timeblock'
@@ -23,6 +23,43 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
   const [blocks, setBlocks] = useState<TimeBlock[]>(template.blocks)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [showUnsaved, setShowUnsaved] = useState(false)
+
+  // ── Drag-to-reorder ──────────────────────────────────────────────
+  const [dragging, setDragging] = useState<number | null>(null)
+  const [dropAt, setDropAt] = useState<number | null>(null)
+  const blockEls = useRef<(HTMLDivElement | null)[]>([])
+
+  function startDrag(index: number) {
+    setDragging(index)
+    setDropAt(index)
+  }
+
+  function onDragMove(clientY: number) {
+    if (dragging === null) return
+    const mids = blockEls.current.map(el => {
+      if (!el) return 0
+      const r = el.getBoundingClientRect()
+      return r.top + r.height / 2
+    })
+    let drop = blocks.length
+    for (let i = 0; i < mids.length; i++) {
+      if (clientY < mids[i]) { drop = i; break }
+    }
+    setDropAt(drop)
+  }
+
+  function commitDrag() {
+    if (dragging !== null && dropAt !== null && dropAt !== dragging && dropAt !== dragging + 1) {
+      const next = [...blocks]
+      const [item] = next.splice(dragging, 1)
+      const insertAt = dropAt > dragging ? dropAt - 1 : dropAt
+      next.splice(insertAt, 0, item)
+      setBlocks(next)
+    }
+    setDragging(null)
+    setDropAt(null)
+  }
+  // ────────────────────────────────────────────────────────────────
 
   const hasChanges =
     label !== template.label ||
@@ -105,88 +142,126 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
         </button>
       </div>
 
+      {template.pomodoroType && (
+        <div className={styles.typeBadgeRow}>
+          <span className={styles.typeBadge}>
+            {template.pomodoroType === 'classic' ? 'Classic' : 'Adaptive'}
+          </span>
+          <span className={styles.typeBadgeLocked}>locked</span>
+        </div>
+      )}
+
       <div className={styles.blocks}>
         {blocks.length === 0 && (
           <p className={styles.empty}>Add your first block below.</p>
         )}
-        {blocks.map(block => (
-          <div
-            key={block.id}
-            className={`${styles.block} ${block.type === 'focus' ? styles.blockFocus : styles.blockBreak}`}
-          >
-            {block.type === 'focus' ? (
-              <div className={`${styles.blockPill} ${styles.blockPillFocus}`} aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-            ) : (
-              <div className={`${styles.blockPill} ${styles.blockPillBreak}`} aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                  <path d="M18 8h1a4 4 0 0 1 0 8h-1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <line x1="6" y1="1" x2="6" y2="4" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-                  <line x1="10" y1="1" x2="10" y2="4" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-                  <line x1="14" y1="1" x2="14" y2="4" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
+        {blocks.map((block, idx) => (
+          <div key={block.id}>
+            {dragging !== null && dropAt === idx && (
+              <div className={styles.dropLine} />
             )}
-            <div className={styles.blockContent}>
-              <div className={styles.blockHeader}>
-                <span className={styles.blockType}>
-                  {block.type === 'focus' ? 'Focus' : 'Break'}
-                </span>
-                {block.type === 'focus' && (
-                  <span className={styles.pomCount}>{block.pomodoroCount} Pomodoros</span>
-                )}
-                <button
-                  className={styles.deleteBlock}
-                  onClick={() => deleteBlock(block.id)}
-                  aria-label="Remove block"
-                >
-                  ×
-                </button>
-              </div>
+            <div
+              ref={el => { blockEls.current[idx] = el }}
+              className={[
+                styles.block,
+                block.type === 'focus' ? styles.blockFocus : styles.blockBreak,
+                dragging === idx ? styles.blockDragging : '',
+              ].filter(Boolean).join(' ')}
+            >
+              <button
+                className={styles.dragHandle}
+                aria-label="Drag to reorder"
+                onTouchStart={() => startDrag(idx)}
+                onTouchMove={e => onDragMove(e.touches[0].clientY)}
+                onTouchEnd={commitDrag}
+              >
+                <svg width="14" height="18" viewBox="0 0 14 18" fill="none" aria-hidden="true">
+                  <circle cx="4" cy="4" r="1.5" fill="currentColor"/>
+                  <circle cx="10" cy="4" r="1.5" fill="currentColor"/>
+                  <circle cx="4" cy="9" r="1.5" fill="currentColor"/>
+                  <circle cx="10" cy="9" r="1.5" fill="currentColor"/>
+                  <circle cx="4" cy="14" r="1.5" fill="currentColor"/>
+                  <circle cx="10" cy="14" r="1.5" fill="currentColor"/>
+                </svg>
+              </button>
 
-              <input
-                className={styles.blockLabel}
-                value={block.label}
-                onChange={e => updateField(block.id, 'label', e.target.value)}
-                placeholder="Block name"
-                aria-label="Block name"
-              />
-
-              <div className={styles.timeRows}>
-                <label className={styles.timeRowItem}>
-                  <span className={styles.timeLabel}>Start</span>
-                  <TimeInput
-                    value={block.startTime}
-                    timeFormat={timeFormat}
-                    onChange={v => updateField(block.id, 'startTime', v)}
-                  />
-                </label>
-                <label className={styles.timeRowItem}>
-                  <span className={styles.timeLabel}>End</span>
-                  {block.type === 'focus' ? (
-                    <FocusEndSelect
-                      startTime={block.startTime}
-                      endTime={block.endTime}
-                      timeFormat={timeFormat}
-                      onChange={v => updateField(block.id, 'endTime', v)}
-                    />
-                  ) : (
-                    <TimeInput
-                      value={block.endTime}
-                      timeFormat={timeFormat}
-                      onChange={v => updateField(block.id, 'endTime', v)}
-                    />
+              {block.type === 'focus' ? (
+                <div className={`${styles.blockPill} ${styles.blockPillFocus}`} aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+              ) : (
+                <div className={`${styles.blockPill} ${styles.blockPillBreak}`} aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path d="M18 8h1a4 4 0 0 1 0 8h-1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <line x1="6" y1="1" x2="6" y2="4" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                    <line x1="10" y1="1" x2="10" y2="4" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                    <line x1="14" y1="1" x2="14" y2="4" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                </div>
+              )}
+              <div className={styles.blockContent}>
+                <div className={styles.blockHeader}>
+                  <span className={styles.blockType}>
+                    {block.type === 'focus' ? 'Focus' : 'Break'}
+                  </span>
+                  {block.type === 'focus' && (
+                    <span className={styles.pomCount}>{block.pomodoroCount} Pomodoros</span>
                   )}
-                </label>
+                  <button
+                    className={styles.deleteBlock}
+                    onClick={() => deleteBlock(block.id)}
+                    aria-label="Remove block"
+                  >
+                    ×
+                  </button>
+                </div>
+
+                <input
+                  className={styles.blockLabel}
+                  value={block.label}
+                  onChange={e => updateField(block.id, 'label', e.target.value)}
+                  placeholder="Block name"
+                  aria-label="Block name"
+                />
+
+                <div className={styles.timeRows}>
+                  <label className={styles.timeRowItem}>
+                    <span className={styles.timeLabel}>Start</span>
+                    <TimeInput
+                      value={block.startTime}
+                      timeFormat={timeFormat}
+                      onChange={v => updateField(block.id, 'startTime', v)}
+                    />
+                  </label>
+                  <label className={styles.timeRowItem}>
+                    <span className={styles.timeLabel}>End</span>
+                    {block.type === 'focus' ? (
+                      <FocusEndSelect
+                        startTime={block.startTime}
+                        endTime={block.endTime}
+                        timeFormat={timeFormat}
+                        onChange={v => updateField(block.id, 'endTime', v)}
+                      />
+                    ) : (
+                      <TimeInput
+                        value={block.endTime}
+                        timeFormat={timeFormat}
+                        onChange={v => updateField(block.id, 'endTime', v)}
+                      />
+                    )}
+                  </label>
+                </div>
               </div>
             </div>
           </div>
         ))}
+        {dragging !== null && dropAt === blocks.length && (
+          <div className={styles.dropLine} />
+        )}
       </div>
 
       <div className={styles.footer}>

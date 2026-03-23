@@ -71,6 +71,34 @@
   background: #FBBF24;
 }
 
+/* ── Pomodoro type badge ── */
+.typeBadgeRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 1.25rem 0.75rem;
+  flex-shrink: 0;
+}
+
+.typeBadge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #F59E0B;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+}
+
+.typeBadgeLocked {
+  font-size: 0.65rem;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
 /* ── Block list ── */
 .blocks {
   flex: 1;
@@ -86,6 +114,42 @@
   font-size: 0.85rem;
   text-align: center;
   padding: 2.5rem 0;
+}
+
+/* ── Drag handle ── */
+.dragHandle {
+  flex-shrink: 0;
+  width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  background: none;
+  border: none;
+  color: #334155;
+  cursor: grab;
+  touch-action: none;
+  padding: 0;
+  border-radius: 0.35rem;
+  transition: color 0.15s;
+}
+
+.dragHandle:active {
+  color: #64748B;
+  cursor: grabbing;
+}
+
+/* ── Drop indicator ── */
+.dropLine {
+  height: 2px;
+  background: #F59E0B;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+/* ── Dragging state ── */
+.blockDragging {
+  opacity: 0.35;
 }
 
 .block {
