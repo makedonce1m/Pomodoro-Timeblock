@@ -25,6 +25,8 @@ export function RunScreen({ template, autoContinue, timeFormat, onDeactivate }: 
     startSession, continueToNext, goToPhase, resetPomodoro, jumpToPomodoro,
   } = session
 
+  const [showExitConfirm, setShowExitConfirm] = useState(false)
+
   const upcomingBlocks = template.blocks.slice(blockIndex + 1)
 
   // ── Animated swipe between pomodoros ──────────────────────────────
@@ -131,7 +133,7 @@ export function RunScreen({ template, autoContinue, timeFormat, onDeactivate }: 
             <p className={styles.blockName}>{currentBlock.label}</p>
           )}
         </div>
-        <button className={styles.endButton} onClick={onDeactivate} aria-label="End session">✕</button>
+        <button className={styles.endButton} onClick={() => setShowExitConfirm(true)} aria-label="End session">✕</button>
       </div>
 
       {/* ── Pomodoro progress dots ── */}
@@ -232,6 +234,25 @@ export function RunScreen({ template, autoContinue, timeFormat, onDeactivate }: 
               <span className={styles.nextTime}>{formatDisplayTime(block.startTime, timeFormat)}–{formatDisplayTime(block.endTime, timeFormat)}</span>
             </div>
           ))}
+        </div>
+      )}
+
+      {showExitConfirm && (
+        <div className={styles.confirmOverlay} onClick={() => setShowExitConfirm(false)}>
+          <div className={styles.confirmDialog} onClick={e => e.stopPropagation()}>
+            <p className={styles.confirmTitle}>Cancel session?</p>
+            <p className={styles.confirmBody}>
+              If you leave now you'll have to start a new session from the beginning.
+            </p>
+            <div className={styles.confirmActions}>
+              <button className={styles.confirmCancel} onClick={() => setShowExitConfirm(false)}>
+                Keep going
+              </button>
+              <button className={styles.confirmExit} onClick={onDeactivate}>
+                Yes, cancel
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

@@ -191,3 +191,81 @@
   color: #334155;
   flex-shrink: 0;
 }
+
+/* ── Exit confirmation dialog ── */
+.confirmOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.confirmDialog {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 1rem;
+  padding: 1.5rem 1.5rem 1.25rem;
+  width: min(320px, calc(100vw - 3rem));
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.confirmTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #F1F5F9;
+  margin: 0;
+}
+
+.confirmBody {
+  font-size: 0.8rem;
+  color: #64748B;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.confirmActions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.4rem;
+}
+
+.confirmCancel {
+  flex: 1;
+  background: #242424;
+  border: 1px solid #2a2a2a;
+  border-radius: 0.6rem;
+  color: #94A3B8;
+  font-size: 0.82rem;
+  font-family: inherit;
+  padding: 0.6rem 0;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.confirmCancel:active {
+  border-color: #475569;
+  color: #F1F5F9;
+}
+
+.confirmExit {
+  flex: 1;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: 0.6rem;
+  color: #ef4444;
+  font-size: 0.82rem;
+  font-family: inherit;
+  padding: 0.6rem 0;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.confirmExit:active {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+}
