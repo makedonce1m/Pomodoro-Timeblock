@@ -244,8 +244,11 @@ export function useSession(
   }, [timer]);
 
   const resetPomodoro = useCallback(() => {
-    timer.reset();
-    setSessionPhase(prev => prev === 'idle' ? 'idle' : 'focus');
+    timer.reset(timer.phase);
+    setSessionPhase(prev => {
+      if (prev === 'idle') return 'idle';
+      return timer.phase === 'break' ? 'short-break' : 'focus';
+    });
     setWaitingForContinue(false);
   }, [timer]);
 
