@@ -11,6 +11,9 @@ interface Props {
   onCancel: () => void
   /** Not provided for brand-new unsaved templates. */
   onDelete?: (id: string) => void
+  /** When set, show the unsaved-changes dialog and resolve it before proceeding. */
+  pendingNavAway?: (() => void) | null
+  onClearPendingNavAway?: () => void
 }
 
 /** Format HH:mm string for display (24h always in editor; time picker returns HH:mm regardless of locale) */
@@ -18,11 +21,12 @@ function fmt24(hhmm: string): string {
   return hhmm // already HH:mm
 }
 
-export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDelete }: Props) {
+export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDelete, pendingNavAway, onClearPendingNavAway }: Props) {
   const [label, setLabel] = useState(template.label)
   const [blocks, setBlocks] = useState<TimeBlock[]>(template.blocks)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [showUnsaved, setShowUnsaved] = useState(false)
+  const pendingNavAwayAction = useRef<(() => void) | null>(null)
 
   // ── Drag-to-reorder ──────────────────────────────────────────────
   const [dragging, setDragging] = useState<number | null>(null)
@@ -140,6 +144,18 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
   const hasChanges =
     label !== template.label ||
     JSON.stringify(blocks) !== JSON.stringify(template.blocks)
+
+  // When the nav triggers a leave while editing, show the unsaved dialog.
+  useEffect(() => {
+    if (!pendingNavAway) return
+    if (hasChanges) {
+      pendingNavAwayAction.current = pendingNavAway
+      setShowUnsaved(true)
+    } else {
+      onClearPendingNavAway?.()
+      pendingNavAway()
+    }
+  }, [pendingNavAway]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleBack() {
     if (hasChanges) {
@@ -367,14 +383,36 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
             <div className={styles.unsavedActions}>
               <button
                 className={styles.unsavedSave}
-                onClick={() => { onSave({ ...template, label, blocks }) }}
+                onClick={() => {
+                  onSave({ ...template, label, blocks })
+                  const act = pendingNavAwayAction.current
+                  pendingNavAwayAction.current = null
+                  onClearPendingNavAway?.()
+                  act?.()
+                }}
               >
                 Save
               </button>
-              <button className={styles.unsavedDiscard} onClick={onCancel}>
+              <button
+                className={styles.unsavedDiscard}
+                onClick={() => {
+                  const act = pendingNavAwayAction.current
+                  pendingNavAwayAction.current = null
+                  onClearPendingNavAway?.()
+                  onCancel()
+                  act?.()
+                }}
+              >
                 Discard
               </button>
-              <button className={styles.unsavedKeep} onClick={() => setShowUnsaved(false)}>
+              <button
+                className={styles.unsavedKeep}
+                onClick={() => {
+                  pendingNavAwayAction.current = null
+                  onClearPendingNavAway?.()
+                  setShowUnsaved(false)
+                }}
+              >
                 Keep editing
               </button>
             </div>

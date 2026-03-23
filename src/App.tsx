@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { BottomNav } from './components/BottomNav'
 import type { AppView } from './components/BottomNav'
 import { PomodoroTimer } from './components/PomodoroTimer'
@@ -25,6 +25,15 @@ function loadTemplates(): DayTemplate[] {
 
 function App() {
   const [view, setView] = useState<AppView>('run')
+  const templatesLeaveRef = useRef<((proceed: () => void) => void) | null>(null)
+
+  function handleNavChange(newView: AppView) {
+    if (view === 'templates' && newView !== 'templates' && templatesLeaveRef.current) {
+      templatesLeaveRef.current(() => setView(newView))
+    } else {
+      setView(newView)
+    }
+  }
   const [activeTemplateId, setActiveTemplateId] = useState<string | null>(null)
   const [templates, setTemplates] = useState<DayTemplate[]>(loadTemplates)
   const { settings, update: updateSettings } = useSettings()
@@ -111,6 +120,7 @@ function App() {
               onSaveTemplate={handleSaveTemplate}
               onDeleteTemplate={handleDeleteTemplate}
               timeFormat={settings.timeFormat}
+              onRegisterLeaveHandler={fn => { templatesLeaveRef.current = fn }}
             />
           )}
           {view === 'settings' && (
@@ -123,7 +133,7 @@ function App() {
       </div>
       {/* Nav is outside the layout so position:fixed reaches the real viewport bottom,
           unaffected by the layout's overflow:hidden */}
-      <BottomNav active={view} onChange={setView} />
+      <BottomNav active={view} onChange={handleNavChange} />
     </>
   )
 }
