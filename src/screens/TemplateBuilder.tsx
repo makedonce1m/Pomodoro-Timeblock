@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { DayTemplate, TimeBlock, FocusBlock, LongBreakBlock } from '../types'
 import type { TimeFormat } from '../hooks/useSettings'
-import { calcPomodoroCount, addMinutes } from '../utils/timeblock'
+import { calcPomodoroCount, addMinutes, formatDisplayTime } from '../utils/timeblock'
 import styles from './TemplateBuilder.module.css'
 
 interface Props {
@@ -70,6 +70,13 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
   function updateField(id: string, field: 'label' | 'startTime' | 'endTime', value: string) {
     setBlocks(prev => prev.map(b => {
       if (b.id !== id) return b
+      // When changing start time on a focus block, preserve the pomodoro count
+      // so the end time stays valid (start + N×30 min).
+      if (b.type === 'focus' && field === 'startTime') {
+        const count = Math.max(1, b.pomodoroCount)
+        const newEnd = addMinutes(value, count * 30)
+        return { ...b, startTime: value, endTime: newEnd } as TimeBlock
+      }
       const next = { ...b, [field]: value }
       if (next.type === 'focus') {
         next.pomodoroCount = calcPomodoroCount(next.startTime, next.endTime)
@@ -143,11 +150,20 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
               <span className={styles.timeSep}>→</span>
               <label className={styles.timeField}>
                 <span className={styles.timeFieldLabel}>End</span>
-                <TimeInput
-                  value={block.endTime}
-                  timeFormat={timeFormat}
-                  onChange={v => updateField(block.id, 'endTime', v)}
-                />
+                {block.type === 'focus' ? (
+                  <FocusEndSelect
+                    startTime={block.startTime}
+                    endTime={block.endTime}
+                    timeFormat={timeFormat}
+                    onChange={v => updateField(block.id, 'endTime', v)}
+                  />
+                ) : (
+                  <TimeInput
+                    value={block.endTime}
+                    timeFormat={timeFormat}
+                    onChange={v => updateField(block.id, 'endTime', v)}
+                  />
+                )}
               </label>
             </div>
           </div>
@@ -199,6 +215,53 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
         </div>
       )}
     </div>
+  )
+}
+
+/**
+ * Dropdown for focus block end times.
+ * Only offers options that are exact multiples of 30 minutes from startTime
+ * (1 pomo = 30 min, 2 pomos = 60 min, … up to 16 pomos / 8 hours).
+ */
+function FocusEndSelect({
+  startTime,
+  endTime,
+  timeFormat,
+  onChange,
+}: {
+  startTime: string
+  endTime: string
+  timeFormat: TimeFormat
+  onChange: (v: string) => void
+}) {
+  const MAX_POMOS = 16
+  const options = Array.from({ length: MAX_POMOS }, (_, i) => {
+    const n = i + 1
+    return { value: addMinutes(startTime, n * 30), pomos: n }
+  })
+
+  // Snap the stored endTime to the nearest valid option so the select always
+  // shows a selected value, even if the block was created before this constraint.
+  const [sh, sm] = startTime.split(':').map(Number)
+  const [eh, em] = endTime.split(':').map(Number)
+  const diffMin = (eh * 60 + em) - (sh * 60 + sm)
+  const snappedCount = Math.min(MAX_POMOS, Math.max(1, Math.round(diffMin / 30)))
+  const snappedValue = addMinutes(startTime, snappedCount * 30)
+
+  return (
+    <select
+      className={styles.endSelect}
+      value={snappedValue}
+      onChange={e => onChange(e.target.value)}
+    >
+      {options.map(o => (
+        <option key={o.value} value={o.value}>
+          {formatDisplayTime(o.value, timeFormat)}
+          {' '}·{' '}
+          {o.pomos === 1 ? '1 pomo' : `${o.pomos} pomos`}
+        </option>
+      ))}
+    </select>
   )
 }
 
