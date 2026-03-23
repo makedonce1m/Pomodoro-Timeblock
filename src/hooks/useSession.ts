@@ -188,9 +188,10 @@ export function useSession(
     // 'block-done' → next: manual continue path (autoContinue=false hits this too, but filtered by autoContinueRef)
     // 'long-break' → next: long-break ended naturally
     // 'focus' → 'long-break': closing interval ended with autoContinue=true
-    const isBlockTransition =
+    const isBlockTransition = prev !== sessionPhase && (
       prev === 'block-done' || prev === 'long-break' ||
-      (prev === 'focus' && sessionPhase === 'long-break');
+      (prev === 'focus' && sessionPhase === 'long-break')
+    );
 
     if (skipNoRestartRef.current) {
       skipNoRestartRef.current = false;
