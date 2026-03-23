@@ -72,7 +72,48 @@ export function SettingsScreen({ settings, onUpdate }: Props) {
 
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Timer</h2>
-        <p className={styles.comingSoon}>Pomodoro mode defaults, long break configuration — coming soon.</p>
+
+        <div className={styles.row}>
+          <div className={styles.rowInfo}>
+            <span className={styles.rowLabel}>Pomodoro type</span>
+            <span className={styles.rowDesc}>
+              Classic: 20 min focus / 5 min break.{' '}
+              Adaptive: choose between Standard (25/5) and Comfort (20/10).
+            </span>
+          </div>
+          <div className={styles.segmented}>
+            <button
+              className={`${styles.seg} ${settings.pomodoroType === 'classic' ? styles.segActive : ''}`}
+              onClick={() => onUpdate({ pomodoroType: 'classic' })}
+            >Classic</button>
+            <button
+              className={`${styles.seg} ${settings.pomodoroType === 'adaptive' ? styles.segActive : ''}`}
+              onClick={() => onUpdate({ pomodoroType: 'adaptive' })}
+            >Adaptive</button>
+          </div>
+        </div>
+
+        {settings.pomodoroType === 'adaptive' && (
+          <div className={styles.row}>
+            <div className={styles.rowInfo}>
+              <span className={styles.rowLabel}>Default mode</span>
+              <span className={styles.rowDesc}>
+                Standard: 25 min focus / 5 min break.{' '}
+                Comfort: 20 min focus / 10 min break (includes bathroom break).
+              </span>
+            </div>
+            <div className={styles.segmented}>
+              <button
+                className={`${styles.seg} ${settings.defaultMode === 'standard' ? styles.segActive : ''}`}
+                onClick={() => onUpdate({ defaultMode: 'standard' })}
+              >Standard</button>
+              <button
+                className={`${styles.seg} ${settings.defaultMode === 'comfort' ? styles.segActive : ''}`}
+                onClick={() => onUpdate({ defaultMode: 'comfort' })}
+              >Comfort</button>
+            </div>
+          </div>
+        )}
       </section>
     </div>
   )

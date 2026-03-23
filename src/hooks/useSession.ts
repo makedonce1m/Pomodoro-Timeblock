@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { DayTemplate, FocusBlock, LongBreakBlock, TimeBlock } from '../types';
-import { CLOSING_INTERVAL_DURATION } from '../constants/timer';
+import type { DayTemplate, FocusBlock, LongBreakBlock, PomodoroMode, PomodoroType, TimeBlock } from '../types';
+import {
+  CLOSING_INTERVAL_DURATION,
+  CLASSIC_POMODORO_FOCUS_DURATION,
+  CLASSIC_POMODORO_BREAK_DURATION,
+} from '../constants/timer';
 import { usePomodoroTimer } from './usePomodoroTimer';
 import { playSkipSound } from '../utils/sound';
-import type { PomodoroMode } from '../types';
 
 export type SessionPhase =
   | 'idle'          // session not yet started
@@ -22,6 +25,7 @@ function blockSeconds(block: { startTime: string; endTime: string }): number {
 
 export interface UseSessionReturn {
   // ── Timer state (forwarded) ──────────────────────────────────────
+  pomodoroType: PomodoroType;
   mode: PomodoroMode;
   timerPhase: 'focus' | 'break';
   elapsedSeconds: number;
@@ -59,6 +63,8 @@ export interface UseSessionReturn {
 export function useSession(
   template: DayTemplate | null,
   autoContinue: boolean,
+  pomodoroType: PomodoroType = 'adaptive',
+  defaultMode: PomodoroMode = 'standard',
 ): UseSessionReturn {
   const [blockIndex, setBlockIndex] = useState(0);
   const [pomodoroIndex, setPomodoroIndex] = useState(0);
@@ -96,6 +102,10 @@ export function useSession(
     : isClosingInterval
     ? CLOSING_INTERVAL_DURATION
     : undefined;
+
+  // For classic pomodoro type, supply fixed focus/break durations (20/5).
+  const customFocusDuration = pomodoroType === 'classic' ? CLASSIC_POMODORO_FOCUS_DURATION : undefined;
+  const customBreakDuration = pomodoroType === 'classic' ? CLASSIC_POMODORO_BREAK_DURATION : undefined;
 
   // Advance to the next block. Called by onPhaseComplete and continueToNext.
   const advanceBlock = useCallback((fromBlockIndex: number) => {
@@ -170,8 +180,10 @@ export function useSession(
   // Stable wrapper so the timer always calls the latest version.
   const [stableAutoAdvanceFn] = useState(() => () => autoAdvanceFnRef.current());
 
-  const timer = usePomodoroTimer('standard', {
+  const timer = usePomodoroTimer(pomodoroType === 'classic' ? 'standard' : defaultMode, {
     customPhaseDuration,
+    customFocusDuration,
+    customBreakDuration,
     onPhaseComplete: handlePhaseComplete,
     autoAdvance: stableAutoAdvanceFn,
   });
@@ -308,6 +320,7 @@ export function useSession(
   }, [timer]);
 
   return {
+    pomodoroType,
     mode: timer.mode,
     timerPhase: timer.phase,
     elapsedSeconds: timer.elapsedSeconds,

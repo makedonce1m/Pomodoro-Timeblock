@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { PomodoroMode, PomodoroType } from '../types';
 
 export type TimeFormat = '24h' | '12h';
 
@@ -6,12 +7,16 @@ export interface AppSettings {
   autoContinue: boolean;
   keepScreenOn: boolean;
   timeFormat: TimeFormat;
+  pomodoroType: PomodoroType;
+  defaultMode: PomodoroMode;
 }
 
 const DEFAULTS: AppSettings = {
   autoContinue: true,
   keepScreenOn: true,
   timeFormat: '24h',
+  pomodoroType: 'adaptive' as PomodoroType,
+  defaultMode: 'standard',
 };
 
 const KEY = 'pomodoro-app-settings';

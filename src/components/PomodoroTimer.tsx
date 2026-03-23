@@ -1,5 +1,8 @@
-import type { PomodoroMode } from '../types'
-import { POMODORO_FOCUS_DURATION, POMODORO_BREAK_DURATION } from '../constants/timer'
+import type { PomodoroMode, PomodoroType } from '../types'
+import {
+  POMODORO_FOCUS_DURATION, POMODORO_BREAK_DURATION,
+  CLASSIC_POMODORO_FOCUS_DURATION, CLASSIC_POMODORO_BREAK_DURATION,
+} from '../constants/timer'
 import styles from './PomodoroTimer.module.css'
 
 const RADIUS = 90
@@ -48,6 +51,7 @@ function IconSkip() {
 }
 
 interface Props {
+  pomodoroType?: PomodoroType
   mode: PomodoroMode
   phase: 'focus' | 'break'
   elapsedSeconds: number
@@ -68,21 +72,23 @@ interface Props {
 }
 
 export function PomodoroTimer({
+  pomodoroType = 'adaptive',
   mode, phase, elapsedSeconds, phaseDurationSeconds,
   isRunning, started, canSwitch, isClosingInterval = false, isLongBreak = false,
   onStart, onPause, onResume, onReset, onSkip, onGoToPhase, onSelectMode, onSwitchMode,
 }: Props) {
   const remaining = Math.max(0, phaseDurationSeconds - elapsedSeconds)
 
-  const focusTotal = POMODORO_FOCUS_DURATION[mode]
-  const breakTotal = POMODORO_BREAK_DURATION[mode]
+  const isClassic = pomodoroType === 'classic'
+  const focusTotal = isClassic ? CLASSIC_POMODORO_FOCUS_DURATION : POMODORO_FOCUS_DURATION[mode]
+  const breakTotal = isClassic ? CLASSIC_POMODORO_BREAK_DURATION : POMODORO_BREAK_DURATION[mode]
 
   const progressFraction = phaseDurationSeconds > 0 ? remaining / phaseDurationSeconds : 1
   const strokeDashoffset = CIRCUMFERENCE * (1 - progressFraction)
 
   return (
     <div className={styles.page}>
-      <p className={styles.pomodoroLabel}>{isLongBreak ? 'Long Break' : 'Adaptive Pomo'}</p>
+      <p className={styles.pomodoroLabel}>{isLongBreak ? 'Long Break' : isClassic ? 'Classic Pomo' : 'Adaptive Pomo'}</p>
 
       <div className={styles.ringContainer}>
         <svg className={styles.ring} viewBox="0 0 200 200">
@@ -172,7 +178,7 @@ export function PomodoroTimer({
         </div>
       </div>
 
-      {!isClosingInterval && !isLongBreak && <div className={styles.modeSelector}>
+      {!isClassic && !isClosingInterval && !isLongBreak && <div className={styles.modeSelector}>
         <button
           className={`${styles.modeButton} ${mode === 'comfort' ? styles.modeActive : ''}`}
           onClick={() => started ? onSwitchMode() : onSelectMode('comfort')}

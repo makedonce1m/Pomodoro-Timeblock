@@ -12,6 +12,10 @@ type Phase = 'focus' | 'break';
 export interface PomodoroTimerOptions {
   /** Override the duration (seconds) for the current phase. Use for closing/long-break intervals. */
   customPhaseDuration?: number;
+  /** Override focus duration (seconds). Lower priority than customPhaseDuration. */
+  customFocusDuration?: number;
+  /** Override break duration (seconds). Lower priority than customPhaseDuration. */
+  customBreakDuration?: number;
   /**
    * Called when a phase ends, before the timer auto-advances (or stops).
    * Useful for session-layer state updates.
@@ -72,8 +76,8 @@ export function usePomodoroTimer(
   const phaseDurationSeconds =
     options?.customPhaseDuration ??
     (phase === 'focus'
-      ? POMODORO_FOCUS_DURATION[mode]
-      : POMODORO_BREAK_DURATION[mode]);
+      ? (options?.customFocusDuration ?? POMODORO_FOCUS_DURATION[mode])
+      : (options?.customBreakDuration ?? POMODORO_BREAK_DURATION[mode]));
 
   const tick = useCallback(() => {
     if (runStartWallTime.current === null) return;
