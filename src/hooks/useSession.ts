@@ -258,7 +258,6 @@ export function useSession(
 
   // Skip: on closing interval or long-break → advance to next block.
   //        on any other pomo → advance to next pomo within the block.
-  const skipPendingRef = useRef(false);
   const skipBlock = useCallback(() => {
     const tmpl = templateRef.current;
     if (!tmpl) return;
@@ -278,31 +277,14 @@ export function useSession(
         const nb = tmpl.blocks[nextBi];
         setSessionPhase(nb.type === 'long-break' ? 'long-break' : 'focus');
         setWaitingForContinue(false);
-        if (autoContinueRef.current) {
-          skipPendingRef.current = true;
-        }
       }
     } else {
       // Advance to next pomo within the current block.
-      const nextPi = pomodoroIndexRef.current + 1;
-      setPomodoroIndex(nextPi);
+      setPomodoroIndex(pomodoroIndexRef.current + 1);
       setSessionPhase('focus');
       setWaitingForContinue(false);
-      if (autoContinueRef.current) {
-        timer.resume();
-      }
     }
   }, [timer]);
-
-  // Restart timer after a skip when autoContinue is on.
-  // (The normal restart effect only watches for 'block-done'/'long-break' transitions.)
-  useEffect(() => {
-    if (skipPendingRef.current && (sessionPhase === 'focus' || sessionPhase === 'long-break')) {
-      skipPendingRef.current = false;
-      timer.reset();
-      timer.resume();
-    }
-  }, [blockIndex, sessionPhase, timer]);
 
   return {
     mode: timer.mode,
