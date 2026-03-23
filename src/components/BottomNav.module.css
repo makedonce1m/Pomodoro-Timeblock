@@ -8,7 +8,7 @@
   display: flex;
   align-items: stretch;
   /* Fixed icon area + safe area fill below */
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-bottom: 0;
 }
 
 .tab {
@@ -19,8 +19,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 10px 0;
+  justify-content: flex-end;
+  padding: 10px 0 max(10px, env(safe-area-inset-bottom));
   gap: 0.25rem;
   cursor: pointer;
   transition: color 0.15s;
