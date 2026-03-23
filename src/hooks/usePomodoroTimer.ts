@@ -40,7 +40,7 @@ interface PomodoroTimerActions {
   start: () => void;
   pause: () => void;
   resume: () => void;
-  reset: () => void;
+  reset: (toPhase?: Phase) => void;
   skip: () => void;
   goToPhase: (phase: Phase) => void;
   switchMode: () => void;
@@ -116,12 +116,12 @@ export function usePomodoroTimer(
     rafHandle.current = requestAnimationFrame(tick);
   }, [tick]);
 
-  const reset = useCallback(() => {
+  const reset = useCallback((toPhase: Phase = 'focus') => {
     stopRaf();
     runStartWallTime.current = null;
     elapsedAtRunStart.current = 0;
     setElapsedSeconds(0);
-    setPhase('focus');
+    setPhase(toPhase);
     setIsRunning(false);
     setHasStarted(false);
   }, [stopRaf]);

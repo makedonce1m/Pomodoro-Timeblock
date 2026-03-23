@@ -184,11 +184,24 @@ export function useSession(
     const prev = prevSessionPhaseRef.current;
     prevSessionPhaseRef.current = sessionPhase;
 
+    // When autoContinue=true, restart the timer on any block transition.
+    // 'block-done' → next: manual continue path (autoContinue=false hits this too, but filtered by autoContinueRef)
+    // 'long-break' → next: long-break ended naturally
+    // 'focus' → 'long-break': closing interval ended with autoContinue=true
+    const isBlockTransition =
+      prev === 'block-done' || prev === 'long-break' ||
+      (prev === 'focus' && sessionPhase === 'long-break');
+
+    if (skipNoRestartRef.current) {
+      skipNoRestartRef.current = false;
+      return;
+    }
+
     if (
       autoContinueRef.current &&
       !waitingForContinue &&
       (sessionPhase === 'focus' || sessionPhase === 'long-break') &&
-      (prev === 'block-done' || prev === 'long-break')
+      isBlockTransition
     ) {
       // Block transition: restart timer for the new block.
       timer.reset();
@@ -244,8 +257,11 @@ export function useSession(
   }, [timer]);
 
   const resetPomodoro = useCallback(() => {
-    timer.reset();
-    setSessionPhase(prev => prev === 'idle' ? 'idle' : 'focus');
+    timer.reset(timer.phase);
+    setSessionPhase(prev => {
+      if (prev === 'idle') return 'idle';
+      return timer.phase === 'break' ? 'short-break' : 'focus';
+    });
     setWaitingForContinue(false);
   }, [timer]);
 
@@ -258,6 +274,8 @@ export function useSession(
 
   // Skip: on closing interval or long-break → advance to next block.
   //        on any other pomo → advance to next pomo within the block.
+  // skipNoRestartRef prevents the restart effect from auto-starting the timer after a skip.
+  const skipNoRestartRef = useRef(false);
   const skipBlock = useCallback(() => {
     const tmpl = templateRef.current;
     if (!tmpl) return;
@@ -265,7 +283,8 @@ export function useSession(
     timer.reset();
 
     if (isClosingIntervalRef.current || isLongBreakBlockRef.current) {
-      // Advance to next block.
+      // Advance to next block — leave timer stopped.
+      skipNoRestartRef.current = true;
       const nextBi = blockIndexRef.current + 1;
       if (nextBi >= tmpl.blocks.length) {
         setIsDone(true);

@@ -113,7 +113,7 @@ export function PomodoroTimer({
         </div>
       </div>
 
-      {!isLongBreak && (
+      {!isLongBreak && !isClosingInterval && (
         <div className={styles.cards}>
           <button
             className={`${styles.card} ${phase === 'focus' ? styles.cardActive : ''}`}
@@ -122,26 +122,25 @@ export function PomodoroTimer({
             aria-pressed={phase === 'focus'}
           >
             <span className={styles.cardIcon}>⚡</span>
-            <span className={styles.cardTime}>{formatMinutes(isClosingInterval ? 1800 : focusTotal)}</span>
+            <span className={styles.cardTime}>{formatMinutes(focusTotal)}</span>
             <span className={styles.cardLabel}>Focus</span>
           </button>
-          {isClosingInterval ? (
-            <div className={styles.closingNote}>
-              <span className={styles.closingNoteIcon}>🏁</span>
-              <span className={styles.closingNoteText}>No break{'\n'}Long rest follows</span>
-            </div>
-          ) : (
-            <button
-              className={`${styles.card} ${phase === 'break' ? styles.cardActive : ''}`}
-              onClick={() => onGoToPhase('break')}
-              disabled={isRunning}
-              aria-pressed={phase === 'break'}
-            >
-              <span className={styles.cardIcon}>🌙</span>
-              <span className={styles.cardTime}>{formatMinutes(breakTotal)}</span>
-              <span className={styles.cardLabel}>Break</span>
-            </button>
-          )}
+          <button
+            className={`${styles.card} ${phase === 'break' ? styles.cardActive : ''}`}
+            onClick={() => onGoToPhase('break')}
+            disabled={isRunning}
+            aria-pressed={phase === 'break'}
+          >
+            <span className={styles.cardIcon}>🌙</span>
+            <span className={styles.cardTime}>{formatMinutes(breakTotal)}</span>
+            <span className={styles.cardLabel}>Break</span>
+          </button>
+        </div>
+      )}
+      {isClosingInterval && (
+        <div className={styles.closingNote}>
+          <span className={styles.closingNoteIcon}>🏁</span>
+          <span className={styles.closingNoteText}>No break{'\n'}Long rest follows</span>
         </div>
       )}
 
