@@ -7,9 +7,6 @@
   border-top: 1px solid #1c1c1c;
   display: flex;
   align-items: flex-start;
-  /* extend nav background into the home indicator zone;
-     34px fallback for when env() is unavailable */
-  padding-bottom: env(safe-area-inset-bottom, 8px);
 }
 
 .tab {
