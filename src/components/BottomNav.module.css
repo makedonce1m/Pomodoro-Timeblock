@@ -8,7 +8,7 @@
   border-top: 1px solid #1c1c1c;
   display: flex;
   align-items: flex-start;
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom, 34px);
 }
 
 .tab {
@@ -36,11 +36,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.icon svg {
-  width: 26px;
-  height: 26px;
 }
 
 .label {
