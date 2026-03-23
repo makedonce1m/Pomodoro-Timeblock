@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background: #0a0a0a; /* own dark bg so body orange only shows in safe-area gap */
   /* Push content below the notch / Dynamic Island / status bar */
   padding-top: env(safe-area-inset-top, 0);
 }
