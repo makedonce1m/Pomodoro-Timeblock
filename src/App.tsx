@@ -30,11 +30,12 @@ function App() {
   // Standalone timer — always alive so it keeps running when switching tabs.
   const timer = usePomodoroTimer()
   const timerStarted = timer.hasStarted
-  useWakeLock(timer.isRunning && settings.keepScreenOn && !activeTemplate)
 
   const activeTemplate = activeTemplateId
     ? (loadTemplates().find(t => t.id === activeTemplateId) ?? null)
     : null
+
+  useWakeLock(timer.isRunning && settings.keepScreenOn && !activeTemplate)
 
   function handleActivate(id: string) {
     setActiveTemplateId(id)
