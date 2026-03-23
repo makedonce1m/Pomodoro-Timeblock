@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import type { DayTemplate, TimeBlock, FocusBlock, LongBreakBlock } from '../types'
 import type { TimeFormat } from '../hooks/useSettings'
 import { calcPomodoroCount, addMinutes, formatDisplayTime } from '../utils/timeblock'
@@ -28,8 +28,20 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
   const [dragging, setDragging] = useState<number | null>(null)
   const [dropAt, setDropAt] = useState<number | null>(null)
   const blockEls = useRef<(HTMLDivElement | null)[]>([])
+  const blocksContainerRef = useRef<HTMLDivElement>(null)
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const pendingDrag = useRef<{ index: number; startY: number } | null>(null)
+
+  // Prevent the scroll container from scrolling while a drag is in progress.
+  // Must be a non-passive listener so preventDefault() is honoured.
+  useEffect(() => {
+    if (dragging === null) return
+    const el = blocksContainerRef.current
+    if (!el) return
+    const prevent = (e: TouchEvent) => e.preventDefault()
+    el.addEventListener('touchmove', prevent, { passive: false })
+    return () => el.removeEventListener('touchmove', prevent)
+  }, [dragging])
 
   function handleTouchStart(index: number, clientY: number) {
     pendingDrag.current = { index, startY: clientY }
@@ -173,7 +185,7 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
         </div>
       )}
 
-      <div className={styles.blocks}>
+      <div className={styles.blocks} ref={blocksContainerRef}>
         {blocks.length === 0 && (
           <p className={styles.empty}>Add your first block below.</p>
         )}
@@ -189,15 +201,12 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
                 block.type === 'focus' ? styles.blockFocus : styles.blockBreak,
                 dragging === idx ? styles.blockDragging : '',
               ].filter(Boolean).join(' ')}
+              onTouchStart={e => handleTouchStart(idx, e.touches[0].clientY)}
+              onTouchMove={e => handleTouchMove(e.touches[0].clientY)}
+              onTouchEnd={handleTouchEnd}
             >
-              <button
-                className={styles.dragHandle}
-                aria-label="Drag to reorder"
-                onTouchStart={e => handleTouchStart(idx, e.touches[0].clientY)}
-                onTouchMove={e => handleTouchMove(e.touches[0].clientY)}
-                onTouchEnd={handleTouchEnd}
-              >
-                <svg width="14" height="18" viewBox="0 0 14 18" fill="none" aria-hidden="true">
+              <div className={styles.dragHandle} aria-hidden="true">
+                <svg width="14" height="18" viewBox="0 0 14 18" fill="none">
                   <circle cx="4" cy="4" r="1.5" fill="currentColor"/>
                   <circle cx="10" cy="4" r="1.5" fill="currentColor"/>
                   <circle cx="4" cy="9" r="1.5" fill="currentColor"/>
@@ -205,7 +214,7 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
                   <circle cx="4" cy="14" r="1.5" fill="currentColor"/>
                   <circle cx="10" cy="14" r="1.5" fill="currentColor"/>
                 </svg>
-              </button>
+              </div>
 
               {block.type === 'focus' ? (
                 <div className={`${styles.blockPill} ${styles.blockPillFocus}`} aria-hidden="true">

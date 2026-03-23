@@ -117,27 +117,16 @@
   padding: 2.5rem 0;
 }
 
-/* ── Drag handle ── */
+/* ── Drag handle (visual indicator only — touch target is the whole block) ── */
 .dragHandle {
   flex-shrink: 0;
-  width: 24px;
+  width: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   align-self: stretch;
-  background: none;
-  border: none;
-  color: #334155;
-  cursor: grab;
-  touch-action: none;
-  padding: 0;
-  border-radius: 0.35rem;
-  transition: color 0.15s;
-}
-
-.dragHandle:active {
-  color: #64748B;
-  cursor: grabbing;
+  color: #2a3a4a;
+  pointer-events: none;
 }
 
 /* ── Drop indicator ── */
@@ -161,6 +150,8 @@
   flex-direction: row;
   align-items: stretch;
   gap: 0.75rem;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .blockPill {
