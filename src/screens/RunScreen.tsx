@@ -86,17 +86,13 @@ export function RunScreen({ template, autoContinue, timeFormat, onDeactivate }: 
 
   function handleSwipeTransitionEnd() {
     if (animPhase.current === 'exit') {
-      animPhase.current = 'enter'
+      // The preview card animated to center — let the real card take over there instantly.
+      animPhase.current = 'idle'
       jumpToPomodoro(pendingJump.current!)
       pendingJump.current = null
-      // Position the new card off-screen from the opposite side, no transition
       setSwipeTransition(false)
-      setSwipeX(exitToward.current * -window.innerWidth)
-      // Double rAF: ensure DOM reflects the no-transition position before animating in
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        setSwipeTransition(true)
-        setSwipeX(0)
-      }))
+      setSwipeX(0)
+      setPreviewDir(null)
     } else if (animPhase.current === 'enter') {
       animPhase.current = 'idle'
       setSwipeTransition(false)
