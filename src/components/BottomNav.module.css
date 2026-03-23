@@ -38,12 +38,12 @@
 }
 
 .icon svg {
-  width: calc(var(--tab-height) * 0.45);
-  height: calc(var(--tab-height) * 0.45);
+  width: 22px;
+  height: 22px;
 }
 
 .label {
-  font-size: calc(var(--tab-height) * 0.195);
+  font-size: 0.6rem;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   font-family: inherit;
