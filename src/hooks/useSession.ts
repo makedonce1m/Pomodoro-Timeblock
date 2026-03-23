@@ -256,26 +256,40 @@ export function useSession(
     setWaitingForContinue(false);
   }, [timer]);
 
-  // Skip the entire current block and advance to the next one.
+  // Skip: on closing interval or long-break → advance to next block.
+  //        on any other pomo → advance to next pomo within the block.
   const skipPendingRef = useRef(false);
   const skipBlock = useCallback(() => {
     const tmpl = templateRef.current;
     if (!tmpl) return;
     playSkipSound();
     timer.reset();
-    const nextBi = blockIndexRef.current + 1;
-    if (nextBi >= tmpl.blocks.length) {
-      setIsDone(true);
-      setSessionPhase('done');
-      setWaitingForContinue(false);
+
+    if (isClosingIntervalRef.current || isLongBreakBlockRef.current) {
+      // Advance to next block.
+      const nextBi = blockIndexRef.current + 1;
+      if (nextBi >= tmpl.blocks.length) {
+        setIsDone(true);
+        setSessionPhase('done');
+        setWaitingForContinue(false);
+      } else {
+        setBlockIndex(nextBi);
+        setPomodoroIndex(0);
+        const nb = tmpl.blocks[nextBi];
+        setSessionPhase(nb.type === 'long-break' ? 'long-break' : 'focus');
+        setWaitingForContinue(false);
+        if (autoContinueRef.current) {
+          skipPendingRef.current = true;
+        }
+      }
     } else {
-      setBlockIndex(nextBi);
-      setPomodoroIndex(0);
-      const nb = tmpl.blocks[nextBi];
-      setSessionPhase(nb.type === 'long-break' ? 'long-break' : 'focus');
+      // Advance to next pomo within the current block.
+      const nextPi = pomodoroIndexRef.current + 1;
+      setPomodoroIndex(nextPi);
+      setSessionPhase('focus');
       setWaitingForContinue(false);
       if (autoContinueRef.current) {
-        skipPendingRef.current = true;
+        timer.resume();
       }
     }
   }, [timer]);
