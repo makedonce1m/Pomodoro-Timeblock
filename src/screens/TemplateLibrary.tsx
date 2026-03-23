@@ -37,9 +37,10 @@ interface Props {
   onNew: () => void
   onEdit: (t: DayTemplate) => void
   onActivate: (id: string) => void
+  onDeactivate: () => void
 }
 
-export function TemplateLibrary({ templates, activeTemplateId, timeFormat, onNew, onEdit, onActivate }: Props) {
+export function TemplateLibrary({ templates, activeTemplateId, timeFormat, onNew, onEdit, onActivate, onDeactivate }: Props) {
   return (
     <div className={styles.screen}>
       <div className={styles.header}>
@@ -93,6 +94,16 @@ export function TemplateLibrary({ templates, activeTemplateId, timeFormat, onNew
                 >
                   {isActive ? '●' : '▶'}
                 </button>
+                {isActive && (
+                  <button
+                    className={styles.cancelButton}
+                    onClick={e => { e.stopPropagation(); onDeactivate() }}
+                    aria-label="Cancel active plan"
+                    title="Stop running this plan"
+                  >
+                    ✕
+                  </button>
+                )}
               </div>
             </div>
           )

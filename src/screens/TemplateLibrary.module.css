@@ -169,3 +169,26 @@
   color: #ef4444;
   background: rgba(239, 68, 68, 0.1);
 }
+
+.cancelButton {
+  background: none;
+  border: 1px solid #2a2a2a;
+  color: #475569;
+  font-size: 0.75rem;
+  width: 40px;
+  height: 22px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+  font-family: inherit;
+}
+
+.cancelButton:active {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.3);
+}
