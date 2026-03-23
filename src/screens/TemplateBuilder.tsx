@@ -28,13 +28,30 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
   const [dragging, setDragging] = useState<number | null>(null)
   const [dropAt, setDropAt] = useState<number | null>(null)
   const blockEls = useRef<(HTMLDivElement | null)[]>([])
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const pendingDrag = useRef<{ index: number; startY: number } | null>(null)
 
-  function startDrag(index: number) {
-    setDragging(index)
-    setDropAt(index)
+  function handleTouchStart(index: number, clientY: number) {
+    pendingDrag.current = { index, startY: clientY }
+    longPressTimer.current = setTimeout(() => {
+      if (pendingDrag.current !== null) {
+        setDragging(pendingDrag.current.index)
+        setDropAt(pendingDrag.current.index)
+        pendingDrag.current = null
+      }
+    }, 500)
   }
 
-  function onDragMove(clientY: number) {
+  function handleTouchMove(clientY: number) {
+    if (pendingDrag.current !== null) {
+      // Not yet active — cancel if the finger moved (user is scrolling)
+      if (Math.abs(clientY - pendingDrag.current.startY) > 8) {
+        clearTimeout(longPressTimer.current!)
+        longPressTimer.current = null
+        pendingDrag.current = null
+      }
+      return
+    }
     if (dragging === null) return
     const mids = blockEls.current.map(el => {
       if (!el) return 0
@@ -48,7 +65,12 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
     setDropAt(drop)
   }
 
-  function commitDrag() {
+  function handleTouchEnd() {
+    if (longPressTimer.current !== null) {
+      clearTimeout(longPressTimer.current)
+      longPressTimer.current = null
+    }
+    pendingDrag.current = null
     if (dragging !== null && dropAt !== null && dropAt !== dragging && dropAt !== dragging + 1) {
       const next = [...blocks]
       const [item] = next.splice(dragging, 1)
@@ -171,9 +193,9 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
               <button
                 className={styles.dragHandle}
                 aria-label="Drag to reorder"
-                onTouchStart={() => startDrag(idx)}
-                onTouchMove={e => onDragMove(e.touches[0].clientY)}
-                onTouchEnd={commitDrag}
+                onTouchStart={e => handleTouchStart(idx, e.touches[0].clientY)}
+                onTouchMove={e => handleTouchMove(e.touches[0].clientY)}
+                onTouchEnd={handleTouchEnd}
               >
                 <svg width="14" height="18" viewBox="0 0 14 18" fill="none" aria-hidden="true">
                   <circle cx="4" cy="4" r="1.5" fill="currentColor"/>

@@ -67,11 +67,13 @@ export function TemplateLibrary({ templates, activeTemplateId, timeFormat, onNew
             >
               <div className={styles.cardBody}>
                 <p className={styles.cardName}>{t.label}</p>
-                {(span || focus > 0) && (
+                {(span || focus > 0 || t.pomodoroType) && (
                   <p className={styles.cardMeta}>
                     {span}
                     {span && focus > 0 && ' · '}
                     {focus > 0 && formatFocusTime(focus)}
+                    {(span || focus > 0) && t.pomodoroType && ' · '}
+                    {t.pomodoroType === 'classic' ? 'Classic' : t.pomodoroType === 'adaptive' ? 'Adaptive' : null}
                   </p>
                 )}
                 <div className={styles.blockPills}>
