@@ -56,6 +56,7 @@ interface Props {
   started: boolean
   canSwitch: boolean
   isClosingInterval?: boolean
+  isLongBreak?: boolean
   onStart: () => void
   onPause: () => void
   onResume: () => void
@@ -68,7 +69,7 @@ interface Props {
 
 export function PomodoroTimer({
   mode, phase, elapsedSeconds, phaseDurationSeconds,
-  isRunning, started, canSwitch, isClosingInterval = false,
+  isRunning, started, canSwitch, isClosingInterval = false, isLongBreak = false,
   onStart, onPause, onResume, onReset, onSkip, onGoToPhase, onSelectMode, onSwitchMode,
 }: Props) {
   const remaining = Math.max(0, phaseDurationSeconds - elapsedSeconds)
@@ -81,7 +82,7 @@ export function PomodoroTimer({
 
   return (
     <div className={styles.page}>
-      <p className={styles.pomodoroLabel}>Adaptive Pomo</p>
+      <p className={styles.pomodoroLabel}>{isLongBreak ? 'Long Break' : 'Adaptive Pomo'}</p>
 
       <div className={styles.ringContainer}>
         <svg className={styles.ring} viewBox="0 0 200 200">
@@ -112,35 +113,37 @@ export function PomodoroTimer({
         </div>
       </div>
 
-      <div className={styles.cards}>
-        <button
-          className={`${styles.card} ${phase === 'focus' ? styles.cardActive : ''}`}
-          onClick={() => onGoToPhase('focus')}
-          disabled={isRunning}
-          aria-pressed={phase === 'focus'}
-        >
-          <span className={styles.cardIcon}>⚡</span>
-          <span className={styles.cardTime}>{formatMinutes(isClosingInterval ? 1800 : focusTotal)}</span>
-          <span className={styles.cardLabel}>Focus</span>
-        </button>
-        {isClosingInterval ? (
-          <div className={styles.closingNote}>
-            <span className={styles.closingNoteIcon}>🏁</span>
-            <span className={styles.closingNoteText}>No break{'\n'}Long rest follows</span>
-          </div>
-        ) : (
+      {!isLongBreak && (
+        <div className={styles.cards}>
           <button
-            className={`${styles.card} ${phase === 'break' ? styles.cardActive : ''}`}
-            onClick={() => onGoToPhase('break')}
+            className={`${styles.card} ${phase === 'focus' ? styles.cardActive : ''}`}
+            onClick={() => onGoToPhase('focus')}
             disabled={isRunning}
-            aria-pressed={phase === 'break'}
+            aria-pressed={phase === 'focus'}
           >
-            <span className={styles.cardIcon}>🌙</span>
-            <span className={styles.cardTime}>{formatMinutes(breakTotal)}</span>
-            <span className={styles.cardLabel}>Break</span>
+            <span className={styles.cardIcon}>⚡</span>
+            <span className={styles.cardTime}>{formatMinutes(isClosingInterval ? 1800 : focusTotal)}</span>
+            <span className={styles.cardLabel}>Focus</span>
           </button>
-        )}
-      </div>
+          {isClosingInterval ? (
+            <div className={styles.closingNote}>
+              <span className={styles.closingNoteIcon}>🏁</span>
+              <span className={styles.closingNoteText}>No break{'\n'}Long rest follows</span>
+            </div>
+          ) : (
+            <button
+              className={`${styles.card} ${phase === 'break' ? styles.cardActive : ''}`}
+              onClick={() => onGoToPhase('break')}
+              disabled={isRunning}
+              aria-pressed={phase === 'break'}
+            >
+              <span className={styles.cardIcon}>🌙</span>
+              <span className={styles.cardTime}>{formatMinutes(breakTotal)}</span>
+              <span className={styles.cardLabel}>Break</span>
+            </button>
+          )}
+        </div>
+      )}
 
       <div className={styles.controls}>
         <div className={styles.sideControl}>
@@ -170,7 +173,7 @@ export function PomodoroTimer({
         </div>
       </div>
 
-      {!isClosingInterval && <div className={styles.modeSelector}>
+      {!isClosingInterval && !isLongBreak && <div className={styles.modeSelector}>
         <button
           className={`${styles.modeButton} ${mode === 'comfort' ? styles.modeActive : ''}`}
           onClick={() => started ? onSwitchMode() : onSelectMode('comfort')}
