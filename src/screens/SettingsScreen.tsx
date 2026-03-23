@@ -30,6 +30,23 @@ export function SettingsScreen({ settings, onUpdate }: Props) {
             <span className={styles.toggleThumb} />
           </button>
         </label>
+
+        <label className={styles.row}>
+          <div className={styles.rowInfo}>
+            <span className={styles.rowLabel}>Keep screen on</span>
+            <span className={styles.rowDesc}>
+              Prevent the screen from sleeping while the timer is running.
+            </span>
+          </div>
+          <button
+            role="switch"
+            aria-checked={settings.keepScreenOn}
+            className={`${styles.toggle} ${settings.keepScreenOn ? styles.toggleOn : ''}`}
+            onClick={() => onUpdate({ keepScreenOn: !settings.keepScreenOn })}
+          >
+            <span className={styles.toggleThumb} />
+          </button>
+        </label>
       </section>
 
       <section className={styles.section}>

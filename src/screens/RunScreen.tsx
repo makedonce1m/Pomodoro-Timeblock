@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import type { DayTemplate } from '../types'
 import type { TimeFormat } from '../hooks/useSettings'
 import { useSession } from '../hooks/useSession'
+import { useWakeLock } from '../hooks/useWakeLock'
 import { PomodoroTimer } from '../components/PomodoroTimer'
 import { formatDisplayTime } from '../utils/timeblock'
 import { POMODORO_FOCUS_DURATION, CLOSING_INTERVAL_DURATION } from '../constants/timer'
@@ -10,12 +11,14 @@ import styles from './RunScreen.module.css'
 interface Props {
   template: DayTemplate
   autoContinue: boolean
+  keepScreenOn: boolean
   timeFormat: TimeFormat
   onDeactivate: () => void
 }
 
-export function RunScreen({ template, autoContinue, timeFormat, onDeactivate }: Props) {
+export function RunScreen({ template, autoContinue, keepScreenOn, timeFormat, onDeactivate }: Props) {
   const session = useSession(template, autoContinue)
+  useWakeLock(session.isRunning && keepScreenOn)
 
   const {
     mode, timerPhase, elapsedSeconds, phaseDurationSeconds, isRunning, canSwitch,

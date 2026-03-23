@@ -4,11 +4,13 @@ export type TimeFormat = '24h' | '12h';
 
 export interface AppSettings {
   autoContinue: boolean;
+  keepScreenOn: boolean;
   timeFormat: TimeFormat;
 }
 
 const DEFAULTS: AppSettings = {
   autoContinue: true,
+  keepScreenOn: true,
   timeFormat: '24h',
 };
 

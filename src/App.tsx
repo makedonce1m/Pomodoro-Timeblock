@@ -7,6 +7,7 @@ import { RunScreen } from './screens/RunScreen'
 import { TemplatesScreen } from './screens/TemplatesScreen'
 import { SettingsScreen } from './screens/SettingsScreen'
 import { useSettings } from './hooks/useSettings'
+import { useWakeLock } from './hooks/useWakeLock'
 import type { DayTemplate } from './types'
 import { DEFAULT_DAY_TEMPLATE } from './defaults/schedule'
 import styles from './App.module.css'
@@ -29,6 +30,7 @@ function App() {
   // Standalone timer — always alive so it keeps running when switching tabs.
   const timer = usePomodoroTimer()
   const timerStarted = timer.hasStarted
+  useWakeLock(timer.isRunning && settings.keepScreenOn && !activeTemplate)
 
   const activeTemplate = activeTemplateId
     ? (loadTemplates().find(t => t.id === activeTemplateId) ?? null)
@@ -66,6 +68,7 @@ function App() {
             <RunScreen
               template={activeTemplate}
               autoContinue={settings.autoContinue}
+              keepScreenOn={settings.keepScreenOn}
               timeFormat={settings.timeFormat}
               onDeactivate={() => setActiveTemplateId(null)}
             />
