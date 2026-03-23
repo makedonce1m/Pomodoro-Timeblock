@@ -173,6 +173,7 @@ export function RunScreen({ template, autoContinue, timeFormat, onDeactivate }: 
             started={sessionStarted}
             canSwitch={canSwitch}
             isClosingInterval={isClosingInterval}
+            isLongBreak={isLongBreak}
             onStart={startSession}
             onPause={pause}
             onResume={handleResume}
