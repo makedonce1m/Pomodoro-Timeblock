@@ -45,14 +45,3 @@
   font-family: inherit;
   font-weight: 600;
 }
-
-/* Paint the safe-area gap below the nav with the same orange background */
-.nav::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  height: env(safe-area-inset-bottom, 50px);
-  background: orange;
-}
