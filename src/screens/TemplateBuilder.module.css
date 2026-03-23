@@ -98,22 +98,21 @@
   gap: 0.75rem;
 }
 
-.blockFocus {
-  /* pill provides the visual indicator */
-}
-
-.blockBreak {
-  border-left: 3px solid #334155;
-}
-
 .blockPill {
   flex-shrink: 0;
   width: 42px;
-  background: #F59E0B;
   border-radius: 999px;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.blockPillFocus {
+  background: #F59E0B;
+}
+
+.blockPillBreak {
+  background: #475569;
 }
 
 .blockContent {
