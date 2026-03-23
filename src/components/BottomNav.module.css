@@ -7,7 +7,7 @@
   border-top: 1px solid #1c1c1c;
   display: flex;
   align-items: flex-start;
-  padding-bottom: max(10px, env(safe-area-inset-bottom));
+  padding-bottom: 0;
 }
 
 .tab {
