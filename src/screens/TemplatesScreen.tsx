@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import type { DayTemplate, PomodoroType } from '../types'
 import { TemplateLibrary } from './TemplateLibrary'
 import { TemplateBuilder } from './TemplateBuilder'
@@ -13,12 +13,26 @@ interface Props {
   onSaveTemplate: (template: DayTemplate) => void
   onDeleteTemplate: (id: string) => void
   timeFormat: TimeFormat
+  onRegisterLeaveHandler?: (fn: (proceed: () => void) => void) => void
 }
 
-export function TemplatesScreen({ templates, activeTemplateId, onActivate, onDeactivate, onSaveTemplate, onDeleteTemplate, timeFormat }: Props) {
+export function TemplatesScreen({ templates, activeTemplateId, onActivate, onDeactivate, onSaveTemplate, onDeleteTemplate, timeFormat, onRegisterLeaveHandler }: Props) {
   const [editing, setEditing] = useState<DayTemplate | null>(null)
   const [isNew, setIsNew] = useState(false)
   const [showTypePicker, setShowTypePicker] = useState(false)
+  const [pendingLeave, setPendingLeave] = useState<(() => void) | null>(null)
+  const editingRef = useRef(editing)
+  useEffect(() => { editingRef.current = editing }, [editing])
+
+  useEffect(() => {
+    onRegisterLeaveHandler?.((proceed) => {
+      if (editingRef.current) {
+        setPendingLeave(() => proceed)
+      } else {
+        proceed()
+      }
+    })
+  }, [onRegisterLeaveHandler])
 
   function handleNew() {
     setShowTypePicker(true)
@@ -53,6 +67,8 @@ export function TemplatesScreen({ templates, activeTemplateId, onActivate, onDea
         onSave={handleSave}
         onCancel={() => setEditing(null)}
         onDelete={isNew ? undefined : handleDelete}
+        pendingNavAway={pendingLeave}
+        onClearPendingNavAway={() => setPendingLeave(null)}
       />
     )
   }
