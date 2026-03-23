@@ -129,15 +129,13 @@ export function RunScreen({ template, autoContinue, keepScreenOn, timeFormat, on
       <div className={styles.sessionHeader}>
         <div className={styles.sessionInfo}>
           <p className={styles.templateName}>{template.label}{currentBlock ? ` · ${currentBlock.label}` : ''}</p>
-          {!isLongBreak && totalPomodoros > 0 && (
-            <p className={styles.blockName}>Pomo {pomodoroIndex + 1}</p>
-          )}
           {isLongBreak && currentBlock && (
             <p className={styles.blockName}>{currentBlock.label}</p>
           )}
         </div>
         <button className={styles.endButton} onClick={() => setShowExitConfirm(true)} aria-label="End session">✕</button>
       </div>
+      <div className={styles.divider} />
 
       {/* ── Pomodoro progress dots ── */}
       {!isLongBreak && !isDone && totalPomodoros > 0 && (
