@@ -19,10 +19,11 @@ import type { TimeFormat } from '../hooks/useSettings'
 interface Props {
   activeTemplateId: string | null
   onActivate: (id: string) => void
+  onDeactivate: () => void
   timeFormat: TimeFormat
 }
 
-export function TemplatesScreen({ activeTemplateId, onActivate, timeFormat }: Props) {
+export function TemplatesScreen({ activeTemplateId, onActivate, onDeactivate, timeFormat }: Props) {
   const [templates, setTemplates] = useState<DayTemplate[]>(loadTemplates)
   const [editing, setEditing] = useState<DayTemplate | null>(null)
   const [isNew, setIsNew] = useState(false)
@@ -72,6 +73,7 @@ export function TemplatesScreen({ activeTemplateId, onActivate, timeFormat }: Pr
       onNew={handleNew}
       onEdit={handleEdit}
       onActivate={onActivate}
+      onDeactivate={onDeactivate}
     />
   )
 }

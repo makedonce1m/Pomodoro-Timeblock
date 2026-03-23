@@ -78,6 +78,7 @@ function App() {
             <TemplatesScreen
               activeTemplateId={activeTemplateId}
               onActivate={handleActivate}
+              onDeactivate={() => setActiveTemplateId(null)}
               timeFormat={settings.timeFormat}
             />
           )}
