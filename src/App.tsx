@@ -79,7 +79,7 @@ function App() {
               autoContinue={settings.autoContinue}
               keepScreenOn={settings.keepScreenOn}
               timeFormat={settings.timeFormat}
-              pomodoroType={settings.pomodoroType}
+              pomodoroType={activeTemplate.pomodoroType ?? 'adaptive'}
               defaultMode={settings.defaultMode}
               onDeactivate={() => setActiveTemplateId(null)}
             />

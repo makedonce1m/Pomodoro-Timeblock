@@ -15,16 +15,6 @@ export function ModeSidebar({ mode, onSelect, disabled }: Props) {
 
       <div className={styles.list}>
         <button
-          className={`${styles.item} ${mode === 'comfort' ? styles.itemActive : ''}`}
-          onClick={() => onSelect('comfort')}
-          disabled={disabled}
-          aria-pressed={mode === 'comfort'}
-        >
-          <span className={styles.icon}>🍃</span>
-          <span className={styles.label}>Comfort</span>
-        </button>
-
-        <button
           className={`${styles.item} ${mode === 'standard' ? styles.itemActive : ''}`}
           onClick={() => onSelect('standard')}
           disabled={disabled}
@@ -32,6 +22,16 @@ export function ModeSidebar({ mode, onSelect, disabled }: Props) {
         >
           <span className={styles.icon}>⏱</span>
           <span className={styles.label}>Standard</span>
+        </button>
+
+        <button
+          className={`${styles.item} ${mode === 'comfort' ? styles.itemActive : ''}`}
+          onClick={() => onSelect('comfort')}
+          disabled={disabled}
+          aria-pressed={mode === 'comfort'}
+        >
+          <span className={styles.icon}>🍃</span>
+          <span className={styles.label}>Comfort</span>
         </button>
       </div>
     </aside>

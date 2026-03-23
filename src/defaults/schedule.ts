@@ -12,6 +12,7 @@ import type { DayTemplate } from '../types';
 export const DEFAULT_DAY_TEMPLATE: DayTemplate = {
   id: 'default',
   label: 'Study Session',
+  pomodoroType: 'adaptive',
   blocks: [
     {
       type: 'focus',

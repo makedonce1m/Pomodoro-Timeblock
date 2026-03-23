@@ -71,6 +71,34 @@
   background: #FBBF24;
 }
 
+/* ── Pomodoro type badge ── */
+.typeBadgeRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 1.25rem 0.75rem;
+  flex-shrink: 0;
+}
+
+.typeBadge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #F59E0B;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+}
+
+.typeBadgeLocked {
+  font-size: 0.65rem;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
 /* ── Block list ── */
 .blocks {
   flex: 1;

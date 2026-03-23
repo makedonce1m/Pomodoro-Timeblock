@@ -105,6 +105,15 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
         </button>
       </div>
 
+      {template.pomodoroType && (
+        <div className={styles.typeBadgeRow}>
+          <span className={styles.typeBadge}>
+            {template.pomodoroType === 'classic' ? 'Classic' : 'Adaptive'}
+          </span>
+          <span className={styles.typeBadgeLocked}>locked</span>
+        </div>
+      )}
+
       <div className={styles.blocks}>
         {blocks.length === 0 && (
           <p className={styles.empty}>Add your first block below.</p>
