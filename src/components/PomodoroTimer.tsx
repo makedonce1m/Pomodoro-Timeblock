@@ -108,7 +108,7 @@ export function PomodoroTimer({
             {formatTime(remaining)}
           </span>
           <span className={styles.phaseLabel}>
-            {phase === 'focus' ? 'Focus' : 'Break'}
+            {isLongBreak ? 'Rest' : phase === 'focus' ? 'Focus' : 'Break'}
           </span>
         </div>
       </div>
