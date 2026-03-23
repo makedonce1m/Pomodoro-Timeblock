@@ -261,6 +261,7 @@ export function useSession(
     timer.reset(timer.phase);
     setSessionPhase(prev => {
       if (prev === 'idle') return 'idle';
+      if (prev === 'long-break') return 'long-break';
       return timer.phase === 'break' ? 'short-break' : 'focus';
     });
     setWaitingForContinue(false);
