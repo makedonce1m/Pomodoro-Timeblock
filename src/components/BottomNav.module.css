@@ -1,4 +1,5 @@
 .nav {
+  --tab-height: 54px;
   position: fixed;
   bottom: 0;
   left: 0;
@@ -11,7 +12,7 @@
 
 .tab {
   flex: 1;
-  height: 49px;
+  height: var(--tab-height);
   background: none;
   border: none;
   color: #475569;
@@ -36,8 +37,13 @@
   justify-content: center;
 }
 
+.icon svg {
+  width: calc(var(--tab-height) * 0.45);
+  height: calc(var(--tab-height) * 0.45);
+}
+
 .label {
-  font-size: 0.6rem;
+  font-size: calc(var(--tab-height) * 0.195);
   text-transform: uppercase;
   letter-spacing: 0.12em;
   font-family: inherit;
