@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { BottomNav } from './components/BottomNav'
 import type { AppView } from './components/BottomNav'
 import { PomodoroTimer } from './components/PomodoroTimer'
@@ -26,7 +26,12 @@ function loadTemplates(): DayTemplate[] {
 function App() {
   const [view, setView] = useState<AppView>('run')
   const [activeTemplateId, setActiveTemplateId] = useState<string | null>(null)
+  const [templates, setTemplates] = useState<DayTemplate[]>(loadTemplates)
   const { settings, update: updateSettings } = useSettings()
+
+  useEffect(() => {
+    localStorage.setItem(TEMPLATES_KEY, JSON.stringify(templates))
+  }, [templates])
 
   // Standalone timer — always alive so it keeps running when switching tabs.
   const timer = usePomodoroTimer(
@@ -39,7 +44,7 @@ function App() {
   const timerStarted = timer.hasStarted
 
   const activeTemplate = activeTemplateId
-    ? (loadTemplates().find(t => t.id === activeTemplateId) ?? null)
+    ? (templates.find(t => t.id === activeTemplateId) ?? null)
     : null
 
   useWakeLock(timer.isRunning && settings.keepScreenOn && !activeTemplate)
@@ -47,6 +52,19 @@ function App() {
   function handleActivate(id: string) {
     setActiveTemplateId(id)
     setView('run')
+  }
+
+  function handleSaveTemplate(template: DayTemplate) {
+    setTemplates(prev =>
+      prev.some(t => t.id === template.id)
+        ? prev.map(t => t.id === template.id ? template : t)
+        : [...prev, template]
+    )
+  }
+
+  function handleDeleteTemplate(id: string) {
+    if (activeTemplateId === id) setActiveTemplateId(null)
+    setTemplates(prev => prev.filter(t => t.id !== id))
   }
 
   return (
@@ -86,9 +104,12 @@ function App() {
           )}
           {view === 'templates' && (
             <TemplatesScreen
+              templates={templates}
               activeTemplateId={activeTemplateId}
               onActivate={handleActivate}
               onDeactivate={() => setActiveTemplateId(null)}
+              onSaveTemplate={handleSaveTemplate}
+              onDeleteTemplate={handleDeleteTemplate}
               timeFormat={settings.timeFormat}
             />
           )}

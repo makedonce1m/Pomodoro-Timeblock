@@ -1,38 +1,24 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import type { DayTemplate, PomodoroType } from '../types'
-import { DEFAULT_DAY_TEMPLATE } from '../defaults/schedule'
 import { TemplateLibrary } from './TemplateLibrary'
 import { TemplateBuilder } from './TemplateBuilder'
 import styles from './TemplatesScreen.module.css'
-
-const STORAGE_KEY = 'pomodoro-templates'
-
-function loadTemplates(): DayTemplate[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (raw) return JSON.parse(raw) as DayTemplate[]
-  } catch {}
-  return [DEFAULT_DAY_TEMPLATE]
-}
-
 import type { TimeFormat } from '../hooks/useSettings'
 
 interface Props {
+  templates: DayTemplate[]
   activeTemplateId: string | null
   onActivate: (id: string) => void
   onDeactivate: () => void
+  onSaveTemplate: (template: DayTemplate) => void
+  onDeleteTemplate: (id: string) => void
   timeFormat: TimeFormat
 }
 
-export function TemplatesScreen({ activeTemplateId, onActivate, onDeactivate, timeFormat }: Props) {
-  const [templates, setTemplates] = useState<DayTemplate[]>(loadTemplates)
+export function TemplatesScreen({ templates, activeTemplateId, onActivate, onDeactivate, onSaveTemplate, onDeleteTemplate, timeFormat }: Props) {
   const [editing, setEditing] = useState<DayTemplate | null>(null)
   const [isNew, setIsNew] = useState(false)
   const [showTypePicker, setShowTypePicker] = useState(false)
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(templates))
-  }, [templates])
 
   function handleNew() {
     setShowTypePicker(true)
@@ -50,14 +36,13 @@ export function TemplatesScreen({ activeTemplateId, onActivate, onDeactivate, ti
   }
 
   function handleSave(template: DayTemplate) {
-    setTemplates(prev =>
-      isNew ? [...prev, template] : prev.map(t => t.id === template.id ? template : t)
-    )
+    onSaveTemplate(template)
     setEditing(null)
   }
 
   function handleDelete(id: string) {
-    setTemplates(prev => prev.filter(t => t.id !== id))
+    onDeleteTemplate(id)
+    setEditing(null)
   }
 
   if (editing) {
@@ -67,7 +52,7 @@ export function TemplatesScreen({ activeTemplateId, onActivate, onDeactivate, ti
         timeFormat={timeFormat}
         onSave={handleSave}
         onCancel={() => setEditing(null)}
-        onDelete={isNew ? undefined : (id) => { handleDelete(id); setEditing(null) }}
+        onDelete={isNew ? undefined : handleDelete}
       />
     )
   }
