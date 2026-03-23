@@ -11,7 +11,7 @@ import type { DayTemplate } from '../types';
  */
 export const DEFAULT_DAY_TEMPLATE: DayTemplate = {
   id: 'default',
-  label: 'Default Day',
+  label: 'Study Session',
   blocks: [
     {
       type: 'focus',
