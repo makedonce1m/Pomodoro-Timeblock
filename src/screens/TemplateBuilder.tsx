@@ -262,28 +262,28 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
         {dragging !== null && dropAt === blocks.length && (
           <div className={styles.dropLine} />
         )}
-      </div>
 
-      <div className={styles.footer}>
-        <button className={styles.addButton} onClick={addFocusBlock}>+ Focus Block</button>
-        <button className={`${styles.addButton} ${styles.addBreak}`} onClick={addBreakBlock}>+ Break</button>
-      </div>
-
-      {onDelete && (
-        <div className={styles.deleteZone}>
-          {confirmDelete ? (
-            <div className={styles.deleteConfirm}>
-              <span className={styles.deleteConfirmText}>Delete this template?</span>
-              <button className={styles.deleteConfirmNo} onClick={() => setConfirmDelete(false)}>Cancel</button>
-              <button className={styles.deleteConfirmYes} onClick={() => onDelete(template.id)}>Delete</button>
-            </div>
-          ) : (
-            <button className={styles.deleteTemplate} onClick={() => setConfirmDelete(true)}>
-              Delete Template
-            </button>
-          )}
+        <div className={styles.footer}>
+          <button className={styles.addButton} onClick={addFocusBlock}>+ Focus Block</button>
+          <button className={`${styles.addButton} ${styles.addBreak}`} onClick={addBreakBlock}>+ Break</button>
         </div>
-      )}
+
+        {onDelete && (
+          <div className={styles.deleteZone}>
+            {confirmDelete ? (
+              <div className={styles.deleteConfirm}>
+                <span className={styles.deleteConfirmText}>Delete this plan?</span>
+                <button className={styles.deleteConfirmNo} onClick={() => setConfirmDelete(false)}>Cancel</button>
+                <button className={styles.deleteConfirmYes} onClick={() => onDelete(template.id)}>Delete</button>
+              </div>
+            ) : (
+              <button className={styles.deleteTemplate} onClick={() => setConfirmDelete(true)}>
+                Delete Plan
+              </button>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Unsaved-changes confirmation */}
       {showUnsaved && (
