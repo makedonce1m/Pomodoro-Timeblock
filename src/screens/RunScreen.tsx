@@ -4,6 +4,7 @@ import type { TimeFormat } from '../hooks/useSettings'
 import { useSession } from '../hooks/useSession'
 import { PomodoroTimer } from '../components/PomodoroTimer'
 import { formatDisplayTime } from '../utils/timeblock'
+import { POMODORO_FOCUS_DURATION, CLOSING_INTERVAL_DURATION } from '../constants/timer'
 import styles from './RunScreen.module.css'
 
 interface Props {
@@ -29,6 +30,7 @@ export function RunScreen({ template, autoContinue, timeFormat, onDeactivate }: 
   // ── Animated swipe between pomodoros ──────────────────────────────
   const [swipeX, setSwipeX] = useState(0)
   const [swipeTransition, setSwipeTransition] = useState(false)
+  const [previewDir, setPreviewDir] = useState<'next' | 'prev' | null>(null)
   const touchStartX = useRef(0)
   const touchStartY = useRef(0)
   const dragging = useRef(false)
@@ -47,7 +49,12 @@ export function RunScreen({ template, autoContinue, timeFormat, onDeactivate }: 
     if (!dragging.current) return
     const dx = e.touches[0].clientX - touchStartX.current
     const dy = Math.abs(e.touches[0].clientY - touchStartY.current)
-    if (dy > Math.abs(dx)) { dragging.current = false; setSwipeX(0); return }
+    if (dy > Math.abs(dx)) { dragging.current = false; setSwipeX(0); setPreviewDir(null); return }
+    // Determine preview direction once we know horizontal intent
+    if (previewDir === null && Math.abs(dx) > 8) {
+      if (dx < 0 && pomodoroIndex < totalPomodoros - 1) setPreviewDir('next')
+      else if (dx > 0 && pomodoroIndex > 0) setPreviewDir('prev')
+    }
     // Apply rubber-band resistance when at the edge (no pomo in that direction)
     const atLeft = pomodoroIndex === 0 && dx > 0
     const atRight = pomodoroIndex === totalPomodoros - 1 && dx < 0
@@ -93,11 +100,23 @@ export function RunScreen({ template, autoContinue, timeFormat, onDeactivate }: 
     } else if (animPhase.current === 'enter') {
       animPhase.current = 'idle'
       setSwipeTransition(false)
+      setPreviewDir(null)
+    } else {
+      // Snap-back completed
+      setPreviewDir(null)
     }
   }
 
   const sessionStarted = sessionPhase !== 'idle'
   const isLongBreak = sessionPhase === 'long-break'
+
+  // Preview card for swipe animation
+  const previewPomoIndex = previewDir === 'next' ? pomodoroIndex + 1 : pomodoroIndex - 1
+  const previewIsClosing = previewPomoIndex === totalPomodoros - 1
+  const previewDuration = previewIsClosing ? CLOSING_INTERVAL_DURATION : POMODORO_FOCUS_DURATION[mode]
+  const previewOffsetX = previewDir === 'next'
+    ? swipeX + window.innerWidth
+    : swipeX - window.innerWidth
 
   // When waiting for the user to tap continue, the play button advances to the next phase.
   const handleResume = waitingForContinue ? continueToNext : session.resume
@@ -168,6 +187,34 @@ export function RunScreen({ template, autoContinue, timeFormat, onDeactivate }: 
             onSwitchMode={switchMode}
           />
         </div>
+        {previewDir !== null && (
+          <div
+            className={styles.previewCard}
+            style={{
+              transform: `translateX(${previewOffsetX}px)`,
+              transition: swipeTransition ? 'transform 0.22s ease-out' : 'none',
+            }}
+          >
+            <PomodoroTimer
+              mode={mode}
+              phase="focus"
+              elapsedSeconds={0}
+              phaseDurationSeconds={previewDuration}
+              isRunning={false}
+              started={false}
+              canSwitch={false}
+              isClosingInterval={previewIsClosing}
+              onStart={() => {}}
+              onPause={() => {}}
+              onResume={() => {}}
+              onReset={() => {}}
+              onSkip={() => {}}
+              onGoToPhase={() => {}}
+              onSelectMode={() => {}}
+              onSwitchMode={() => {}}
+            />
+          </div>
+        )}
       </div>
 
       {/* ── Done overlay ── */}

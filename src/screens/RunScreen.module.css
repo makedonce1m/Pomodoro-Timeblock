@@ -100,11 +100,21 @@
 .swipeViewport {
   width: 100%;
   overflow: hidden;
+  position: relative;
 }
 
 .swipeCard {
   width: 100%;
   will-change: transform;
+}
+
+.previewCard {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  will-change: transform;
+  pointer-events: none;
 }
 
 /* ── Done row ── */
