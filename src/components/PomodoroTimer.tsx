@@ -140,7 +140,7 @@ export function PomodoroTimer({
       {isClosingInterval && (
         <div className={styles.closingNote}>
           <span className={styles.closingNoteIcon}>🏁</span>
-          <span className={styles.closingNoteText}>No break{'\n'}Long rest follows</span>
+          <span className={styles.closingNoteText}>NO BREAK{'\n'}LAST POMO!</span>
         </div>
       )}
 

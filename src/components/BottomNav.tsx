@@ -3,18 +3,18 @@ import styles from './BottomNav.module.css'
 
 export type AppView = 'run' | 'templates' | 'settings'
 
-function IconRun() {
+function IconFocus() {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
-      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
+      <path d="M12 2C9.5 6.5 7 9 7 14a5 5 0 0 0 10 0c0-2.5-1-4-2-5.5-.3 1.2-1 2.3-1 3.5a2 2 0 0 1-4 0C10 9 12 5.5 12 2z" />
     </svg>
   )
 }
 
-function IconTemplates() {
+function IconPlans() {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
-      <path d="M3 3h8v8H3zm0 10h8v8H3zm10-10h8v8h-8zm0 10h8v8h-8z" />
+      <path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 16H5V9h14v10zm-7-8h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 0H6v2h2v-2zm8 3h-2v2h2v-2zm-4 0h-2v2h2v-2zm-4 0H6v2h2v-2z" />
     </svg>
   )
 }
@@ -34,8 +34,8 @@ interface Props {
 
 export function BottomNav({ active, onChange }: Props) {
   const tabs: { view: AppView; label: string; Icon: () => React.ReactElement }[] = [
-    { view: 'run', label: 'Run', Icon: IconRun },
-    { view: 'templates', label: 'Templates', Icon: IconTemplates },
+    { view: 'run', label: 'Focus', Icon: IconFocus },
+    { view: 'templates', label: 'Plans', Icon: IconPlans },
     { view: 'settings', label: 'Settings', Icon: IconSettings },
   ]
 
