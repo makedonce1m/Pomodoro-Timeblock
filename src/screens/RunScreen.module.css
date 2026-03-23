@@ -6,60 +6,12 @@
   padding: 0.75rem 0 3.5rem;
 }
 
-/* ── Session header ── */
-.sessionHeader {
-  width: 100%;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 0 1.25rem 0.75rem;
-}
-
 .divider {
   width: 75%;
   height: 1px;
   background: #1e1e1e;
-  margin-bottom: 0.75rem;
+  margin: 0.5rem 0 0.75rem;
   flex-shrink: 0;
-}
-
-.sessionInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-}
-
-.templateName {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #F1F5F9;
-}
-
-.blockName {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #F1F5F9;
-}
-
-.endButton {
-  background: #1c1c1c;
-  border: none;
-  color: #475569;
-  font-size: 1rem;
-  width: 42px;
-  height: 42px;
-  border-radius: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: color 0.15s, background 0.15s;
-}
-
-.endButton:active {
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.08);
 }
 
 /* ── Progress dots ── */
@@ -194,6 +146,27 @@
   font-variant-numeric: tabular-nums;
   color: #334155;
   flex-shrink: 0;
+}
+
+/* ── Cancel Plan button ── */
+.cancelPlanButton {
+  width: calc(100% - 2.5rem);
+  background: #141414;
+  border: 1px solid #1e1e1e;
+  border-radius: 0.65rem;
+  color: #475569;
+  font-size: 0.78rem;
+  font-family: inherit;
+  padding: 0.65rem 0.9rem;
+  cursor: pointer;
+  text-align: left;
+  margin-top: 0.75rem;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.cancelPlanButton:active {
+  border-color: #ef4444;
+  color: #ef4444;
 }
 
 /* ── Exit confirmation dialog ── */
