@@ -148,6 +148,57 @@ Synthesizes bird-like chirp sounds using the Web Audio API. Three sounds:
 
 ---
 
+## Pomodoro Modes — Full Breakdown
+
+There are two layers here that are easy to conflate: **PomodoroType** (set per template) and **PomodoroMode** (the Standard/Comfort choice within Adaptive). They interact, but they are separate.
+
+---
+
+### PomodoroType: `'adaptive'` vs `'classic'`
+
+Set on the `DayTemplate` and locked for the duration of a session. Cannot be changed mid-session.
+
+**Adaptive** — the default. The user chooses Standard or Comfort mode, and can switch between them during a session (see rules below). The timer uses `POMODORO_FOCUS_DURATION[mode]` and `POMODORO_BREAK_DURATION[mode]` from the constants, keyed by the active mode.
+
+**Classic** — a simpler, fixed variant. `useSession` passes `customFocusDuration = 1200s` and `customBreakDuration = 300s` directly to `usePomodoroTimer`, bypassing the mode system entirely. Internally the timer is initialised with `mode = 'standard'` but that value is irrelevant — the custom overrides take precedence and mode switching (`switchMode`, `selectMode`) has no effect. Classic always runs 20 min focus / 5 min break, no exceptions.
+
+---
+
+### PomodoroMode: `'standard'` vs `'comfort'` (Adaptive only)
+
+Only meaningful when `PomodoroType` is `'adaptive'`.
+
+| Mode | Focus | Break | Total | Intent |
+|---|---|---|---|---|
+| **Standard** | 25 min | 5 min | 30 min | Default work mode |
+| **Comfort** | 20 min | 10 min | 30 min | Break long enough to cover a bathroom stop alongside normal rest |
+
+The Comfort break is **intentionally 10 minutes**. Do not shorten it.
+
+Both modes produce a 30-minute slot. This is the design constraint that makes Pomodoros slot cleanly into time blocks.
+
+---
+
+### Mid-Session Mode Switching (Adaptive only)
+
+While a Pomodoro is running, the user can switch between Standard and Comfort without stopping the timer. All of the following must be true for a switch to be allowed:
+
+1. `PomodoroType` is `'adaptive'` (Classic ignores this entirely)
+2. Current phase is `'focus'` (switching during a break is not allowed)
+3. Elapsed focus time is **below `MODE_SWITCH_CUTOFF_SECONDS` (1190s = 19:50)**
+
+The cutoff exists because Comfort focus is 20 min. Switching at 19:51 would mean the focus phase ends in 9 seconds — meaningless. The 10-second buffer ensures meaningful time remains regardless of which mode you switch to.
+
+**How it works in the code:**
+
+- `canSwitchMode(phase, elapsedSeconds)` — the pure gate function. Returns `true` only when both conditions above are met. Used to derive `canSwitch` in the timer state and to guard the `switchMode` action itself.
+- `switchMode()` — toggles `standard` ↔ `comfort` while the timer keeps running. Elapsed time is preserved exactly. The wall-clock anchor (`runStartWallTime`) is reset to `Date.now()` so future ticks measure from the correct base.
+- `selectMode(mode)` — a separate action for pre-session mode selection (before the timer has started). It is blocked once the timer is running or has elapsed time. This is the settings-screen or pre-start picker path, not the in-session toggle.
+
+**UI requirement:** The switch button must be disabled (not hidden) when `canSwitch` is `false`. It is visible throughout focus and break phases so the user knows it exists, but grayed out when switching is not permitted.
+
+---
+
 ## What Carries Over Unchanged
 
 | File | Status |
