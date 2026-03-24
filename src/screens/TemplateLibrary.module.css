@@ -58,6 +58,7 @@
   cursor: pointer;
   transition: background 0.15s;
   border: 1px solid transparent;
+  box-shadow: var(--card-shadow);
 }
 
 .card:active {
