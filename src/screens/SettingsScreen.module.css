@@ -27,6 +27,17 @@
   letter-spacing: 0.18em;
   color: var(--text-4);
   margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.sectionTitle::before,
+.sectionTitle::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-0);
 }
 
 /* ── Row ── */
@@ -96,6 +107,7 @@
   padding: 0.2rem;
   gap: 0.2rem;
   flex-shrink: 0;
+  box-shadow: var(--seg-shadow);
 }
 
 .seg {
@@ -117,6 +129,7 @@
 .segActive {
   background: var(--surface-2);
   color: var(--accent);
+  box-shadow: var(--seg-pill-shadow);
 }
 
 /* ── Coming soon ── */

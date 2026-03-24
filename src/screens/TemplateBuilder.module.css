@@ -49,7 +49,11 @@
   transition: border-color 0.15s;
 }
 
-.nameInput:focus { border-color: var(--accent); }
+.nameInput:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+  outline: none;
+}
 
 .saveButton {
   background: var(--accent);
@@ -223,7 +227,11 @@
   transition: border-color 0.15s;
 }
 
-.blockLabel:focus { border-color: var(--text-4); }
+.blockLabel:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+  outline: none;
+}
 
 /* ── Time rows ── */
 .timeRows {
@@ -268,7 +276,11 @@
   color-scheme: var(--color-scheme);
 }
 
-.timeInput:focus { border-color: var(--text-4); }
+.timeInput:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+  outline: none;
+}
 
 /* 24h overlay input */
 .timeInputWrapper {
@@ -285,7 +297,10 @@
   min-width: 0;
 }
 
-.timeInputWrapper:focus-within { border-color: var(--text-4); }
+.timeInputWrapper:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
 
 .timeInputDisplay {
   font-size: 0.9rem;
@@ -329,7 +344,11 @@
   padding-right: 1.8rem;
 }
 
-.endSelect:focus { border-color: var(--text-4); }
+.endSelect:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+  outline: none;
+}
 
 /* ── Footer ── */
 .footer {

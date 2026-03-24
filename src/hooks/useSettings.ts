@@ -19,7 +19,7 @@ const DEFAULTS: AppSettings = {
   timeFormat: '24h',
   pomodoroType: 'adaptive' as PomodoroType,
   defaultMode: 'standard',
-  theme: 'dark',
+  theme: 'light',
 };
 
 const KEY = 'pomodoro-app-settings';
