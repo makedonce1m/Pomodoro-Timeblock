@@ -20,6 +20,16 @@
   height: clamp(185px, 57vw, 250px);
 }
 
+/* Floating disc shadow sits behind the SVG */
+.ringContainer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: var(--ring-shadow);
+  pointer-events: none;
+}
+
 .ringBreak {
   --ring-accent: var(--ring-break);
 }
@@ -87,6 +97,7 @@
   transition: opacity 0.2s;
   cursor: pointer;
   text-align: left;
+  box-shadow: var(--card-shadow);
 }
 
 .card:active { opacity: 0.7; }
@@ -159,6 +170,7 @@
   justify-content: center;
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
+  box-shadow: var(--card-shadow);
 }
 
 .sideButton:active:not(:disabled) {
@@ -190,7 +202,7 @@
   justify-content: center;
   cursor: pointer;
   transition: background 0.15s, transform 0.1s;
-  box-shadow: 0 4px 24px var(--accent-glow);
+  box-shadow: 0 4px 24px var(--accent-glow), var(--card-shadow);
 }
 
 .playButton:active {
@@ -209,6 +221,7 @@
   background: var(--surface-1);
   border-radius: 0.75rem;
   padding: 0.25rem;
+  box-shadow: var(--card-shadow);
 }
 
 .modeButton {
