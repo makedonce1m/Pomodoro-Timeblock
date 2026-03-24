@@ -197,21 +197,41 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
   }
 
   function updateField(id: string, field: 'label' | 'startTime' | 'endTime', value: string) {
-    setBlocks(prev => prev.map(b => {
-      if (b.id !== id) return b
-      // When changing start time on a focus block, preserve the pomodoro count
-      // so the end time stays valid (start + N×30 min).
-      if (b.type === 'focus' && field === 'startTime') {
-        const count = Math.max(1, b.pomodoroCount)
+    setBlocks(prev => {
+      const idx = prev.findIndex(b => b.id === id)
+      if (idx === -1) return prev
+      const block = prev[idx]
+      let updated: TimeBlock
+      let endDeltaMin = 0
+
+      if (block.type === 'focus' && field === 'startTime') {
+        const count = Math.max(1, block.pomodoroCount)
         const newEnd = addMinutes(value, count * 30)
-        return { ...b, startTime: value, endTime: newEnd } as TimeBlock
+        endDeltaMin = toMins(newEnd) - toMins(block.endTime)
+        updated = { ...block, startTime: value, endTime: newEnd }
+      } else {
+        const next = { ...block, [field]: value }
+        if (next.type === 'focus') {
+          next.pomodoroCount = calcPomodoroCount(next.startTime, next.endTime)
+        }
+        updated = next as TimeBlock
+        if (field === 'endTime') {
+          endDeltaMin = toMins(value) - toMins(block.endTime)
+        }
       }
-      const next = { ...b, [field]: value }
-      if (next.type === 'focus') {
-        next.pomodoroCount = calcPomodoroCount(next.startTime, next.endTime)
+
+      const result = [...prev]
+      result[idx] = updated
+
+      // Cascade any end-time shift to all subsequent blocks
+      if (endDeltaMin !== 0) {
+        for (let i = idx + 1; i < result.length; i++) {
+          const b = result[i]
+          result[i] = { ...b, startTime: addMinutes(b.startTime, endDeltaMin), endTime: addMinutes(b.endTime, endDeltaMin) }
+        }
       }
-      return next as TimeBlock
-    }))
+      return result
+    })
   }
 
   function deleteBlock(id: string) {
@@ -336,8 +356,9 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
                         onChange={v => updateField(block.id, 'endTime', v)}
                       />
                     ) : (
-                      <TimeInput
-                        value={block.endTime}
+                      <BreakEndSelect
+                        startTime={block.startTime}
+                        endTime={block.endTime}
                         timeFormat={timeFormat}
                         onChange={v => updateField(block.id, 'endTime', v)}
                       />
@@ -423,6 +444,11 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
   )
 }
 
+function toMins(hhmm: string): number {
+  const [h, m] = hhmm.split(':').map(Number)
+  return h * 60 + m
+}
+
 /**
  * Dropdown for focus block end times.
  * Only offers options that are exact multiples of 30 minutes from startTime
@@ -464,6 +490,53 @@ function FocusEndSelect({
           {formatDisplayTime(o.value, timeFormat)}
           {' '}·{' '}
           {o.pomos === 1 ? '1 pomo' : `${o.pomos} pomos`}
+        </option>
+      ))}
+    </select>
+  )
+}
+
+/**
+ * Dropdown for break block end times.
+ * 15-minute increments from startTime+15 up to startTime+120 (2 hours).
+ */
+function BreakEndSelect({
+  startTime,
+  endTime,
+  timeFormat,
+  onChange,
+}: {
+  startTime: string
+  endTime: string
+  timeFormat: TimeFormat
+  onChange: (v: string) => void
+}) {
+  const STEP = 15
+  const MAX = 120
+  const options = Array.from({ length: MAX / STEP }, (_, i) => {
+    const mins = (i + 1) * STEP
+    return { value: addMinutes(startTime, mins), mins }
+  })
+
+  const diffMin = toMins(endTime) - toMins(startTime)
+  const snapped = Math.min(MAX, Math.max(STEP, Math.round(diffMin / STEP) * STEP))
+  const snappedValue = addMinutes(startTime, snapped)
+
+  function label(mins: number): string {
+    if (mins < 60) return `${mins}m`
+    if (mins % 60 === 0) return `${mins / 60}h`
+    return `${Math.floor(mins / 60)}h ${mins % 60}m`
+  }
+
+  return (
+    <select
+      className={styles.endSelect}
+      value={snappedValue}
+      onChange={e => onChange(e.target.value)}
+    >
+      {options.map(o => (
+        <option key={o.value} value={o.value}>
+          {formatDisplayTime(o.value, timeFormat)} · {label(o.mins)}
         </option>
       ))}
     </select>

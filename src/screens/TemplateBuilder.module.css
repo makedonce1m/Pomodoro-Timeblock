@@ -146,6 +146,7 @@
   gap: 0.75rem;
   user-select: none;
   -webkit-user-select: none;
+  box-shadow: var(--card-shadow);
 }
 
 .blockPill {
