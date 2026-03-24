@@ -47,6 +47,11 @@
   --ring-shadow: 0 6px 24px rgba(0, 0, 0, 0.65),
                  0 1px 0 rgba(255, 255, 255, 0.04) inset;
 
+  /* Segmented control — recessed trough + raised active pill */
+  --seg-shadow:      inset 0 1px 4px rgba(0, 0, 0, 0.45);
+  --seg-pill-shadow: 0 1px 3px rgba(0, 0, 0, 0.30),
+                     0 1px 0 rgba(255, 255, 255, 0.06) inset;
+
   /* Misc */
   --color-scheme: dark;
 }
@@ -92,6 +97,11 @@
   --ring-shadow: 0 4px 20px rgba(0, 0, 0, 0.10),
                  0 1px 4px rgba(0, 0, 0, 0.07);
 
+  /* Segmented control — light */
+  --seg-shadow:      inset 0 1px 3px rgba(0, 0, 0, 0.13);
+  --seg-pill-shadow: 0 1px 3px rgba(0, 0, 0, 0.10),
+                     0 1px 0 rgba(255, 255, 255, 0.80) inset;
+
   --color-scheme: light;
 }
 
@@ -106,6 +116,9 @@
   margin: 0;
   padding: 0;
   -webkit-tap-highlight-color: transparent;
+  /* Theme crossfade — only fires when CSS vars change (toggle), not on first paint */
+  transition: background-color 0.22s ease, color 0.2s ease,
+              border-color 0.2s ease, fill 0.2s ease, stroke 0.2s ease;
 }
 
 html {

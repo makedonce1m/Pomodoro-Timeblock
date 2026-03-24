@@ -12,6 +12,7 @@
 
 .tab {
   flex: 1;
+  position: relative;
   background: none;
   border: none;
   color: var(--text-4);
@@ -23,6 +24,19 @@
   gap: 0.25rem;
   cursor: pointer;
   transition: color 0.15s;
+}
+
+/* Amber pip at the top of the active tab */
+.tabActive::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 0 0 3px 3px;
 }
 
 .tabActive,
