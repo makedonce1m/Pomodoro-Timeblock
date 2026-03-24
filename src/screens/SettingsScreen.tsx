@@ -9,8 +9,6 @@ interface Props {
 export function SettingsScreen({ settings, onUpdate }: Props) {
   return (
     <div className={styles.screen}>
-      <h1 className={styles.title}>Settings</h1>
-
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Session</h2>
 
