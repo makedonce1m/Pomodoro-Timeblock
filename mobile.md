@@ -199,6 +199,63 @@ The cutoff exists because Comfort focus is 20 min. Switching at 19:51 would mean
 
 ---
 
+## Settings Screen — Web vs Mobile
+
+The web settings screen (`src/screens/SettingsScreen.tsx`) has three sections with five controls total. All five map directly to fields in `AppSettings` and persist via `useSettings`.
+
+---
+
+### Session
+
+**Auto-continue** (`autoContinue: boolean`)
+Toggle switch. When on, the timer advances automatically through all transitions — focus → break → next Pomodoro → next block — without the user tapping anything. When off, a Continue button appears at each boundary.
+- Web: custom CSS toggle (`role="switch"`)
+- Mobile: `Switch` from React Native core
+
+**Keep screen on** (`keepScreenOn: boolean`)
+Toggle switch. Prevents the display from sleeping while the timer is running.
+- Web: `useWakeLock` hook using `navigator.wakeLock`
+- Mobile: `expo-keep-awake` — call `useKeepAwake()` when this is true and a session is active
+
+---
+
+### Display
+
+**Time format** (`timeFormat: '24h' | '12h'`)
+Segmented control with two options: `24h` and `AM/PM`. Controls how block start/end times are displayed throughout the app via `formatDisplayTime()`.
+- Web: two `<button>` elements styled as a segmented picker
+- Mobile: two-option `SegmentedControl` (or a pair of styled `Pressable` components)
+
+---
+
+### Timer
+
+**Pomodoro type** (`pomodoroType: 'classic' | 'adaptive'`)
+Segmented control: Classic or Adaptive. This is a global default — new templates inherit it. Existing templates store their own `pomodoroType` and are unaffected by changing this setting mid-use.
+- Web: two-button segmented control
+- Mobile: same pattern
+
+**Default mode** (`defaultMode: 'standard' | 'comfort'`)
+Segmented control: Standard or Comfort. **Only shown when Pomodoro type is set to Adaptive** — the row is hidden entirely when Classic is selected. This is the starting mode for new Adaptive sessions; the user can still switch mid-session.
+- Web: conditionally rendered row (`{settings.pomodoroType === 'adaptive' && ...}`)
+- Mobile: same conditional render
+
+---
+
+### Implementation Notes for Mobile
+
+| Control | Web pattern | Mobile equivalent |
+|---|---|---|
+| Toggle (Auto-continue, Keep screen on) | Custom `<button role="switch">` | `Switch` (React Native core) |
+| Segmented (Time format, Pomodoro type, Default mode) | Styled `<button>` pair | `SegmentedControl` or styled `Pressable` pair |
+| Conditional row (Default mode) | `{condition && <div>}` | Same — identical React pattern |
+| Persistence | `localStorage` via `useSettings` | `AsyncStorage` via `useSettings` (swap only) |
+| Section grouping | `<section>` with heading | `View` with `Text` heading, or `SectionList` |
+
+The settings screen is the simplest screen to build — all logic already exists in `useSettings`, the UI is just five straightforward controls.
+
+---
+
 ## What Carries Over Unchanged
 
 | File | Status |
