@@ -52,6 +52,21 @@ export function SettingsScreen({ settings, onUpdate }: Props) {
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Display</h2>
 
+        <label className={styles.row}>
+          <div className={styles.rowInfo}>
+            <span className={styles.rowLabel}>Light mode</span>
+            <span className={styles.rowDesc}>Switch to a warm, bright interface.</span>
+          </div>
+          <button
+            role="switch"
+            aria-checked={settings.theme === 'light'}
+            className={`${styles.toggle} ${settings.theme === 'light' ? styles.toggleOn : ''}`}
+            onClick={() => onUpdate({ theme: settings.theme === 'light' ? 'dark' : 'light' })}
+          >
+            <span className={styles.toggleThumb} />
+          </button>
+        </label>
+
         <div className={styles.row}>
           <div className={styles.rowInfo}>
             <span className={styles.rowLabel}>Time format</span>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { PomodoroMode, PomodoroType } from '../types';
 
 export type TimeFormat = '24h' | '12h';
+export type AppTheme = 'dark' | 'light';
 
 export interface AppSettings {
   autoContinue: boolean;
@@ -9,6 +10,7 @@ export interface AppSettings {
   timeFormat: TimeFormat;
   pomodoroType: PomodoroType;
   defaultMode: PomodoroMode;
+  theme: AppTheme;
 }
 
 const DEFAULTS: AppSettings = {
@@ -17,6 +19,7 @@ const DEFAULTS: AppSettings = {
   timeFormat: '24h',
   pomodoroType: 'adaptive' as PomodoroType,
   defaultMode: 'standard',
+  theme: 'dark',
 };
 
 const KEY = 'pomodoro-app-settings';

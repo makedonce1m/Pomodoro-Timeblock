@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useLayoutEffect } from 'react'
 import { BottomNav } from './components/BottomNav'
 import type { AppView } from './components/BottomNav'
 import { PomodoroTimer } from './components/PomodoroTimer'
@@ -37,6 +37,10 @@ function App() {
   const [activeTemplateId, setActiveTemplateId] = useState<string | null>(null)
   const [templates, setTemplates] = useState<DayTemplate[]>(loadTemplates)
   const { settings, update: updateSettings } = useSettings()
+
+  useLayoutEffect(() => {
+    document.documentElement.dataset.theme = settings.theme ?? 'dark'
+  }, [settings.theme])
 
   useEffect(() => {
     localStorage.setItem(TEMPLATES_KEY, JSON.stringify(templates))

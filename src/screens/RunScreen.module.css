@@ -9,18 +9,18 @@
 .divider {
   width: 75%;
   height: 1px;
-  background: #1e1e1e;
+  background: var(--border-0);
   margin: 0.5rem 0 0.75rem;
   flex-shrink: 0;
 }
 
 /* ── Plan name ── */
 .planName {
-  font-size: 0.65rem;
+  font-size: 0.68rem;
   text-transform: uppercase;
   letter-spacing: 0.14em;
   font-weight: 600;
-  color: #475569;
+  color: var(--text-4);
   margin-bottom: 0.5rem;
 }
 
@@ -36,36 +36,37 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #1e1e1e;
-  border: 1.5px solid #2a2a2a;
+  background: var(--surface-2);
+  border: 1.5px solid var(--border-1);
   transition: background 0.2s, border-color 0.2s;
   flex-shrink: 0;
 }
 
 .dotDone {
-  background: #1a3a1a;
-  border-color: #4ade80;
+  background: var(--success-bg);
+  border-color: var(--success);
 }
 
 .dotActive {
-  background: #F59E0B;
-  border-color: #F59E0B;
+  background: var(--accent);
+  border-color: var(--accent);
 }
 
 .dotClosing {
-  background: #b45309;
-  border-color: #F59E0B;
+  background: var(--accent-bg);
+  border-color: var(--accent);
 }
 
 .closingBadge {
-  font-size: 0.55rem;
+  font-size: 0.62rem;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: #b45309;
+  color: var(--accent);
+  opacity: 0.75;
   margin-left: 0.15rem;
 }
 
-/* ── Swipe viewport (clips the sliding card) ── */
+/* ── Swipe viewport ── */
 .swipeViewport {
   width: 100%;
   overflow: hidden;
@@ -98,14 +99,14 @@
 .doneMsg {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #4ade80;
+  color: var(--success);
 }
 
 .restartButton {
-  background: #1c1c1c;
-  border: 1px solid #2a2a2a;
+  background: var(--surface-1);
+  border: 1px solid var(--border-1);
   border-radius: 2rem;
-  color: #64748B;
+  color: var(--text-3);
   font-size: 0.8rem;
   font-family: inherit;
   padding: 0.45rem 1.25rem;
@@ -114,15 +115,15 @@
 }
 
 .restartButton:active {
-  border-color: #F59E0B;
-  color: #F59E0B;
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 /* ── Upcoming blocks ── */
 .upcoming {
   width: calc(100% - 2.5rem);
-  background: #141414;
-  border: 1px solid #1e1e1e;
+  background: var(--surface-1);
+  border: 1px solid var(--border-0);
   border-radius: 0.65rem;
   margin-top: 1.25rem;
   overflow: hidden;
@@ -133,39 +134,37 @@
   align-items: center;
   gap: 0.6rem;
   padding: 0.6rem 0.9rem;
-  border-bottom: 1px solid #1a1a1a;
+  border-bottom: 1px solid var(--border-0);
 }
 
-.upcomingRow:last-child {
-  border-bottom: none;
-}
+.upcomingRow:last-child { border-bottom: none; }
 
 .upcomingRowCurrent .nextName,
 .upcomingRowCurrent .nextTime {
-  color: #F59E0B;
+  color: var(--accent);
 }
 
 .nextName {
-  font-size: 0.78rem;
-  color: #64748B;
+  font-size: 0.8rem;
+  color: var(--text-3);
   flex: 1;
 }
 
 .nextTime {
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   font-variant-numeric: tabular-nums;
-  color: #334155;
+  color: var(--text-5);
   flex-shrink: 0;
 }
 
 /* ── Cancel Plan button ── */
 .cancelPlanButton {
   width: calc(100% - 2.5rem);
-  background: #141414;
-  border: 1px solid #1e1e1e;
+  background: var(--surface-1);
+  border: 1px solid var(--border-0);
   border-radius: 0.65rem;
-  color: #475569;
-  font-size: 0.78rem;
+  color: var(--text-4);
+  font-size: 0.8rem;
   font-family: inherit;
   padding: 0.65rem 0.9rem;
   cursor: pointer;
@@ -175,8 +174,8 @@
 }
 
 .cancelPlanButton:active {
-  border-color: #ef4444;
-  color: #ef4444;
+  border-color: var(--danger);
+  color: var(--danger);
 }
 
 /* ── Exit confirmation dialog ── */
@@ -191,8 +190,8 @@
 }
 
 .confirmDialog {
-  background: #1a1a1a;
-  border: 1px solid #2a2a2a;
+  background: var(--surface-1);
+  border: 1px solid var(--border-1);
   border-radius: 1rem;
   padding: 1.5rem 1.5rem 1.25rem;
   width: min(320px, calc(100vw - 3rem));
@@ -204,13 +203,13 @@
 .confirmTitle {
   font-size: 1rem;
   font-weight: 700;
-  color: #F1F5F9;
+  color: var(--text-1);
   margin: 0;
 }
 
 .confirmBody {
   font-size: 0.8rem;
-  color: #64748B;
+  color: var(--text-3);
   line-height: 1.5;
   margin: 0;
 }
@@ -223,10 +222,10 @@
 
 .confirmCancel {
   flex: 1;
-  background: #242424;
-  border: 1px solid #2a2a2a;
+  background: var(--surface-3);
+  border: 1px solid var(--border-1);
   border-radius: 0.6rem;
-  color: #94A3B8;
+  color: var(--text-2);
   font-size: 0.82rem;
   font-family: inherit;
   padding: 0.6rem 0;
@@ -235,16 +234,16 @@
 }
 
 .confirmCancel:active {
-  border-color: #475569;
-  color: #F1F5F9;
+  border-color: var(--text-4);
+  color: var(--text-1);
 }
 
 .confirmExit {
   flex: 1;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.25);
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-brd);
   border-radius: 0.6rem;
-  color: #ef4444;
+  color: var(--danger);
   font-size: 0.82rem;
   font-family: inherit;
   padding: 0.6rem 0;
@@ -253,6 +252,6 @@
 }
 
 .confirmExit:active {
-  background: rgba(239, 68, 68, 0.2);
-  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.15);
+  border-color: var(--danger);
 }

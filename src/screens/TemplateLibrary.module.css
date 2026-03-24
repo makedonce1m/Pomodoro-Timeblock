@@ -17,11 +17,11 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: #F1F5F9;
+  color: var(--text-1);
 }
 
 .newButton {
-  background: #F59E0B;
+  background: var(--accent);
   color: #1c1c1c;
   border: none;
   border-radius: 0.6rem;
@@ -33,9 +33,7 @@
   transition: background 0.15s;
 }
 
-.newButton:active {
-  background: #FBBF24;
-}
+.newButton:active { background: var(--accent-hi); }
 
 .list {
   display: flex;
@@ -44,14 +42,14 @@
 }
 
 .empty {
-  color: #475569;
+  color: var(--text-4);
   font-size: 0.85rem;
   text-align: center;
   padding: 2rem 0;
 }
 
 .card {
-  background: #1c1c1c;
+  background: var(--surface-2);
   border-radius: 0.75rem;
   padding: 1rem 1.1rem;
   display: flex;
@@ -63,8 +61,8 @@
 }
 
 .card:active {
-  background: #222;
-  border-color: #2a2a2a;
+  background: var(--surface-3);
+  border-color: var(--border-1);
 }
 
 .cardBody {
@@ -77,12 +75,12 @@
 .cardName {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #F1F5F9;
+  color: var(--text-1);
 }
 
 .cardMeta {
   font-size: 0.72rem;
-  color: #64748B;
+  color: var(--text-3);
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
@@ -95,25 +93,25 @@
 }
 
 .pill {
-  font-size: 0.65rem;
+  font-size: 0.68rem;
   padding: 0.2rem 0.5rem;
   border-radius: 999px;
   font-variant-numeric: tabular-nums;
 }
 
 .pillFocus {
-  background: rgba(245, 158, 11, 0.12);
-  color: #F59E0B;
+  background: var(--accent-bg);
+  color: var(--accent);
 }
 
 .pillBreak {
   background: rgba(100, 116, 139, 0.15);
-  color: #64748B;
+  color: var(--text-3);
 }
 
 .cardActive {
-  border-color: rgba(245, 158, 11, 0.35) !important;
-  background: #1e1c14 !important;
+  border-color: var(--accent-brd) !important;
+  background: var(--accent-bg) !important;
 }
 
 .cardActions {
@@ -125,9 +123,9 @@
 }
 
 .runButton {
-  background: #1a1a1a;
-  border: 1px solid #2a2a2a;
-  color: #475569;
+  background: var(--surface-1);
+  border: 1px solid var(--border-1);
+  color: var(--text-4);
   font-size: 1rem;
   width: 40px;
   height: 40px;
@@ -141,21 +139,21 @@
 }
 
 .runButton:active {
-  color: #F59E0B;
-  background: rgba(245, 158, 11, 0.1);
-  border-color: rgba(245, 158, 11, 0.35);
+  color: var(--accent);
+  background: var(--accent-bg);
+  border-color: var(--accent-brd);
 }
 
 .runButtonActive {
-  color: #F59E0B;
-  background: rgba(245, 158, 11, 0.1);
-  border-color: rgba(245, 158, 11, 0.35);
+  color: var(--accent);
+  background: var(--accent-bg);
+  border-color: var(--accent-brd);
 }
 
 .deleteButton {
   background: none;
   border: none;
-  color: #475569;
+  color: var(--text-4);
   font-size: 1.25rem;
   line-height: 1;
   cursor: pointer;
@@ -166,14 +164,14 @@
 }
 
 .deleteButton:active {
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+  background: var(--danger-bg);
 }
 
 .cancelButton {
-  background: #1a1a1a;
-  border: 1px solid #2a2a2a;
-  color: #475569;
+  background: var(--surface-1);
+  border: 1px solid var(--border-1);
+  color: var(--text-4);
   font-size: 0.8rem;
   width: 40px;
   height: 40px;
@@ -188,7 +186,7 @@
 }
 
 .cancelButton:active {
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.08);
-  border-color: rgba(239, 68, 68, 0.3);
+  color: var(--danger);
+  background: var(--danger-bg);
+  border-color: var(--danger-brd);
 }

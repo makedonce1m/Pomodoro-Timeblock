@@ -90,13 +90,13 @@ export function PomodoroTimer({
     <div className={styles.page}>
       <p className={styles.pomodoroLabel}>{isLongBreak ? 'Long Break' : isClassic ? 'Classic Pomo' : 'Adaptive Pomo'}</p>
 
-      <div className={styles.ringContainer}>
+      <div className={`${styles.ringContainer} ${phase === 'break' ? styles.ringBreak : ''} ${isRunning ? styles.ringRunning : ''}`}>
         <svg className={styles.ring} viewBox="0 0 200 200">
-          <circle cx="100" cy="100" r={RADIUS} fill="none" stroke="#1a1a1a" strokeWidth="6" />
+          <circle className={styles.ringTrack} cx="100" cy="100" r={RADIUS} fill="none" strokeWidth="6" />
           <circle
+            className={styles.ringProgress}
             cx="100" cy="100" r={RADIUS}
             fill="none"
-            stroke="#F59E0B"
             strokeWidth="6"
             strokeLinecap="round"
             strokeDasharray={CIRCUMFERENCE}
@@ -159,7 +159,7 @@ export function PomodoroTimer({
         </div>
 
         <button
-          className={styles.playButton}
+          className={`${styles.playButton} ${isRunning ? styles.playButtonRunning : ''}`}
           onClick={!started ? onStart : isRunning ? onPause : onResume}
           aria-label={isRunning ? 'Pause' : 'Play'}
         >
