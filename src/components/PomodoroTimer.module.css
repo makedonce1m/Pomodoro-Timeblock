@@ -30,9 +30,6 @@
   pointer-events: none;
 }
 
-.ringBreak {
-  --ring-accent: var(--ring-break);
-}
 
 .ring {
   width: 100%;
