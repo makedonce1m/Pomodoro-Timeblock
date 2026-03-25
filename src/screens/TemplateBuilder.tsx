@@ -16,10 +16,6 @@ interface Props {
   onClearPendingNavAway?: () => void
 }
 
-/** Format HH:mm string for display (24h always in editor; time picker returns HH:mm regardless of locale) */
-function fmt24(hhmm: string): string {
-  return hhmm // already HH:mm
-}
 
 export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDelete, pendingNavAway, onClearPendingNavAway }: Props) {
   const [label, setLabel] = useState(template.label)
