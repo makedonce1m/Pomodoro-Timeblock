@@ -1,5 +1,13 @@
-import type { AppSettings } from '../hooks/useSettings'
+import type { AppSettings, AppAccent } from '../hooks/useSettings'
 import styles from './SettingsScreen.module.css'
+
+const SWATCH_COLORS: Record<AppAccent, string> = {
+  amber:  '#F59E0B',
+  blue:   '#3b82f6',
+  purple: '#a855f7',
+  green:  '#22c55e',
+  rose:   '#f43f5e',
+}
 
 interface Props {
   settings: AppSettings
@@ -50,20 +58,44 @@ export function SettingsScreen({ settings, onUpdate }: Props) {
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Display</h2>
 
-        <label className={styles.row}>
+        <div className={styles.row}>
           <div className={styles.rowInfo}>
-            <span className={styles.rowLabel}>Light mode</span>
-            <span className={styles.rowDesc}>Switch to a warm, bright interface.</span>
+            <span className={styles.rowLabel}>Theme</span>
+            <span className={styles.rowDesc}>Dark, pure black OLED, or warm light.</span>
           </div>
-          <button
-            role="switch"
-            aria-checked={settings.theme === 'light'}
-            className={`${styles.toggle} ${settings.theme === 'light' ? styles.toggleOn : ''}`}
-            onClick={() => onUpdate({ theme: settings.theme === 'light' ? 'dark' : 'light' })}
-          >
-            <span className={styles.toggleThumb} />
-          </button>
-        </label>
+          <div className={styles.segmented}>
+            <button
+              className={`${styles.seg} ${settings.theme === 'dark' ? styles.segActive : ''}`}
+              onClick={() => onUpdate({ theme: 'dark' })}
+            >Dark</button>
+            <button
+              className={`${styles.seg} ${settings.theme === 'oled' ? styles.segActive : ''}`}
+              onClick={() => onUpdate({ theme: 'oled' })}
+            >OLED</button>
+            <button
+              className={`${styles.seg} ${settings.theme === 'light' ? styles.segActive : ''}`}
+              onClick={() => onUpdate({ theme: 'light' })}
+            >Light</button>
+          </div>
+        </div>
+
+        <div className={styles.row}>
+          <div className={styles.rowInfo}>
+            <span className={styles.rowLabel}>Accent colour</span>
+            <span className={styles.rowDesc}>Tints buttons, the timer ring, and highlights.</span>
+          </div>
+          <div className={styles.swatches}>
+            {([ 'amber', 'blue', 'purple', 'green', 'rose'] as AppAccent[]).map(color => (
+              <button
+                key={color}
+                aria-label={color}
+                className={`${styles.swatch} ${settings.accentColor === color ? styles.swatchActive : ''}`}
+                style={{ background: SWATCH_COLORS[color] }}
+                onClick={() => onUpdate({ accentColor: color })}
+              />
+            ))}
+          </div>
+        </div>
 
         <div className={styles.row}>
           <div className={styles.rowInfo}>

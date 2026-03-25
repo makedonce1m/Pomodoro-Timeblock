@@ -2,7 +2,8 @@ import { useState } from 'react';
 import type { PomodoroMode, PomodoroType } from '../types';
 
 export type TimeFormat = '24h' | '12h';
-export type AppTheme = 'dark' | 'light';
+export type AppTheme = 'dark' | 'light' | 'oled';
+export type AppAccent = 'amber' | 'blue' | 'purple' | 'green' | 'rose';
 
 export interface AppSettings {
   autoContinue: boolean;
@@ -11,6 +12,7 @@ export interface AppSettings {
   pomodoroType: PomodoroType;
   defaultMode: PomodoroMode;
   theme: AppTheme;
+  accentColor: AppAccent;
 }
 
 const DEFAULTS: AppSettings = {
@@ -20,6 +22,7 @@ const DEFAULTS: AppSettings = {
   pomodoroType: 'adaptive' as PomodoroType,
   defaultMode: 'standard',
   theme: 'light',
+  accentColor: 'amber',
 };
 
 const KEY = 'pomodoro-app-settings';
