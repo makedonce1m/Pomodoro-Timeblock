@@ -88,15 +88,7 @@ export function TemplateLibrary({ templates, activeTemplateId, timeFormat, onNew
                 </div>
               </div>
               <div className={styles.cardActions}>
-                <button
-                  className={`${styles.runButton} ${isActive ? styles.runButtonActive : ''}`}
-                  onClick={e => { e.stopPropagation(); onActivate(t.id) }}
-                  aria-label={`${isActive ? 'Active' : 'Run'} ${t.label}`}
-                  title={isActive ? 'Active in Run tab' : 'Set as active in Run tab'}
-                >
-                  {isActive ? '●' : '▶'}
-                </button>
-                {isActive && (
+                {isActive ? (
                   <button
                     className={styles.cancelButton}
                     onClick={e => { e.stopPropagation(); onDeactivate() }}
@@ -104,6 +96,15 @@ export function TemplateLibrary({ templates, activeTemplateId, timeFormat, onNew
                     title="Stop running this plan"
                   >
                     ✕
+                  </button>
+                ) : (
+                  <button
+                    className={styles.runButton}
+                    onClick={e => { e.stopPropagation(); onActivate(t.id) }}
+                    aria-label={`Run ${t.label}`}
+                    title="Set as active in Run tab"
+                  >
+                    ▶
                   </button>
                 )}
               </div>
