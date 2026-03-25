@@ -135,6 +135,32 @@
   box-shadow: var(--seg-pill-shadow);
 }
 
+/* ── Accent colour swatches ── */
+.swatches {
+  display: flex;
+  gap: 0.55rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.swatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  transition: outline-color 0.15s, transform 0.1s;
+  flex-shrink: 0;
+}
+
+.swatch:active { transform: scale(0.88); }
+
+.swatchActive {
+  outline-color: var(--text-1);
+}
+
 /* ── Coming soon ── */
 .comingSoon {
   font-size: 0.8rem;

@@ -91,6 +91,14 @@ function App() {
     document.documentElement.dataset.theme = settings.theme ?? 'dark'
   }, [settings.theme])
 
+  useLayoutEffect(() => {
+    if (settings.accentColor && settings.accentColor !== 'amber') {
+      document.documentElement.dataset.accent = settings.accentColor
+    } else {
+      delete document.documentElement.dataset.accent
+    }
+  }, [settings.accentColor])
+
   useEffect(() => {
     localStorage.setItem(TEMPLATES_KEY, JSON.stringify(templates))
   }, [templates])
