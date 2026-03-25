@@ -167,13 +167,7 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
 
   function lastEndTime(): string {
     if (blocks.length > 0) return blocks[blocks.length - 1].endTime
-    // Default to current time rounded up to the next 30-minute mark
-    const now = new Date()
-    const total = now.getHours() * 60 + now.getMinutes()
-    const rounded = Math.ceil(total / 30) * 30
-    const h = Math.floor(rounded / 60) % 24
-    const m = rounded % 60
-    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
+    return '09:00'
   }
 
   function addFocusBlock() {
