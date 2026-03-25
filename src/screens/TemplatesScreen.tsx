@@ -90,7 +90,7 @@ export function TemplatesScreen({ templates, activeTemplateId, onActivate, onDea
             <p className={styles.typeTitle}>Choose Pomodoro type</p>
             <p className={styles.typeDesc}>This setting is locked once the plan is created.</p>
             <div className={styles.typeOptions}>
-              <button className={styles.typeOption} onClick={() => handlePickType('adaptive')}>
+              <button className={`${styles.typeOption} ${styles.typeOptionAdaptive}`} onClick={() => handlePickType('adaptive')}>
                 Adaptive
                 <span className={styles.typeOptionSub}>Switch between Standard (25/5) and Comfort (20/10) during your session</span>
               </button>
