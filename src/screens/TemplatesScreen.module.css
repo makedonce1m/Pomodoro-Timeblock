@@ -100,6 +100,33 @@
   line-height: 1.4;
 }
 
+/* Start-time select inside the modal */
+.startTimeSelect {
+  background: var(--surface-2);
+  border: 1px solid var(--border-1);
+  border-radius: 0.75rem;
+  color: var(--text-1);
+  font-size: 1rem;
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  padding: 0.8rem 1rem;
+  outline: none;
+  width: 100%;
+  cursor: pointer;
+  color-scheme: var(--color-scheme);
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2364748B' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+
+.startTimeSelect:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
 /* Divider + cancel row */
 .typeCancel {
   background: none;

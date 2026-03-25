@@ -99,6 +99,33 @@
   letter-spacing: 0.1em;
 }
 
+/* ── Plan start time row ── */
+.planStartRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1.25rem 0.75rem;
+  flex-shrink: 0;
+}
+
+.planStartLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-3);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Computed time display inside each block ── */
+.computedTime {
+  font-size: 0.78rem;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
 /* ── Block list ── */
 .blocks {
   flex: 1;

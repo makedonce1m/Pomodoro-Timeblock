@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import type { DayTemplate, PomodoroType } from '../types'
 import { TemplateLibrary } from './TemplateLibrary'
 import { TemplateBuilder } from './TemplateBuilder'
+import { formatDisplayTime } from '../utils/timeblock'
 import styles from './TemplatesScreen.module.css'
 import type { TimeFormat } from '../hooks/useSettings'
 
@@ -20,6 +21,9 @@ export function TemplatesScreen({ templates, activeTemplateId, onActivate, onDea
   const [editing, setEditing] = useState<DayTemplate | null>(null)
   const [isNew, setIsNew] = useState(false)
   const [showTypePicker, setShowTypePicker] = useState(false)
+  const [pendingType, setPendingType] = useState<PomodoroType | null>(null)
+  const [showStartTimePicker, setShowStartTimePicker] = useState(false)
+  const [pendingStartTime, setPendingStartTime] = useState('09:00')
   const [pendingLeave, setPendingLeave] = useState<(() => void) | null>(null)
   const editingRef = useRef(editing)
   useEffect(() => { editingRef.current = editing }, [editing])
@@ -40,7 +44,15 @@ export function TemplatesScreen({ templates, activeTemplateId, onActivate, onDea
 
   function handlePickType(type: PomodoroType) {
     setShowTypePicker(false)
-    setEditing({ id: Date.now().toString(), label: 'New Template', blocks: [], pomodoroType: type })
+    setPendingType(type)
+    setPendingStartTime('09:00')
+    setShowStartTimePicker(true)
+  }
+
+  function handlePickStartTime() {
+    setShowStartTimePicker(false)
+    setEditing({ id: Date.now().toString(), label: 'New Template', startTime: pendingStartTime, blocks: [], pomodoroType: pendingType! })
+    setPendingType(null)
     setIsNew(true)
   }
 
@@ -73,6 +85,13 @@ export function TemplatesScreen({ templates, activeTemplateId, onActivate, onDea
     )
   }
 
+  // Build start time options (30-min increments)
+  const startTimeOptions = Array.from({ length: 48 }, (_, i) => {
+    const h = Math.floor(i / 2)
+    const m = i % 2 === 0 ? '00' : '30'
+    return `${String(h).padStart(2, '0')}:${m}`
+  })
+
   return (
     <>
       <TemplateLibrary
@@ -84,6 +103,8 @@ export function TemplatesScreen({ templates, activeTemplateId, onActivate, onDea
         onActivate={onActivate}
         onDeactivate={onDeactivate}
       />
+
+      {/* Step 1: Choose Pomodoro type */}
       {showTypePicker && (
         <div className={styles.typeOverlay}>
           <div className={styles.typeSheet}>
@@ -100,6 +121,29 @@ export function TemplatesScreen({ templates, activeTemplateId, onActivate, onDea
               </button>
             </div>
             <button className={styles.typeCancel} onClick={() => setShowTypePicker(false)}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {/* Step 2: Choose day start time */}
+      {showStartTimePicker && (
+        <div className={styles.typeOverlay}>
+          <div className={styles.typeSheet}>
+            <p className={styles.typeTitle}>When does your day start?</p>
+            <p className={styles.typeDesc}>Your first block will begin at this time. You can change it later in the plan editor.</p>
+            <select
+              className={styles.startTimeSelect}
+              value={pendingStartTime}
+              onChange={e => setPendingStartTime(e.target.value)}
+            >
+              {startTimeOptions.map(o => (
+                <option key={o} value={o}>{formatDisplayTime(o, timeFormat)}</option>
+              ))}
+            </select>
+            <button className={`${styles.typeOption} ${styles.typeOptionAdaptive}`} onClick={handlePickStartTime}>
+              Continue
+            </button>
+            <button className={styles.typeCancel} onClick={() => setShowStartTimePicker(false)}>Cancel</button>
           </div>
         </div>
       )}

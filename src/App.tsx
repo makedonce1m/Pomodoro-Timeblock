@@ -15,10 +15,59 @@ import styles from './App.module.css'
 
 const TEMPLATES_KEY = 'pomodoro-templates'
 
+/** Migrate a single saved template from the old startTime/endTime-per-block format to durationMins. */
+function migrateTemplate(raw: unknown): DayTemplate {
+  const t = raw as Record<string, unknown>
+  const rawBlocks = ((t.blocks as unknown[]) ?? []) as Record<string, unknown>[]
+
+  const toMins = (hhmm: string) => {
+    const [h, m] = hhmm.split(':').map(Number)
+    return h * 60 + m
+  }
+
+  const blocks = rawBlocks.map(b => {
+    // Already in new format
+    if (typeof b.durationMins === 'number') return b as unknown as import('./types').TimeBlock
+    const durationMins = toMins(b.endTime as string) - toMins(b.startTime as string)
+    if (b.type === 'focus') {
+      return {
+        type: 'focus' as const,
+        id: b.id as string,
+        label: b.label as string,
+        durationMins,
+        pomodoroCount: Math.max(1, Math.floor(durationMins / 30)),
+      }
+    }
+    return {
+      type: 'long-break' as const,
+      id: b.id as string,
+      label: b.label as string,
+      durationMins,
+    }
+  })
+
+  // Use template-level startTime if present, otherwise fall back to first block's old startTime
+  const startTime =
+    typeof t.startTime === 'string'
+      ? t.startTime
+      : (rawBlocks[0] && typeof rawBlocks[0].startTime === 'string' ? rawBlocks[0].startTime as string : '09:00')
+
+  return {
+    id: t.id as string,
+    label: t.label as string,
+    startTime,
+    blocks,
+    pomodoroType: t.pomodoroType as import('./types').PomodoroType | undefined,
+  }
+}
+
 function loadTemplates(): DayTemplate[] {
   try {
     const raw = localStorage.getItem(TEMPLATES_KEY)
-    if (raw) return JSON.parse(raw) as DayTemplate[]
+    if (raw) {
+      const parsed = JSON.parse(raw) as unknown[]
+      return parsed.map(migrateTemplate)
+    }
   } catch {}
   return [DEFAULT_DAY_TEMPLATE]
 }
