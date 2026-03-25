@@ -122,60 +122,72 @@
 /* ── Upcoming blocks ── */
 .upcoming {
   width: calc(100% - 2.5rem);
-  background: var(--surface-1);
-  border: 1px solid var(--border-0);
-  border-radius: 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
   margin-top: 1.25rem;
-  overflow: hidden;
 }
 
 .upcomingRow {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.6rem 0.9rem;
-  border-bottom: 1px solid var(--border-0);
+  gap: 0.75rem;
+  padding: 0.85rem 1.1rem;
+  background: var(--surface-2);
+  border-radius: 0.75rem;
+  box-shadow: var(--card-shadow);
 }
 
-.upcomingRow:last-child { border-bottom: none; }
+.upcomingRowCurrent {
+  border: 1px solid var(--accent-brd);
+  background: var(--accent-bg);
+}
 
-.upcomingRowCurrent .nextName,
+.upcomingRowCurrent .nextName {
+  color: var(--accent);
+  font-weight: 600;
+}
+
 .upcomingRowCurrent .nextTime {
   color: var(--accent);
+  opacity: 0.8;
 }
 
 .nextName {
-  font-size: 0.8rem;
-  color: var(--text-3);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-2);
   flex: 1;
 }
 
 .nextTime {
   font-size: 0.72rem;
   font-variant-numeric: tabular-nums;
-  color: var(--text-5);
+  color: var(--text-4);
   flex-shrink: 0;
 }
 
 /* ── Cancel Plan button ── */
 .cancelPlanButton {
   width: calc(100% - 2.5rem);
-  background: var(--surface-1);
-  border: 1px solid var(--border-0);
-  border-radius: 0.65rem;
-  color: var(--text-4);
-  font-size: 0.8rem;
+  background: var(--surface-2);
+  border: 1px solid var(--danger-brd);
+  border-radius: 0.75rem;
+  color: var(--danger);
+  font-size: 0.82rem;
+  font-weight: 500;
   font-family: inherit;
-  padding: 0.65rem 0.9rem;
+  padding: 0.85rem 1.1rem;
   cursor: pointer;
   text-align: left;
-  margin-top: 0.75rem;
-  transition: border-color 0.15s, color 0.15s;
+  margin-top: 0.5rem;
+  box-shadow: var(--card-shadow);
+  transition: background 0.15s, border-color 0.15s;
 }
 
 .cancelPlanButton:active {
+  background: var(--danger-bg);
   border-color: var(--danger);
-  color: var(--danger);
 }
 
 /* ── Exit confirmation dialog ── */
