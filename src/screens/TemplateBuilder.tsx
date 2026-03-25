@@ -341,7 +341,7 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
                 <div className={styles.timeRows}>
                   <label className={styles.timeRowItem}>
                     <span className={styles.timeLabel}>Start</span>
-                    <TimeInput
+                    <StartTimeSelect
                       value={block.startTime}
                       timeFormat={timeFormat}
                       onChange={v => updateField(block.id, 'startTime', v)}
@@ -448,6 +448,44 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
 function toMins(hhmm: string): number {
   const [h, m] = hhmm.split(':').map(Number)
   return h * 60 + m
+}
+
+/**
+ * Dropdown for block start times in 30-minute increments across the full day.
+ */
+function StartTimeSelect({
+  value,
+  timeFormat,
+  onChange,
+}: {
+  value: string
+  timeFormat: TimeFormat
+  onChange: (v: string) => void
+}) {
+  const options = Array.from({ length: 48 }, (_, i) => {
+    const h = Math.floor(i / 2)
+    const m = i % 2 === 0 ? '00' : '30'
+    return `${String(h).padStart(2, '0')}:${m}`
+  })
+
+  // Snap stored value to nearest 30-min slot
+  const [h, m] = value.split(':').map(Number)
+  const snapped = `${String(h).padStart(2, '0')}:${m < 30 ? '00' : '30'}`
+  const selected = options.includes(snapped) ? snapped : options[0]
+
+  return (
+    <select
+      className={styles.endSelect}
+      value={selected}
+      onChange={e => onChange(e.target.value)}
+    >
+      {options.map(o => (
+        <option key={o} value={o}>
+          {formatDisplayTime(o, timeFormat)}
+        </option>
+      ))}
+    </select>
+  )
 }
 
 /**
