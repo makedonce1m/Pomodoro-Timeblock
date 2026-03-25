@@ -6,7 +6,7 @@ import {
   CLASSIC_POMODORO_BREAK_DURATION,
 } from '../constants/timer';
 import { usePomodoroTimer } from './usePomodoroTimer';
-import { playSkipSound } from '../utils/sound';
+import { playSkipSound, playFocusEndSound, playBreakEndSound } from '../utils/sound';
 
 export type SessionPhase =
   | 'idle'          // session not yet started
@@ -132,6 +132,7 @@ export function useSession(
     const ac = autoContinueRef.current;
 
     if (completedPhase === 'focus') {
+      playFocusEndSound();
       if (isCI || isLB) {
         // End of this block.
         if (ac) {
@@ -151,6 +152,7 @@ export function useSession(
       }
     } else {
       // completedPhase === 'break' → end of short break, next Pomodoro.
+      playBreakEndSound();
       const newPi = pi + 1;
       setPomodoroIndex(newPi);
       if (!ac) {
