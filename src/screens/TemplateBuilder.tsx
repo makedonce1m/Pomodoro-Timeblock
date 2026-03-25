@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import type { DayTemplate, TimeBlock, FocusBlock, LongBreakBlock } from '../types'
 import type { TimeFormat } from '../hooks/useSettings'
-import { calcPomodoroCount, addMinutes, formatDisplayTime } from '../utils/timeblock'
+import { calcBlockTimes, formatDisplayTime } from '../utils/timeblock'
 import styles from './TemplateBuilder.module.css'
 
 interface Props {
@@ -16,9 +16,9 @@ interface Props {
   onClearPendingNavAway?: () => void
 }
 
-
 export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDelete, pendingNavAway, onClearPendingNavAway }: Props) {
   const [label, setLabel] = useState(template.label)
+  const [startTime, setStartTime] = useState(template.startTime ?? '09:00')
   const [blocks, setBlocks] = useState<TimeBlock[]>(template.blocks)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [showUnsaved, setShowUnsaved] = useState(false)
@@ -139,6 +139,7 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
 
   const hasChanges =
     label !== template.label ||
+    startTime !== (template.startTime ?? '09:00') ||
     JSON.stringify(blocks) !== JSON.stringify(template.blocks)
 
   // When the nav triggers a leave while editing, show the unsaved dialog.
@@ -161,79 +162,44 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
     }
   }
 
-  function lastEndTime(): string {
-    if (blocks.length > 0) return blocks[blocks.length - 1].endTime
-    return '09:00'
-  }
-
   function addFocusBlock() {
-    const start = lastEndTime()
-    const end = addMinutes(start, 120)
     const block: FocusBlock = {
       type: 'focus',
       id: Date.now().toString(),
       label: `Focus Block ${blocks.filter(b => b.type === 'focus').length + 1}`,
-      startTime: start,
-      endTime: end,
-      pomodoroCount: calcPomodoroCount(start, end),
+      durationMins: 120,
+      pomodoroCount: 4,
     }
     setBlocks(prev => [...prev, block])
   }
 
   function addBreakBlock() {
-    const start = lastEndTime()
-    const end = addMinutes(start, 30)
     const block: LongBreakBlock = {
       type: 'long-break',
       id: Date.now().toString(),
       label: 'Break',
-      startTime: start,
-      endTime: end,
+      durationMins: 30,
     }
     setBlocks(prev => [...prev, block])
   }
 
-  function updateField(id: string, field: 'label' | 'startTime' | 'endTime', value: string) {
-    setBlocks(prev => {
-      const idx = prev.findIndex(b => b.id === id)
-      if (idx === -1) return prev
-      const block = prev[idx]
-      let updated: TimeBlock
-      let endDeltaMin = 0
+  function updateLabel(id: string, value: string) {
+    setBlocks(prev => prev.map(b => b.id === id ? { ...b, label: value } : b))
+  }
 
-      if (block.type === 'focus' && field === 'startTime') {
-        const count = Math.max(1, block.pomodoroCount)
-        const newEnd = addMinutes(value, count * 30)
-        endDeltaMin = toMins(newEnd) - toMins(block.endTime)
-        updated = { ...block, startTime: value, endTime: newEnd }
-      } else {
-        const next = { ...block, [field]: value }
-        if (next.type === 'focus') {
-          next.pomodoroCount = calcPomodoroCount(next.startTime, next.endTime)
-        }
-        updated = next as TimeBlock
-        if (field === 'endTime') {
-          endDeltaMin = toMins(value) - toMins(block.endTime)
-        }
-      }
-
-      const result = [...prev]
-      result[idx] = updated
-
-      // Cascade any end-time shift to all subsequent blocks
-      if (endDeltaMin !== 0) {
-        for (let i = idx + 1; i < result.length; i++) {
-          const b = result[i]
-          result[i] = { ...b, startTime: addMinutes(b.startTime, endDeltaMin), endTime: addMinutes(b.endTime, endDeltaMin) }
-        }
-      }
-      return result
-    })
+  function updateDuration(id: string, durationMins: number) {
+    setBlocks(prev => prev.map(b => {
+      if (b.id !== id) return b
+      if (b.type === 'focus') return { ...b, durationMins, pomodoroCount: durationMins / 30 }
+      return { ...b, durationMins }
+    }))
   }
 
   function deleteBlock(id: string) {
     setBlocks(prev => prev.filter(b => b.id !== id))
   }
+
+  const blockTimes = calcBlockTimes(startTime, blocks)
 
   return (
     <div className={styles.screen}>
@@ -246,7 +212,7 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
           placeholder="Template name"
           aria-label="Template name"
         />
-        <button className={styles.saveButton} onClick={() => onSave({ ...template, label, blocks })}>
+        <button className={styles.saveButton} onClick={() => onSave({ ...template, label, startTime, blocks })}>
           Save
         </button>
       </div>
@@ -260,112 +226,113 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
         </div>
       )}
 
+      {/* Plan-level start time */}
+      <div className={styles.planStartRow}>
+        <span className={styles.planStartLabel}>Day starts at</span>
+        <StartTimeSelect value={startTime} timeFormat={timeFormat} onChange={setStartTime} />
+      </div>
+
       <div className={styles.blocks} ref={blocksContainerRef}>
         {blocks.length === 0 && (
           <p className={styles.empty}>Add your first block below.</p>
         )}
-        {blocks.map((block, idx) => (
-          <div key={block.id}>
-            {dragging !== null && dropAt === idx && (
-              <div className={styles.dropLine} />
-            )}
-            <div
-              ref={el => { blockEls.current[idx] = el }}
-              className={[
-                styles.block,
-                block.type === 'focus' ? styles.blockFocus : styles.blockBreak,
-                dragging === idx ? styles.blockDragging : '',
-              ].filter(Boolean).join(' ')}
-              onTouchStart={e => handleTouchStart(idx, e.touches[0].clientY)}
-              onTouchMove={e => handleTouchMove(e.touches[0].clientY)}
-              onTouchEnd={handleTouchEnd}
-            >
-              <div className={styles.dragHandle} aria-hidden="true">
-                <svg width="14" height="18" viewBox="0 0 14 18" fill="none">
-                  <circle cx="4" cy="4" r="1.5" fill="currentColor"/>
-                  <circle cx="10" cy="4" r="1.5" fill="currentColor"/>
-                  <circle cx="4" cy="9" r="1.5" fill="currentColor"/>
-                  <circle cx="10" cy="9" r="1.5" fill="currentColor"/>
-                  <circle cx="4" cy="14" r="1.5" fill="currentColor"/>
-                  <circle cx="10" cy="14" r="1.5" fill="currentColor"/>
-                </svg>
-              </div>
-
-              {block.type === 'focus' ? (
-                <div className={`${styles.blockPill} ${styles.blockPillFocus}`} aria-hidden="true">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
-              ) : (
-                <div className={`${styles.blockPill} ${styles.blockPillBreak}`} aria-hidden="true">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                    <path d="M18 8h1a4 4 0 0 1 0 8h-1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <line x1="6" y1="1" x2="6" y2="4" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-                    <line x1="10" y1="1" x2="10" y2="4" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-                    <line x1="14" y1="1" x2="14" y2="4" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-                  </svg>
-                </div>
+        {blocks.map((block, idx) => {
+          const times = blockTimes[idx]
+          return (
+            <div key={block.id}>
+              {dragging !== null && dropAt === idx && (
+                <div className={styles.dropLine} />
               )}
-              <div className={styles.blockContent}>
-                <div className={styles.blockHeader}>
-                  <span className={styles.blockType}>
-                    {block.type === 'focus' ? 'Focus' : 'Break'}
-                  </span>
-                  {block.type === 'focus' && (
-                    <span className={styles.pomCount}>{block.pomodoroCount} Pomodoros</span>
-                  )}
-                  <button
-                    className={styles.deleteBlock}
-                    onClick={() => deleteBlock(block.id)}
-                    aria-label="Remove block"
-                  >
-                    ×
-                  </button>
+              <div
+                ref={el => { blockEls.current[idx] = el }}
+                className={[
+                  styles.block,
+                  block.type === 'focus' ? styles.blockFocus : styles.blockBreak,
+                  dragging === idx ? styles.blockDragging : '',
+                ].filter(Boolean).join(' ')}
+                onTouchStart={e => handleTouchStart(idx, e.touches[0].clientY)}
+                onTouchMove={e => handleTouchMove(e.touches[0].clientY)}
+                onTouchEnd={handleTouchEnd}
+              >
+                <div className={styles.dragHandle} aria-hidden="true">
+                  <svg width="14" height="18" viewBox="0 0 14 18" fill="none">
+                    <circle cx="4" cy="4" r="1.5" fill="currentColor"/>
+                    <circle cx="10" cy="4" r="1.5" fill="currentColor"/>
+                    <circle cx="4" cy="9" r="1.5" fill="currentColor"/>
+                    <circle cx="10" cy="9" r="1.5" fill="currentColor"/>
+                    <circle cx="4" cy="14" r="1.5" fill="currentColor"/>
+                    <circle cx="10" cy="14" r="1.5" fill="currentColor"/>
+                  </svg>
                 </div>
 
-                <input
-                  className={styles.blockLabel}
-                  value={block.label}
-                  onChange={e => updateField(block.id, 'label', e.target.value)}
-                  placeholder="Block name"
-                  aria-label="Block name"
-                />
+                {block.type === 'focus' ? (
+                  <div className={`${styles.blockPill} ${styles.blockPillFocus}`} aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                ) : (
+                  <div className={`${styles.blockPill} ${styles.blockPillBreak}`} aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <path d="M18 8h1a4 4 0 0 1 0 8h-1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <line x1="6" y1="1" x2="6" y2="4" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                      <line x1="10" y1="1" x2="10" y2="4" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                      <line x1="14" y1="1" x2="14" y2="4" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                  </div>
+                )}
 
-                <div className={styles.timeRows}>
-                  <label className={styles.timeRowItem}>
-                    <span className={styles.timeLabel}>Start</span>
-                    <StartTimeSelect
-                      value={block.startTime}
-                      timeFormat={timeFormat}
-                      onChange={v => updateField(block.id, 'startTime', v)}
-                    />
-                  </label>
-                  <label className={styles.timeRowItem}>
-                    <span className={styles.timeLabel}>End</span>
-                    {block.type === 'focus' ? (
-                      <FocusEndSelect
-                        startTime={block.startTime}
-                        endTime={block.endTime}
-                        timeFormat={timeFormat}
-                        onChange={v => updateField(block.id, 'endTime', v)}
-                      />
-                    ) : (
-                      <BreakEndSelect
-                        startTime={block.startTime}
-                        endTime={block.endTime}
-                        timeFormat={timeFormat}
-                        onChange={v => updateField(block.id, 'endTime', v)}
-                      />
+                <div className={styles.blockContent}>
+                  <div className={styles.blockHeader}>
+                    <span className={styles.blockType}>
+                      {block.type === 'focus' ? 'Focus' : 'Break'}
+                    </span>
+                    {block.type === 'focus' && (
+                      <span className={styles.pomCount}>{block.pomodoroCount} Pomodoros</span>
                     )}
-                  </label>
+                    <button
+                      className={styles.deleteBlock}
+                      onClick={() => deleteBlock(block.id)}
+                      aria-label="Remove block"
+                    >
+                      ×
+                    </button>
+                  </div>
+
+                  <input
+                    className={styles.blockLabel}
+                    value={block.label}
+                    onChange={e => updateLabel(block.id, e.target.value)}
+                    placeholder="Block name"
+                    aria-label="Block name"
+                  />
+
+                  <div className={styles.timeRows}>
+                    <span className={styles.computedTime}>
+                      {formatDisplayTime(times.start, timeFormat)}–{formatDisplayTime(times.end, timeFormat)}
+                    </span>
+                    <label className={styles.timeRowItem}>
+                      <span className={styles.timeLabel}>Duration</span>
+                      {block.type === 'focus' ? (
+                        <FocusDurationSelect
+                          durationMins={block.durationMins}
+                          onChange={v => updateDuration(block.id, v)}
+                        />
+                      ) : (
+                        <BreakDurationSelect
+                          durationMins={block.durationMins}
+                          onChange={v => updateDuration(block.id, v)}
+                        />
+                      )}
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
         {dragging !== null && dropAt === blocks.length && (
           <div className={styles.dropLine} />
         )}
@@ -402,7 +369,7 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
               <button
                 className={styles.unsavedSave}
                 onClick={() => {
-                  onSave({ ...template, label, blocks })
+                  onSave({ ...template, label, startTime, blocks })
                   const act = pendingNavAwayAction.current
                   pendingNavAwayAction.current = null
                   onClearPendingNavAway?.()
@@ -441,13 +408,8 @@ export function TemplateBuilder({ template, timeFormat, onSave, onCancel, onDele
   )
 }
 
-function toMins(hhmm: string): number {
-  const [h, m] = hhmm.split(':').map(Number)
-  return h * 60 + m
-}
-
 /**
- * Dropdown for block start times in 30-minute increments across the full day.
+ * Dropdown for plan-level start time in 30-minute increments across the full day.
  */
 function StartTimeSelect({
   value,
@@ -485,46 +447,37 @@ function StartTimeSelect({
 }
 
 /**
- * Dropdown for focus block end times.
- * Only offers options that are exact multiples of 30 minutes from startTime
- * (1 pomo = 30 min, 2 pomos = 60 min, … up to 16 pomos / 8 hours).
+ * Dropdown for focus block duration: 1–16 Pomodoros (30-min steps).
  */
-function FocusEndSelect({
-  startTime,
-  endTime,
-  timeFormat,
+function FocusDurationSelect({
+  durationMins,
   onChange,
 }: {
-  startTime: string
-  endTime: string
-  timeFormat: TimeFormat
-  onChange: (v: string) => void
+  durationMins: number
+  onChange: (v: number) => void
 }) {
   const MAX_POMOS = 16
-  const options = Array.from({ length: MAX_POMOS }, (_, i) => {
-    const n = i + 1
-    return { value: addMinutes(startTime, n * 30), pomos: n }
-  })
+  const options = Array.from({ length: MAX_POMOS }, (_, i) => ({
+    pomos: i + 1,
+    mins: (i + 1) * 30,
+  }))
+  const snapped = Math.min(MAX_POMOS * 30, Math.max(30, Math.round(durationMins / 30) * 30))
 
-  // Snap the stored endTime to the nearest valid option so the select always
-  // shows a selected value, even if the block was created before this constraint.
-  const [sh, sm] = startTime.split(':').map(Number)
-  const [eh, em] = endTime.split(':').map(Number)
-  const diffMin = (eh * 60 + em) - (sh * 60 + sm)
-  const snappedCount = Math.min(MAX_POMOS, Math.max(1, Math.round(diffMin / 30)))
-  const snappedValue = addMinutes(startTime, snappedCount * 30)
+  function durationLabel(mins: number): string {
+    if (mins < 60) return `${mins}m`
+    if (mins % 60 === 0) return `${mins / 60}h`
+    return `${Math.floor(mins / 60)}h ${mins % 60}m`
+  }
 
   return (
     <select
       className={styles.endSelect}
-      value={snappedValue}
-      onChange={e => onChange(e.target.value)}
+      value={snapped}
+      onChange={e => onChange(Number(e.target.value))}
     >
       {options.map(o => (
-        <option key={o.value} value={o.value}>
-          {formatDisplayTime(o.value, timeFormat)}
-          {' '}·{' '}
-          {o.pomos === 1 ? '1 pomo' : `${o.pomos} pomos`}
+        <option key={o.mins} value={o.mins}>
+          {o.pomos === 1 ? '1 pomo' : `${o.pomos} pomos`} · {durationLabel(o.mins)}
         </option>
       ))}
     </select>
@@ -532,30 +485,17 @@ function FocusEndSelect({
 }
 
 /**
- * Dropdown for break block end times.
- * 15-minute increments from startTime+15 up to startTime+120 (2 hours).
+ * Dropdown for break block duration: 15-minute steps up to 2 hours.
  */
-function BreakEndSelect({
-  startTime,
-  endTime,
-  timeFormat,
+function BreakDurationSelect({
+  durationMins,
   onChange,
 }: {
-  startTime: string
-  endTime: string
-  timeFormat: TimeFormat
-  onChange: (v: string) => void
+  durationMins: number
+  onChange: (v: number) => void
 }) {
-  const STEP = 15
-  const MAX = 120
-  const options = Array.from({ length: MAX / STEP }, (_, i) => {
-    const mins = (i + 1) * STEP
-    return { value: addMinutes(startTime, mins), mins }
-  })
-
-  const diffMin = toMins(endTime) - toMins(startTime)
-  const snapped = Math.min(MAX, Math.max(STEP, Math.round(diffMin / STEP) * STEP))
-  const snappedValue = addMinutes(startTime, snapped)
+  const options = [15, 30, 45, 60, 90, 120]
+  const snapped = options.includes(durationMins) ? durationMins : 30
 
   function label(mins: number): string {
     if (mins < 60) return `${mins}m`
@@ -566,14 +506,13 @@ function BreakEndSelect({
   return (
     <select
       className={styles.endSelect}
-      value={snappedValue}
-      onChange={e => onChange(e.target.value)}
+      value={snapped}
+      onChange={e => onChange(Number(e.target.value))}
     >
       {options.map(o => (
-        <option key={o.value} value={o.value}>
-          {formatDisplayTime(o.value, timeFormat)} · {label(o.mins)}
-        </option>
+        <option key={o} value={o}>{label(o)}</option>
       ))}
     </select>
   )
 }
+

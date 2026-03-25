@@ -1,16 +1,12 @@
 import type { DayTemplate, FocusBlock } from '../types'
 import type { TimeFormat } from '../hooks/useSettings'
-import { formatDisplayTime } from '../utils/timeblock'
+import { formatDisplayTime, calcBlockTimes } from '../utils/timeblock'
 import styles from './TemplateLibrary.module.css'
 
 function focusMinutes(template: DayTemplate): number {
   return template.blocks
     .filter((b): b is FocusBlock => b.type === 'focus')
-    .reduce((sum, b) => {
-      const [sh, sm] = b.startTime.split(':').map(Number)
-      const [eh, em] = b.endTime.split(':').map(Number)
-      return sum + (eh * 60 + em) - (sh * 60 + sm)
-    }, 0)
+    .reduce((sum, b) => sum + b.durationMins, 0)
 }
 
 function formatFocusTime(minutes: number): string {
@@ -23,11 +19,10 @@ function formatFocusTime(minutes: number): string {
 
 function daySpan(template: DayTemplate, timeFormat: TimeFormat): string | null {
   if (template.blocks.length === 0) return null
-  const times = template.blocks.flatMap(b => [b.startTime, b.endTime])
-  const toMin = (t: string) => { const [h, m] = t.split(':').map(Number); return h * 60 + m }
-  const earliest = times.reduce((a, b) => toMin(a) <= toMin(b) ? a : b)
-  const latest = times.reduce((a, b) => toMin(a) >= toMin(b) ? a : b)
-  return `${formatDisplayTime(earliest, timeFormat)}–${formatDisplayTime(latest, timeFormat)}`
+  const times = calcBlockTimes(template.startTime ?? '09:00', template.blocks)
+  const start = times[0].start
+  const end = times[times.length - 1].end
+  return `${formatDisplayTime(start, timeFormat)}–${formatDisplayTime(end, timeFormat)}`
 }
 
 interface Props {
@@ -56,6 +51,7 @@ export function TemplateLibrary({ templates, activeTemplateId, timeFormat, onNew
           const isActive = t.id === activeTemplateId
           const span = daySpan(t, timeFormat)
           const focus = focusMinutes(t)
+          const blockTimes = calcBlockTimes(t.startTime ?? '09:00', t.blocks)
           return (
             <div
               key={t.id}
@@ -77,12 +73,12 @@ export function TemplateLibrary({ templates, activeTemplateId, timeFormat, onNew
                   </p>
                 )}
                 <div className={styles.blockPills}>
-                  {t.blocks.map(b => (
+                  {t.blocks.map((b, i) => (
                     <span
                       key={b.id}
                       className={`${styles.pill} ${b.type === 'focus' ? styles.pillFocus : styles.pillBreak}`}
                     >
-                      {formatDisplayTime(b.startTime, timeFormat)}–{formatDisplayTime(b.endTime, timeFormat)}
+                      {formatDisplayTime(blockTimes[i].start, timeFormat)}–{formatDisplayTime(blockTimes[i].end, timeFormat)}
                     </span>
                   ))}
                 </div>

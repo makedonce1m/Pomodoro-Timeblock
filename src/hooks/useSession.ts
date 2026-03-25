@@ -16,11 +16,9 @@ export type SessionPhase =
   | 'block-done'    // focus block complete, waiting/transitioning to next
   | 'done';         // all blocks complete
 
-/** Compute block duration in seconds from HH:mm strings. */
-function blockSeconds(block: { startTime: string; endTime: string }): number {
-  const [sh, sm] = block.startTime.split(':').map(Number);
-  const [eh, em] = block.endTime.split(':').map(Number);
-  return ((eh * 60 + em) - (sh * 60 + sm)) * 60;
+/** Compute block duration in seconds from durationMins. */
+function blockSeconds(block: { durationMins: number }): number {
+  return block.durationMins * 60;
 }
 
 export interface UseSessionReturn {

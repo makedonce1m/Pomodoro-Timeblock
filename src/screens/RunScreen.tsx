@@ -4,7 +4,7 @@ import type { TimeFormat } from '../hooks/useSettings'
 import { useSession } from '../hooks/useSession'
 import { useWakeLock } from '../hooks/useWakeLock'
 import { PomodoroTimer } from '../components/PomodoroTimer'
-import { formatDisplayTime } from '../utils/timeblock'
+import { formatDisplayTime, calcBlockTimes } from '../utils/timeblock'
 import { POMODORO_FOCUS_DURATION, CLOSING_INTERVAL_DURATION } from '../constants/timer'
 import styles from './RunScreen.module.css'
 
@@ -34,6 +34,9 @@ export function RunScreen({ template, autoContinue, keepScreenOn, timeFormat, po
   const [showExitConfirm, setShowExitConfirm] = useState(false)
 
   const upcomingBlocks = template.blocks.slice(blockIndex + 1)
+  const blockTimes = calcBlockTimes(template.startTime ?? '09:00', template.blocks)
+  const currentBlockTimes = blockTimes[blockIndex] ?? null
+  const upcomingBlockTimes = blockTimes.slice(blockIndex + 1)
 
   // ── Animated swipe between pomodoros ──────────────────────────────
   const [swipeX, setSwipeX] = useState(0)
@@ -227,12 +230,14 @@ export function RunScreen({ template, autoContinue, keepScreenOn, timeFormat, po
         <div className={styles.upcoming}>
           <div className={`${styles.upcomingRow} ${styles.upcomingRowCurrent}`}>
             <span className={styles.nextName}>{currentBlock.label}</span>
-            <span className={styles.nextTime}>{formatDisplayTime(currentBlock.startTime, timeFormat)}–{formatDisplayTime(currentBlock.endTime, timeFormat)}</span>
+            {currentBlockTimes && (
+              <span className={styles.nextTime}>{formatDisplayTime(currentBlockTimes.start, timeFormat)}–{formatDisplayTime(currentBlockTimes.end, timeFormat)}</span>
+            )}
           </div>
-          {upcomingBlocks.map(block => (
+          {upcomingBlocks.map((block, i) => (
             <div key={block.id} className={styles.upcomingRow}>
               <span className={styles.nextName}>{block.label}</span>
-              <span className={styles.nextTime}>{formatDisplayTime(block.startTime, timeFormat)}–{formatDisplayTime(block.endTime, timeFormat)}</span>
+              <span className={styles.nextTime}>{formatDisplayTime(upcomingBlockTimes[i].start, timeFormat)}–{formatDisplayTime(upcomingBlockTimes[i].end, timeFormat)}</span>
             </div>
           ))}
         </div>
