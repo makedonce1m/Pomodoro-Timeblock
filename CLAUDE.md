@@ -6,14 +6,14 @@ This file provides guidance for AI assistants (Claude and others) working on thi
 
 ## Project Overview
 
-**Pomodoro-Timeblock** is a productivity application combining the Pomodoro Technique with time-blocking. Users define scheduled time blocks throughout their day, and within each block a Pomodoro timer runs (work intervals interleaved with short and long breaks).
+**Pomodoro-Timeblock** is a productivity application combining the Pomodoro Technique with time-blocking. Users build day plans made up of ordered focus and break blocks. Within each focus block, a Pomodoro timer runs through work intervals interleaved with short breaks.
 
 ### Core Concepts
-- **Time Block**: A named, calendar-scheduled work session (e.g., "Deep Work 9:00–11:00")
+- **Time Block**: A named work session with a duration (e.g., "Deep Work — 2 hours")
 - **Pomodoro**: A 30-minute interval consisting of a focus period followed by a break
-- **Short Break**: Rest period between Pomodoros within a time block
-- **Long Break**: Rest after a user-configurable number of Pomodoros (4, 5, or 6); duration is also configurable (15 min, 30 min, or 60 min)
-- **Closing Interval**: The final Pomodoro of a time block — 30 minutes of pure focus with no trailing break, since a longer inter-block break follows immediately
+- **Short Break**: Rest period between Pomodoros within a focus block
+- **Long Break Block**: An explicitly scheduled rest block added to the plan by the user (not auto-triggered)
+- **Closing Interval**: The final Pomodoro of a focus block — 30 minutes of pure focus with no trailing break, since a longer inter-block break follows immediately
 
 ### Pomodoro Interval Modes
 Two modes are supported; users can switch between them in settings:
@@ -25,50 +25,64 @@ Two modes are supported; users can switch between them in settings:
 
 > **Note on Comfort Pomodoro**: The 10-minute break is intentionally long enough to cover a bathroom break combined with a normal rest. Do not shorten it.
 
-### Closing Interval (Last Pomodoro of a Time Block)
-When a time block ends, the final Pomodoro runs as a **30-minute pure focus interval** (no break appended). The rationale: a longer inter-block break is already scheduled after the time block, so a 5-minute trailing break would be redundant and disruptive to the natural transition.
+### Closing Interval (Last Pomodoro of a Focus Block)
+When a focus block ends, the final Pomodoro runs as a **30-minute pure focus interval** (no break appended). The rationale: a longer inter-block break is already scheduled after the block, so a 5-minute trailing break would be redundant and disruptive to the natural transition.
 
-### Long Break Options
-After a user-configured number of Pomodoros (4, 5, or 6), users take a long break. Both the interval count and the break length are configurable:
-
-| Option | Duration |
-|--------|----------|
-| Short long break | 15 min |
-| Standard long break | 30 min |
-| **Extended long break** | 60 min |
+### Long Breaks
+Long breaks are **explicit plan blocks** (`LongBreakBlock`) that the user adds to their plan via `+ Break`. They are not auto-triggered after N Pomodoros. The user decides when and how long a break is by placing it in the plan.
 
 ---
 
 ## Repository State
 
-> **Note**: This repository is in early/initial state. As the project grows, update this file to reflect actual structure, tooling, and conventions.
+The application is functionally complete for core features. The tech stack is React + TypeScript + Vite + CSS Modules, deployed as a mobile-first web app.
 
 ---
 
-## Expected Project Structure
-
-When source code is added, the likely structure will be:
+## Actual Project Structure
 
 ```
 Pomodoro-Timeblock/
-├── CLAUDE.md                  # This file
-├── README.md                  # User-facing documentation
-├── package.json               # Dependencies and scripts
-├── tsconfig.json              # TypeScript configuration
-├── .eslintrc.*                # Linting rules
-├── .prettierrc                # Code formatting
-├── .gitignore
-├── src/
-│   ├── main.*                 # Entry point
-│   ├── components/            # UI components
-│   ├── store/                 # State management
-│   ├── hooks/                 # Custom React hooks (if React)
-│   ├── utils/                 # Pure utility functions
-│   ├── types/                 # TypeScript type definitions
-│   └── styles/                # CSS / styling
-├── tests/                     # Test files (mirror src/ structure)
-└── public/                    # Static assets
+├── CLAUDE.md
+├── README.md
+├── package.json
+├── tsconfig.json
+├── vite.config.ts
+├── index.html
+└── src/
+    ├── main.tsx                        # Entry point
+    ├── App.tsx                         # Root: template state, routing between views
+    ├── App.module.css
+    ├── index.css                       # Global CSS variables (themes, tokens)
+    ├── vite-env.d.ts
+    ├── components/
+    │   ├── BottomNav.tsx               # Tab bar (Run / Plans / Settings)
+    │   ├── PomodoroTimer.tsx           # Standalone timer UI (no active plan)
+    │   └── ModeSidebar.tsx             # Standard/Comfort mode switcher panel
+    ├── constants/
+    │   └── timer.ts                    # POMODORO_FOCUS_DURATION, CLOSING_INTERVAL_DURATION, etc.
+    ├── defaults/
+    │   └── schedule.ts                 # DEFAULT_DAY_TEMPLATE (sample plan)
+    ├── hooks/
+    │   ├── usePomodoroTimer.ts         # Core drift-resistant timer (performance.now)
+    │   ├── useSession.ts               # Block/Pomodoro progression logic for an active plan
+    │   ├── useSettings.ts              # App settings (persisted to localStorage)
+    │   └── useWakeLock.ts              # Screen wake lock while timer runs
+    ├── screens/
+    │   ├── RunScreen.tsx               # Active session UI
+    │   ├── TemplatesScreen.tsx         # Orchestrates plan list + builder + modals
+    │   ├── TemplateLibrary.tsx         # Plan list view
+    │   ├── TemplateBuilder.tsx         # Plan editor (blocks, drag-to-reorder, duration selects)
+    │   └── SettingsScreen.tsx          # App settings UI
+    ├── types/
+    │   └── index.ts                    # All TypeScript types (DayTemplate, FocusBlock, etc.)
+    └── utils/
+        ├── timeblock.ts                # formatDisplayTime, addMinutes, calcBlockTimes
+        ├── pomodoroMode.ts             # Mode-related utilities
+        └── sound.ts                   # Skip/notification sounds
 ```
+
+> No `tests/` directory exists yet. No `store/` directory — state is managed via hooks and component state.
 
 ---
 
@@ -76,21 +90,10 @@ Pomodoro-Timeblock/
 
 ### Setup
 ```bash
-# Install dependencies (once package.json exists)
-npm install         # or: yarn install / pnpm install
-
-# Start development server
-npm run dev
-
-# Run tests
-npm test
-
-# Build for production
-npm run build
-
-# Lint and format
-npm run lint
-npm run format
+npm install
+npm run dev       # Start dev server
+npm run build     # Production build
+npm run lint      # ESLint
 ```
 
 ### Branch Strategy
@@ -111,7 +114,7 @@ chore: upgrade dependencies
 
 ---
 
-## Key Conventions (to be confirmed once code exists)
+## Key Conventions
 
 ### General
 - **Language**: TypeScript (strict mode preferred)
@@ -120,30 +123,39 @@ chore: upgrade dependencies
 - **No `any`**: Avoid TypeScript `any`; use proper types or `unknown`
 
 ### Timer Logic
-- Timer state should be managed in a dedicated store or hook, not scattered across UI components
-- Pomodoro intervals are user-configurable; never hardcode durations — use named constants or settings (e.g., `STANDARD_MODE`, `COMFORT_MODE`)
-- The two supported modes are Standard (25 min focus / 5 min break) and Comfort (20 min focus / 10 min break); both total 30 minutes
-- Comfort mode's 10-minute break is designed to cover a bathroom break combined with a normal rest — do not shorten it
-- Long break duration is user-configurable: 15 min, 30 min, or 60 min; use a named constant (e.g., `LONG_BREAK_DURATION`) — never hardcode
-- The number of Pomodoros before a long break is user-configurable: 4, 5, or 6; use a named constant (e.g., `POMODOROS_BEFORE_LONG_BREAK`) — never hardcode
-- The last interval of every time block is a **closing interval**: 30 minutes of focus with no break; implement this as a distinct interval type (e.g., `CLOSING_INTERVAL`) so it is never confused with a standard Pomodoro
-- Use `Date.now()` / `performance.now()` for drift-resistant timing rather than naive `setInterval` counting
-- Pause/resume must preserve elapsed time accurately
-- **Mid-session mode switching**: While a Pomodoro is running, a button allows switching between Standard and Comfort mode. The timer must not stop. Switching is only permitted during the focus phase and only while elapsed focus time is below `MODE_SWITCH_CUTOFF_SECONDS` (10 seconds before Comfort mode's 20-minute focus mark, i.e. < 19:50). The button must be disabled outside this window. Elapsed time is preserved on switch.
+- Timer state is in `usePomodoroTimer` (low-level) and `useSession` (plan-aware)
+- Pomodoro durations come from constants in `src/constants/timer.ts` — never hardcode
+- The two supported modes are Standard (25/5) and Comfort (20/10); both total 30 minutes
+- Comfort mode's 10-minute break is designed to cover a bathroom break — do not shorten it
+- The last interval of every focus block is a **closing interval**: 30 minutes of focus with no break; implemented as `CLOSING_INTERVAL_DURATION`
+- Use `performance.now()` for drift-resistant timing — never naive `setInterval` counting
+- Pause/resume preserves elapsed time accurately
+- **Mid-session mode switching**: permitted only during focus phase and only while elapsed time < `MODE_SWITCH_CUTOFF_SECONDS` (19:50). Button is disabled outside this window.
 
-### Time Block Scheduling
-- Store time blocks as `{ id, label, startTime: ISO8601, endTime: ISO8601, pomodoroCount: number }`
-- Validate that time blocks do not overlap
-- Times should always be handled in local time for display but stored/compared in UTC or epoch ms
+### Plan / Time Block Model
+- `DayTemplate` has a plan-level `startTime: string` (HH:mm, 24h)
+- `FocusBlock` and `LongBreakBlock` store `durationMins: number` — **not** `startTime/endTime`
+- Block start/end times are **derived** by chaining durations from the plan's `startTime` via `calcBlockTimes()` in `src/utils/timeblock.ts`
+- This means drag-to-reorder always produces valid, consistent times (no manual cascade needed)
+- `FocusBlock.pomodoroCount = durationMins / 30` (always an integer)
+- Focus block durations are multiples of 30 min (1–16 pomos). Break durations: 15, 30, 45, 60, 90, 120 min.
+
+### New Plan Creation Flow
+1. User taps `+ New` in the plan list
+2. Modal 1: Choose Pomodoro type — **Adaptive** (Standard/Comfort switchable) or **Classic** (20/5 fixed). Locked after creation.
+3. Modal 2: Choose day start time (30-min increment dropdown)
+4. Plan builder opens with the chosen start time
 
 ### State Management
-- Keep UI state local (component state) when it does not need to be shared
-- Lift to global store only what truly needs to be shared across unrelated components (e.g., current timer state, today's schedule)
-- Do not store derived values in state — compute them from source data
+- UI state stays local (component state) unless shared across unrelated components
+- Global shared state: current timer, active template ID, app settings
+- Do not store derived values in state — compute them (e.g. block times come from `calcBlockTimes`, not stored)
 
 ### Persistence
-- User settings and today's schedule should persist across page reloads (localStorage or IndexedDB)
-- Use a versioned schema for stored data to enable future migrations
+- Templates stored in `localStorage` under key `pomodoro-templates`
+- Settings stored in `localStorage` under key `pomodoro-app-settings`
+- `App.tsx` runs `migrateTemplate()` on load to handle the old `startTime/endTime`-per-block format
+- No versioned schema yet — migrations are ad-hoc
 
 ### Accessibility
 - Timer countdowns must be announced to screen readers (use `aria-live`)
@@ -152,7 +164,16 @@ chore: upgrade dependencies
 
 ---
 
-## Testing Guidelines
+## What Is Not Yet Built
+
+- **Tests**: No test suite exists. Priority areas: `usePomodoroTimer`, `useSession`, `calcBlockTimes`
+- **Versioned localStorage schema**: Migrations are currently ad-hoc in `migrateTemplate()`
+- **Notifications / sounds**: Skip sound exists (`sound.ts`) but no end-of-block or end-of-session notification
+- **README**: Needs a user-facing README
+
+---
+
+## Testing Guidelines (when tests are added)
 
 - Write unit tests for all timer and scheduling logic (pure functions are easiest to test)
 - Integration tests for user flows: start timer → pause → resume → complete Pomodoro → take break
