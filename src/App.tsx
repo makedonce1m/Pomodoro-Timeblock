@@ -97,7 +97,7 @@ function App() {
               onStart={timer.start}
               onPause={timer.pause}
               onResume={timer.resume}
-              onReset={timer.reset}
+              onReset={() => timer.reset(timer.phase)}
               onSkip={timer.skip}
               onGoToPhase={timer.goToPhase}
               onSelectMode={timer.selectMode}

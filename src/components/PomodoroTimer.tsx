@@ -152,7 +152,7 @@ export function PomodoroTimer({
 
       <div className={styles.controls}>
         <div className={styles.sideControl}>
-          <button className={styles.sideButton} onClick={onReset} disabled={!started} aria-label="Reset">
+          <button className={styles.sideButton} onClick={() => onReset()} disabled={!started} aria-label="Reset">
             <IconReset />
           </button>
           <span className={styles.buttonLabel}>Reset</span>
