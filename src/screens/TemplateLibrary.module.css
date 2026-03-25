@@ -129,8 +129,7 @@
 .runButton {
   background: var(--surface-1);
   border: 1px solid var(--border-1);
-  color: var(--text-4);
-  font-size: 1rem;
+  color: var(--text-3);
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -175,9 +174,8 @@
 
 .cancelButton {
   background: var(--surface-1);
-  border: 1px solid var(--border-1);
-  color: var(--text-4);
-  font-size: 0.8rem;
+  border: 1px solid var(--danger-brd);
+  color: var(--danger);
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -187,12 +185,9 @@
   cursor: pointer;
   transition: color 0.15s, background 0.15s, border-color 0.15s, box-shadow 0.15s;
   flex-shrink: 0;
-  font-family: inherit;
   box-shadow: var(--seg-pill-shadow);
 }
 
 .cancelButton:active {
-  color: var(--danger);
   background: var(--danger-bg);
-  border-color: var(--danger-brd);
 }

@@ -95,7 +95,9 @@ export function TemplateLibrary({ templates, activeTemplateId, timeFormat, onNew
                     aria-label="Cancel active plan"
                     title="Stop running this plan"
                   >
-                    ✕
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                      <path d="M1.5 1.5L10.5 10.5M10.5 1.5L1.5 10.5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"/>
+                    </svg>
                   </button>
                 ) : (
                   <button
@@ -104,7 +106,9 @@ export function TemplateLibrary({ templates, activeTemplateId, timeFormat, onNew
                     aria-label={`Run ${t.label}`}
                     title="Set as active in Run tab"
                   >
-                    ▶
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
+                      <path d="M4.5 2.8L11.5 7L4.5 11.2V2.8Z" strokeLinejoin="round"/>
+                    </svg>
                   </button>
                 )}
               </div>
