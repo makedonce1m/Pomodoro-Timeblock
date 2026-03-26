@@ -174,7 +174,7 @@ export function RunScreen({ template, autoContinue, keepScreenOn, timeFormat, po
       )}
 
       {/* ── Full Adaptive Pomo timer (swipeable) ── */}
-      <div className={styles.swipeViewport}>
+      {!isDone && <div className={styles.swipeViewport}>
         <div
           className={styles.swipeCard}
           style={{
@@ -236,7 +236,7 @@ export function RunScreen({ template, autoContinue, keepScreenOn, timeFormat, po
             />
           </div>
         )}
-      </div>
+      </div>}
 
       {/* ── Done card ── */}
       {isDone && (
@@ -255,7 +255,7 @@ export function RunScreen({ template, autoContinue, keepScreenOn, timeFormat, po
       )}
 
       {/* ── Upcoming blocks ── */}
-      <div className={styles.divider} />
+      {!isDone && <div className={styles.divider} />}
       {currentBlock && !isDone && (
         <div className={styles.upcoming}>
           <div className={`${styles.upcomingRow} ${styles.upcomingRowCurrent}`}>
