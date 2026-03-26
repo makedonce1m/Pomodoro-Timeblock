@@ -87,34 +87,59 @@
   pointer-events: none;
 }
 
-/* ── Done row ── */
-.doneRow {
+/* ── Done card ── */
+.doneCard {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem 0 0;
+  gap: 0.5rem;
+  padding: 1.5rem 2rem 0.75rem;
+  text-align: center;
 }
 
-.doneMsg {
+.doneTick {
+  font-size: 2rem;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.doneTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: -0.02em;
+}
+
+.donePraise {
   font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--success);
+  color: var(--text-3);
+  font-style: italic;
 }
 
-.restartButton {
-  background: var(--surface-1);
+.doneStats {
+  font-size: 0.72rem;
+  color: var(--text-4);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 0.25rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.runAgainButton {
+  margin-top: 0.75rem;
+  background: none;
   border: 1px solid var(--border-1);
   border-radius: 2rem;
-  color: var(--text-3);
-  font-size: 0.8rem;
+  color: var(--text-4);
+  font-size: 0.78rem;
   font-family: inherit;
-  padding: 0.45rem 1.25rem;
+  padding: 0.4rem 1.25rem;
   cursor: pointer;
   transition: border-color 0.15s, color 0.15s;
 }
 
-.restartButton:active {
+.runAgainButton:active {
   border-color: var(--accent);
   color: var(--accent);
 }

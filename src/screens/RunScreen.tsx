@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useMemo } from 'react'
 import type { DayTemplate, PomodoroMode, PomodoroType } from '../types'
 import type { TimeFormat } from '../hooks/useSettings'
 import { useSession } from '../hooks/useSession'
@@ -32,6 +32,28 @@ export function RunScreen({ template, autoContinue, keepScreenOn, timeFormat, po
   } = session
 
   const [showExitConfirm, setShowExitConfirm] = useState(false)
+
+  const totalFocusPomos = useMemo(() =>
+    template.blocks.filter(b => b.type === 'focus').reduce((s, b) => s + (b as import('../types').FocusBlock).pomodoroCount, 0)
+  , [template])
+
+  const totalFocusMins = useMemo(() =>
+    template.blocks.filter(b => b.type === 'focus').reduce((s, b) => s + b.durationMins, 0)
+  , [template])
+
+  const doneMessage = useMemo(() => {
+    const msgs = [
+      'Deep work done. Go rest.',
+      'That\'s what consistency looks like.',
+      'You showed up. That\'s everything.',
+      'Focus built. Rest earned.',
+      'Another session in the books.',
+      'You owned it.',
+      'Locked in and delivered.',
+      'That\'s the work.',
+    ]
+    return msgs[totalFocusPomos % msgs.length]
+  }, [totalFocusPomos])
 
   const upcomingBlocks = template.blocks.slice(blockIndex + 1)
   const blockTimes = calcBlockTimes(template.startTime ?? '09:00', template.blocks)
@@ -216,11 +238,20 @@ export function RunScreen({ template, autoContinue, keepScreenOn, timeFormat, po
         )}
       </div>
 
-      {/* ── Done overlay ── */}
+      {/* ── Done card ── */}
       {isDone && (
-        <div className={styles.doneRow}>
-          <span className={styles.doneMsg}>Session complete!</span>
-          <button className={styles.restartButton} onClick={startSession}>Start Again</button>
+        <div className={styles.doneCard}>
+          <span className={styles.doneTick}>✓</span>
+          <p className={styles.doneTitle}>Plan complete.</p>
+          <p className={styles.donePraise}>{doneMessage}</p>
+          <p className={styles.doneStats}>
+            {totalFocusPomos} {totalFocusPomos === 1 ? 'pomodoro' : 'pomodoros'}
+            {' · '}
+            {totalFocusMins >= 60
+              ? `${Math.floor(totalFocusMins / 60)}h${totalFocusMins % 60 > 0 ? ` ${totalFocusMins % 60}m` : ''}`
+              : `${totalFocusMins}m`} focus
+          </p>
+          <button className={styles.runAgainButton} onClick={startSession}>Run again</button>
         </div>
       )}
 
