@@ -161,16 +161,19 @@ function App() {
               onSwitchMode={timer.switchMode}
             />
           )}
-          {view === 'run' && activeTemplate && (
-            <RunScreen
-              template={activeTemplate}
-              autoContinue={settings.autoContinue}
-              keepScreenOn={settings.keepScreenOn}
-              timeFormat={settings.timeFormat}
-              pomodoroType={activeTemplate.pomodoroType ?? 'adaptive'}
-              defaultMode={settings.defaultMode}
-              onDeactivate={() => setActiveTemplateId(null)}
-            />
+          {/* Keep RunScreen mounted while a plan is active so session state (incl. isDone) survives tab switches */}
+          {activeTemplate && (
+            <div style={view !== 'run' ? { display: 'none' } : undefined}>
+              <RunScreen
+                template={activeTemplate}
+                autoContinue={settings.autoContinue}
+                keepScreenOn={settings.keepScreenOn}
+                timeFormat={settings.timeFormat}
+                pomodoroType={activeTemplate.pomodoroType ?? 'adaptive'}
+                defaultMode={settings.defaultMode}
+                onDeactivate={() => setActiveTemplateId(null)}
+              />
+            </div>
           )}
           {view === 'templates' && (
             <TemplatesScreen
