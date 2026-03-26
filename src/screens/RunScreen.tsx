@@ -251,7 +251,6 @@ export function RunScreen({ template, autoContinue, keepScreenOn, timeFormat, po
               ? `${Math.floor(totalFocusMins / 60)}h${totalFocusMins % 60 > 0 ? ` ${totalFocusMins % 60}m` : ''}`
               : `${totalFocusMins}m`} focus
           </p>
-          <button className={styles.runAgainButton} onClick={startSession}>Run again</button>
         </div>
       )}
 

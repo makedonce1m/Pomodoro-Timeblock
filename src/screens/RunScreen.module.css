@@ -126,24 +126,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-.runAgainButton {
-  margin-top: 0.75rem;
-  background: none;
-  border: 1px solid var(--border-1);
-  border-radius: 2rem;
-  color: var(--text-4);
-  font-size: 0.78rem;
-  font-family: inherit;
-  padding: 0.4rem 1.25rem;
-  cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
-}
-
-.runAgainButton:active {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
 /* ── Upcoming blocks ── */
 .upcoming {
   width: calc(100% - 2.5rem);
