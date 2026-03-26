@@ -163,7 +163,7 @@ function App() {
           )}
           {/* Keep RunScreen mounted while a plan is active so session state (incl. isDone) survives tab switches */}
           {activeTemplate && (
-            <div style={view !== 'run' ? { display: 'none' } : undefined}>
+            <div style={view !== 'run' ? { display: 'none' } : { width: '100%' }}>
               <RunScreen
                 template={activeTemplate}
                 autoContinue={settings.autoContinue}
